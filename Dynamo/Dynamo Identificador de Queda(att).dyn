@@ -1,0 +1,166 @@
+{
+  "Uuid": "16f13276-198a-4935-8655-b8eb985464f7",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Dynamo Identificador de Queda(att)",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('AcMgd')\r\nclr.AddReference('AcDbMgd')\r\nclr.AddReference('AeccDbMgd')\r\n\r\nfrom Autodesk.AutoCAD.ApplicationServices import Application\r\nfrom Autodesk.AutoCAD.DatabaseServices import *\r\nfrom Autodesk.Civil.DatabaseServices import *\r\n\r\ndoc = Application.DocumentManager.MdiActiveDocument\r\ndb = doc.Database\r\n\r\n# Nome da rede vindo do String conectado ao IN[0]\r\nnome_rede_alvo = IN[0]\r\n\r\nresultados = []\r\n\r\nwith doc.LockDocument():\r\n\r\n    tr = db.TransactionManager.StartTransaction()\r\n\r\n    try:\r\n\r\n        bt = tr.GetObject(\r\n            db.BlockTableId,\r\n            OpenMode.ForRead\r\n        )\r\n\r\n        ms = tr.GetObject(\r\n            bt[BlockTableRecord.ModelSpace],\r\n            OpenMode.ForRead\r\n        )\r\n\r\n        for objId in ms:\r\n\r\n            obj = tr.GetObject(\r\n                objId,\r\n                OpenMode.ForRead\r\n            )\r\n\r\n            # Somente Structures\r\n            if not isinstance(obj, Structure):\r\n                continue\r\n\r\n            estrutura = obj\r\n            nome_estrutura = estrutura.Name\r\n\r\n            # -----------------------------------------\r\n            # IDENTIFICAR A REDE\r\n            # -----------------------------------------\r\n\r\n            try:\r\n\r\n                network = tr.GetObject(\r\n                    estrutura.NetworkId,\r\n                    OpenMode.ForRead\r\n                )\r\n\r\n                nome_rede = network.Name\r\n\r\n            except:\r\n                continue\r\n\r\n            # Filtra pela rede informada no IN[0]\r\n            if nome_rede != nome_rede_alvo:\r\n                continue\r\n\r\n            entradas = []\r\n            saidas = []\r\n\r\n            qtd = estrutura.ConnectedPipesCount\r\n\r\n            # -----------------------------------------\r\n            # PIPES CONECTADAS\r\n            # -----------------------------------------\r\n\r\n            for i in range(qtd):\r\n\r\n                pipeId = estrutura.ConnectedPipe[i]\r\n\r\n                pipe = tr.GetObject(\r\n                    pipeId,\r\n                    OpenMode.ForRead\r\n                )\r\n\r\n                if not isinstance(pipe, Pipe):\r\n                    continue\r\n\r\n                # Extremidade da pipe conectada ao PV\r\n                if pipe.StartStructureId == estrutura.ObjectId:\r\n\r\n                    extremo = \"START\"\r\n                    elev_centro = pipe.StartPoint.Z\r\n\r\n                elif pipe.EndStructureId == estrutura.ObjectId:\r\n\r\n                    extremo = \"END\"\r\n                    elev_centro = pipe.EndPoint.Z\r\n\r\n                else:\r\n                    continue\r\n\r\n                # Cota de fundo\r\n                invert = elev_centro - (pipe.InnerHeight / 2.0)\r\n\r\n                # Pipe entrando ou saindo\r\n                entrando = estrutura.IsConnectedPipeFlowingIn(i)\r\n\r\n                dados_pipe = [\r\n                    pipe.Name,\r\n                    extremo,\r\n                    invert\r\n                ]\r\n\r\n                if entrando:\r\n                    entradas.append(dados_pipe)\r\n                else:\r\n                    saidas.append(dados_pipe)\r\n\r\n            # -----------------------------------------\r\n            # CALCULAR QUEDA\r\n            # -----------------------------------------\r\n\r\n            if len(entradas) == 1 and len(saidas) == 1:\r\n\r\n                inv_entrada = entradas[0][2]\r\n                inv_saida = saidas[0][2]\r\n\r\n                queda = inv_entrada - inv_saida\r\n\r\n                # Eliminar pequenos resíduos numéricos\r\n                if abs(queda) < 0.0005:\r\n                    queda = 0.0\r\n\r\n                queda = round(queda, 3)\r\n\r\n                # Abre Structure para escrita\r\n                estrutura.UpgradeOpen()\r\n\r\n                # -----------------------------------------\r\n                # ACESSAR O MATERIAL VIA PART DATA\r\n                # -----------------------------------------\r\n\r\n                part_data = estrutura.PartData\r\n\r\n                material_field = part_data.GetDataFieldBy(\r\n                    PartContextType.Material\r\n                )\r\n\r\n                # -----------------------------------------\r\n                # GRAVAR QUEDA NO MATERIAL\r\n                # -----------------------------------------\r\n\r\n                if queda == 0.0:\r\n\r\n                    material_field.Value = \"\"\r\n\r\n                else:\r\n\r\n                    material_field.Value = (\r\n                        \"QUEDA: {:.3f}m\".format(queda)\r\n                    )\r\n\r\n                # IMPORTANTE:\r\n                # reatribuir PartData à Structure\r\n                estrutura.PartData = part_data\r\n\r\n                resultados.append([\r\n                    nome_rede,\r\n                    nome_estrutura,\r\n\r\n                    \"ENTRADA\",\r\n                    entradas[0][0],\r\n                    round(inv_entrada, 3),\r\n\r\n                    \"SAIDA\",\r\n                    saidas[0][0],\r\n                    round(inv_saida, 3),\r\n\r\n                    \"QUEDA\",\r\n                    queda,\r\n\r\n                    \"MATERIAL\",\r\n                    material_field.Value\r\n                ])\r\n\r\n            else:\r\n\r\n                # Sem uma entrada + uma saída:\r\n                # deixa Material vazio\r\n                estrutura.UpgradeOpen()\r\n\r\n                try:\r\n\r\n                    part_data = estrutura.PartData\r\n\r\n                    material_field = part_data.GetDataFieldBy(\r\n                        PartContextType.Material\r\n                    )\r\n\r\n                    material_field.Value = \"\"\r\n\r\n                    estrutura.PartData = part_data\r\n\r\n                except:\r\n                    pass\r\n\r\n                resultados.append([\r\n                    nome_rede,\r\n                    nome_estrutura,\r\n                    \"Entradas: \" + str(len(entradas)),\r\n                    \"Saidas: \" + str(len(saidas)),\r\n                    \"Não calculado\"\r\n                ])\r\n\r\n        tr.Commit()\r\n\r\n    except Exception as e:\r\n\r\n        tr.Abort()\r\n\r\n        resultados = [\r\n            \"ERRO:\",\r\n            str(e)\r\n        ]\r\n\r\n    finally:\r\n\r\n        tr.Dispose()\r\n\r\nOUT = resultados",
+      "VariableInputPorts": true,
+      "Id": "d595ead5087c4bb4862a30795514581f",
+      "Inputs": [
+        {
+          "Id": "ef8d8dd850974809a1b576b1e5aefe7e",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b1b4d021f19f4964a262abc28511414b",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "REDE 01",
+      "Id": "e6836218987040c19b12b858a58ba346",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2b32ad48213544e1963d0c3cb9f53ca6",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "13e7b536c8ef41d182de481473c58138",
+      "Inputs": [
+        {
+          "Id": "5ab908a80ea14e778089efe34aba0715",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "977a2d7adfb14cf697011c49e964cf7c",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "b1b4d021f19f4964a262abc28511414b",
+      "End": "5ab908a80ea14e778089efe34aba0715",
+      "Id": "ee80117a83544bc09a5cffb8c173f44c"
+    },
+    {
+      "Start": "2b32ad48213544e1963d0c3cb9f53ca6",
+      "End": "ef8d8dd850974809a1b576b1e5aefe7e",
+      "Id": "d35d121a42eb40f5801f0afa7a54d270"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.5.1.7586",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "d595ead5087c4bb4862a30795514581f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 749.26921496191335,
+        "Y": 370.57136985853526
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "e6836218987040c19b12b858a58ba346",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 642.03724525531652,
+        "Y": 378.394044157707
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "13e7b536c8ef41d182de481473c58138",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 912.54355722494051,
+        "Y": 367.93247408153377
+      }
+    ],
+    "Annotations": [],
+    "X": -406.60586776457876,
+    "Y": -211.2902972057235,
+    "Zoom": 1.33823125
+  }
+}
