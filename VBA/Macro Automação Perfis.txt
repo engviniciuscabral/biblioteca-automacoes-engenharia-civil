@@ -1,0 +1,47 @@
+Sub GerarFormulaECalcular()
+
+    Dim ws As Worksheet
+    Dim ultimaLinha As Long
+    Dim i As Long
+    Dim termoFormula As String
+    Dim formulaBase As String
+
+    Set ws = ActiveSheet
+
+    ' Encontra a última linha com dados na coluna G
+    ultimaLinha = ws.Cells(ws.Rows.Count, "G").End(xlUp).Row
+
+    ' Monta a sequência do denominador: (G4/RAIZ(H4))+(G5/RAIZ(H5))...
+    termoFormula = ""
+    For i = 4 To ultimaLinha
+        If i = 4 Then
+            termoFormula = "(G" & i & "/RAIZ(H" & i & "))"
+        Else
+            termoFormula = termoFormula & "+(G" & i & "/RAIZ(H" & i & "))"
+        End If
+    Next i
+
+    ' Esta é a fórmula base que calcula o valor real/puro (m/m)
+    formulaBase = "((E" & ultimaLinha & "/(" & termoFormula & "))^2)/1000"
+
+    ' --- PREENCHIMENTO E FORMATAÇÃO DAS CÉLULAS (COLUNA K) ---
+
+    ' K4: m/km -> 3 casas decimais
+    With ws.Range("K4")
+        .FormulaLocal = "=(" & formulaBase & ")*1000"
+        .NumberFormat = "0.000"
+    End With
+
+    ' K5: m/m -> 4 casas decimais
+    With ws.Range("K5")
+        .FormulaLocal = "=" & formulaBase
+        .NumberFormat = "0.0000"
+    End With
+
+    ' K6: % -> 2 casas decimais
+    With ws.Range("K6")
+        .FormulaLocal = "=(" & formulaBase & ")*100"
+        .NumberFormat = "0.00"
+    End With
+
+End Sub
