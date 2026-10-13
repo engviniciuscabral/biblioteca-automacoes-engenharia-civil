@@ -1,0 +1,284 @@
+
+from qgis.core import (
+    QgsProject,
+    QgsPointXY,
+    QgsRectangle,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform
+)
+
+from qgis.gui import QgsVertexMarker
+
+from qgis.PyQt.QtGui import QColor
+
+from qgis.PyQt.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QFormLayout,
+    QDoubleSpinBox,
+    QSpinBox,
+    QPushButton,
+    QMessageBox
+)
+
+
+class LocalizadorRodovia(QDialog):
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle("Localizador de trecho rodoviário")
+        self.resize(380, 300)
+
+        # Layout principal
+        layout = QVBoxLayout()
+        formulario = QFormLayout()
+
+        # 1. Campos das coordenadas
+
+        self.e_inicio = QDoubleSpinBox()
+        self.n_inicio = QDoubleSpinBox()
+        self.e_fim = QDoubleSpinBox()
+        self.n_fim = QDoubleSpinBox()
+
+        campos = [
+            self.e_inicio,
+            self.n_inicio,
+            self.e_fim,
+            self.n_fim
+        ]
+
+        for campo in campos:
+            campo.setRange(0, 10000000)
+            campo.setDecimals(3)
+            campo.setSingleStep(100)
+
+        # Coordenadas iniciais
+        self.e_inicio.setValue(287120.030)
+        self.n_inicio.setValue(8486073.129)
+
+        self.e_fim.setValue(286969.033)
+        self.n_fim.setValue(8492841.288)
+
+        # 2. Campo EPSG
+
+        self.epsg = QSpinBox()
+        self.epsg.setRange(1000, 999999)
+        self.epsg.setValue(31983)
+
+        formulario.addRow("Este inicial (m):", self.e_inicio)
+        formulario.addRow("Norte inicial (m):", self.n_inicio)
+        formulario.addRow("Este final (m):", self.e_fim)
+        formulario.addRow("Norte final (m):", self.n_fim)
+        formulario.addRow("Código EPSG:", self.epsg)
+
+        layout.addLayout(formulario)
+
+        # 3. Botão para localizar trecho
+
+        self.botao_localizar = QPushButton(
+            "Localizar trecho"
+        )
+
+        self.botao_localizar.clicked.connect(
+            self.localizar
+        )
+
+        layout.addWidget(self.botao_localizar)
+
+        # 4. Botão para mostrar/ocultar marcadores
+
+        self.botao_marcadores = QPushButton(
+            "Ocultar marcadores"
+        )
+
+        self.botao_marcadores.clicked.connect(
+            self.alternar_marcadores
+        )
+
+        self.botao_marcadores.setEnabled(False)
+
+        layout.addWidget(self.botao_marcadores)
+
+        self.setLayout(layout)
+
+        # Referências aos marcadores
+        self.marcador_inicio = None
+        self.marcador_fim = None
+
+        # Estado de visibilidade
+        self.marcadores_visiveis = False
+
+    # 5. Função para localizar trecho
+
+    def localizar(self):
+
+        try:
+            # Ler coordenadas
+            e1 = self.e_inicio.value()
+            n1 = self.n_inicio.value()
+
+            e2 = self.e_fim.value()
+            n2 = self.n_fim.value()
+
+            codigo_epsg = self.epsg.value()
+
+            inicio = QgsPointXY(e1, n1)
+            fim = QgsPointXY(e2, n2)
+
+            # Sistemas de coordenadas
+            projeto = QgsProject.instance()
+
+            crs_origem = QgsCoordinateReferenceSystem(
+                f"EPSG:{codigo_epsg}"
+            )
+
+            if not crs_origem.isValid():
+                raise ValueError("Código EPSG inválido.")
+
+            crs_destino = projeto.crs()
+
+            if not crs_destino.isValid():
+                raise ValueError(
+                    "SRC do projeto inválido."
+                )
+
+            transformacao = QgsCoordinateTransform(
+                crs_origem,
+                crs_destino,
+                projeto
+            )
+
+            inicio = transformacao.transform(inicio)
+            fim = transformacao.transform(fim)
+
+            # Calcular limites da região
+            xmin = min(inicio.x(), fim.x())
+            xmax = max(inicio.x(), fim.x())
+
+            ymin = min(inicio.y(), fim.y())
+            ymax = max(inicio.y(), fim.y())
+
+            regiao = QgsRectangle(
+                xmin, ymin, xmax, ymax
+            )
+
+            if regiao.width() == 0:
+                regiao.setXMinimum(xmin - 100)
+                regiao.setXMaximum(xmax + 100)
+
+            if regiao.height() == 0:
+                regiao.setYMinimum(ymin - 100)
+                regiao.setYMaximum(ymax + 100)
+
+            regiao.scale(1.2)
+
+            canvas = iface.mapCanvas()
+
+            # Remover marcadores anteriores
+            self.remover_marcadores()
+
+            # Criar marcador inicial
+            self.marcador_inicio = QgsVertexMarker(canvas)
+
+            self.marcador_inicio.setCenter(inicio)
+            self.marcador_inicio.setColor(
+                QColor("green")
+            )
+            self.marcador_inicio.setIconType(
+                QgsVertexMarker.ICON_CIRCLE
+            )
+            self.marcador_inicio.setIconSize(16)
+            self.marcador_inicio.setPenWidth(3)
+
+            # Criar marcador final
+            self.marcador_fim = QgsVertexMarker(canvas)
+
+            self.marcador_fim.setCenter(fim)
+            self.marcador_fim.setColor(
+                QColor("red")
+            )
+            self.marcador_fim.setIconType(
+                QgsVertexMarker.ICON_CIRCLE
+            )
+            self.marcador_fim.setIconSize(16)
+            self.marcador_fim.setPenWidth(3)
+
+            # Atualizar zoom
+            canvas.setExtent(regiao)
+            canvas.refresh()
+
+            # Atualizar botão
+            self.marcadores_visiveis = True
+
+            self.botao_marcadores.setEnabled(True)
+            self.botao_marcadores.setText(
+                "Ocultar marcadores"
+            )
+
+        except Exception as erro:
+
+            QMessageBox.critical(
+                self,
+                "Erro",
+                str(erro)
+            )
+
+    # 6. Mostrar ou ocultar marcadores
+
+    def alternar_marcadores(self):
+
+        if (
+            self.marcador_inicio is None
+            or self.marcador_fim is None
+        ):
+            return
+
+        if self.marcadores_visiveis:
+
+            self.marcador_inicio.hide()
+            self.marcador_fim.hide()
+
+            self.marcadores_visiveis = False
+
+            self.botao_marcadores.setText(
+                "Mostrar marcadores"
+            )
+
+        else:
+
+            self.marcador_inicio.show()
+            self.marcador_fim.show()
+
+            self.marcadores_visiveis = True
+
+            self.botao_marcadores.setText(
+                "Ocultar marcadores"
+            )
+
+        iface.mapCanvas().refresh()
+
+    # 7. Remover marcadores antigos
+
+    def remover_marcadores(self):
+
+        canvas = iface.mapCanvas()
+
+        if self.marcador_inicio is not None:
+            canvas.scene().removeItem(
+                self.marcador_inicio
+            )
+            self.marcador_inicio = None
+
+        if self.marcador_fim is not None:
+            canvas.scene().removeItem(
+                self.marcador_fim
+            )
+            self.marcador_fim = None
+
+        self.marcadores_visiveis = False
+
+    # 8. Abrir janela
+
+janela = LocalizadorRodovia()
+janela.show()
