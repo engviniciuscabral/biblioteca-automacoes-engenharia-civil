@@ -14,6 +14,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`CONT_COMP.lsp`](./CONT_COMP.lsp) | `CONT_COMP` | Exportação dos comprimentos de polilinhas selecionadas para Excel. |
 | [`GEOIMG.lsp`](./GEOIMG.lsp) | `GEOIMG` | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
 | [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. |
+| [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. |
 
 ## Documentação das rotinas
@@ -153,6 +154,26 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 **Status:** Código original incluído sem alterações; compatibilidade com os métodos/propriedades ActiveX de leitura de perfis ainda não verificada por execução.
 
 **Limitações e cuidados:** Recomenda-se responder **N** ao ajuste automático para preservar as cotas originais: a opção **S** reordena elevações e pode descaracterizar o perfil real. A verificação do sentido do alinhamento contém a expressão `(< (car cotas) (last cotas))`, que pode provocar erro de tipo. A rotina presume estação inicial zero, não valida intervalo fixo maior que zero, pode falhar com nomes de alinhamento inválidos como nomes de arquivo e depende da disponibilidade de `Profiles` e dos métodos de elevação na API COM. Revise os CSVs e teste em cópia do projeto antes de uso técnico.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### 8. TEXTO_BACIA_2.lsp
+
+**Arquivo:** [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp)  
+**Comandos:** `TEXTO_BACIAS_TODAS`, `TEXTO_BACIA`, `TEXTO_BACIA_CSV` e `TEXTO_BACIA_RECARREGAR`.  
+**Objetivo:** Criar e atualizar chamadas de identificação de bacias com MLEADER a partir de dados de planilha exportados para CSV.
+
+**Funcionamento:** Procura um CSV com `BACIA` no nome na pasta do DWG ou solicita a escolha manual. Interpreta campos de código da bacia, estaca, área, comprimento do talvegue, declividade e, quando disponível, curso d'água. Relaciona os códigos às layers `BC` numeradas no Model Space; para cada bacia escolhe prioritariamente a curva fechada de maior área, calcula um ponto interno de referência e insere um MLEADER na layer `TEXTO BACIAS`. Chamadas anteriormente criadas pela rotina são identificadas por XData e têm o texto atualizado sem perder a posição.
+
+**Como utilizar:** No Excel, exporte a tabela de bacias para CSV separado por ponto e vírgula, preferencialmente com `BACIA` no nome e na pasta do DWG. No AutoCAD/Civil 3D para Windows, carregue o arquivo com `APPLOAD`. Execute `TEXTO_BACIAS_TODAS` para inserir/atualizar todas as chamadas; `TEXTO_BACIA` para selecionar uma bacia e posicionar uma chamada manualmente; `TEXTO_BACIA_CSV` para selecionar outro CSV; e `TEXTO_BACIA_RECARREGAR` para limpar o cache antes de reler dados alterados. Ajuste altura, cores, layer e afastamento nas variáveis `*bb:...` do início do arquivo.
+
+**Requisitos e dependências:** AutoCAD/Civil 3D com AutoLISP, Visual LISP/ActiveX e suporte a MLEADER; desenho com layers de bacias `BC` e arquivo CSV no formato esperado. Não exige Excel instalado durante a execução, apenas o CSV exportado.
+
+**Status:** Código original anexado incluído sem alterações; funcionamento não verificado em execução nesta revisão.
+
+**Limitações e cuidados:** Os campos do CSV são reconhecidos por cabeçalhos e, quando ausentes, por posições predefinidas; confira a estrutura e as unidades da planilha (área em km², comprimento em km e declividade em %). Se houver mais de um CSV com `BACIA` no nome, a seleção automática pode não corresponder ao arquivo desejado. Sem curva fechada, a rotina usa a curva aberta mais longa como referência, o que exige conferência visual. O comando altera/adiciona entidades MLEADER no desenho; teste em uma cópia antes do uso.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
