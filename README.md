@@ -14,7 +14,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 7 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 8 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **VBA** | VBA / Excel | 2 | [Ver catálogo](./VBA/README.md) |
 
@@ -37,6 +37,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`CONT_COMP.lsp`](./Lisps/CONT_COMP.lsp) | Exportação dos comprimentos de polilinhas selecionadas para Excel. |
 | [`GEOIMG.lsp`](./Lisps/GEOIMG.lsp) | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
 | [`UnirConectados.lsp`](./Lisps/UnirConectados.lsp) | União de entidades lineares conectadas por extremidades. |
+| [`TEXTO_BACIA_2.lsp`](./Lisps/TEXTO_BACIA_2.lsp) | Criação e atualização de chamadas MLEADER de bacias com dados de CSV. |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 
 ### [QGIS](./QGIS/README.md)
