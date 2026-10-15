@@ -10,6 +10,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 |---|---|---|
 | [`CONT_AREA.lsp`](./CONT_AREA.lsp) | `CONT_AREA` | Exportação de áreas de hachuras e polilinhas fechadas para Excel. |
 | [`CONT_AREA_POLILINHA.lsp`](./CONT_AREA_POLILINHA.lsp) | `CONT_AREA` | Exportação de áreas dos objetos selecionados para Excel. |
+| [`COTAS_TALVEGUES.lsp`](./COTAS_TALVEGUES.lsp) | `COTASTALVEGUES` | Exportação de cotas e distâncias de perfis de talvegues do Civil 3D. |
 | [`CONT_COMP.lsp`](./CONT_COMP.lsp) | `CONT_COMP` | Exportação dos comprimentos de polilinhas selecionadas para Excel. |
 | [`GEOIMG.lsp`](./GEOIMG.lsp) | `GEOIMG` | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
 | [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. |
@@ -132,6 +133,26 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 **Status:** Disponível na biblioteca; funcionamento não verificado por execução nesta revisão.
 
 **Limitações e cuidados:** O resultado usa as unidades do desenho. O cabeçalho do arquivo atribui autoria original a Tee Square Graphics (1998); preserve essa informação ao reutilizar ou distribuir.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### 7. COTAS_TALVEGUES.lsp
+
+**Arquivo:** [`COTAS_TALVEGUES.lsp`](./COTAS_TALVEGUES.lsp)  
+**Comando / entrada:** `COTASTALVEGUES`  
+**Objetivo:** Exportar cotas e distâncias amostradas ao longo de alinhamentos de talvegues do Civil 3D.
+
+**Funcionamento:** Percorre objetos do Model Space identificados como alinhamentos, filtra nomes por prefixo (padrão `TALV`), procura um perfil associado (prioriza nomes contendo `PERFIL LONGITUDINAL`, `TERRENO` ou `EXISTENTE`), amostra elevações por intervalo automático ou fixo e gera um CSV por alinhamento, com colunas `Ponto;Cota (m);Distancia (m)`. Opcionalmente reordena as cotas em ordem decrescente, mantendo as distâncias, e registra as alterações em `Ajustes_Cotas.txt`.
+
+**Como utilizar:** Abra um DWG salvo com alinhamentos e perfis longitudinais; carregue o LISP por `APPLOAD`; execute `COTASTALVEGUES`; informe o prefixo, escolha amostragem automática (100 m para extensões < 1.000 m; 200 m para < 3.000 m; 500 m para < 8.000 m; 1.000 m para extensões maiores) ou intervalo fixo e responda à pergunta sobre ajuste de cotas. Os arquivos são gravados na pasta `Perfis_Talvegues` junto ao DWG, em CSV compatível com Excel-BR (separador `;` e decimal `,`).
+
+**Requisitos e dependências:** AutoCAD Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX, alinhamentos com perfis associados e desenho salvo; valores presumidos em metros.
+
+**Status:** Código original incluído sem alterações; compatibilidade com os métodos/propriedades ActiveX de leitura de perfis ainda não verificada por execução.
+
+**Limitações e cuidados:** Recomenda-se responder **N** ao ajuste automático para preservar as cotas originais: a opção **S** reordena elevações e pode descaracterizar o perfil real. A verificação do sentido do alinhamento contém a expressão `(< (car cotas) (last cotas))`, que pode provocar erro de tipo. A rotina presume estação inicial zero, não valida intervalo fixo maior que zero, pode falhar com nomes de alinhamento inválidos como nomes de arquivo e depende da disponibilidade de `Profiles` e dos métodos de elevação na API COM. Revise os CSVs e teste em cópia do projeto antes de uso técnico.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
