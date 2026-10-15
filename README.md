@@ -14,7 +14,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD | 6 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 7 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **VBA** | VBA / Excel | 2 | [Ver catálogo](./VBA/README.md) |
 
@@ -33,6 +33,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 |---|---|
 | [`CONT_AREA.lsp`](./Lisps/CONT_AREA.lsp) | Exportação de áreas de hachuras e polilinhas fechadas para Excel. |
 | [`CONT_AREA_POLILINHA.lsp`](./Lisps/CONT_AREA_POLILINHA.lsp) | Exportação de áreas dos objetos selecionados para Excel. |
+| [`COTAS_TALVEGUES.lsp`](./Lisps/COTAS_TALVEGUES.lsp) | Exportação de cotas e distâncias ao longo de perfis de talvegues do Civil 3D. |
 | [`CONT_COMP.lsp`](./Lisps/CONT_COMP.lsp) | Exportação dos comprimentos de polilinhas selecionadas para Excel. |
 | [`GEOIMG.lsp`](./Lisps/GEOIMG.lsp) | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
 | [`UnirConectados.lsp`](./Lisps/UnirConectados.lsp) | União de entidades lineares conectadas por extremidades. |
