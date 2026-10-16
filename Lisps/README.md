@@ -15,6 +15,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`GEOIMG.lsp`](./GEOIMG.lsp) | `GEOIMG` | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
 | [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. |
 | [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. |
+| [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. |
 
 ## Documentação das rotinas
@@ -174,6 +175,33 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 **Status:** Código original anexado incluído sem alterações; funcionamento não verificado em execução nesta revisão.
 
 **Limitações e cuidados:** Os campos do CSV são reconhecidos por cabeçalhos e, quando ausentes, por posições predefinidas; confira a estrutura e as unidades da planilha (área em km², comprimento em km e declividade em %). Se houver mais de um CSV com `BACIA` no nome, a seleção automática pode não corresponder ao arquivo desejado. Sem curva fechada, a rotina usa a curva aberta mais longa como referência, o que exige conferência visual. O comando altera/adiciona entidades MLEADER no desenho; teste em uma cópia antes do uso.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+
+---
+
+### BACIAS_QUADRO.lsp
+
+**Arquivo:** [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp)  
+**Comandos:** `BACIAS_QUADRO`, `BACIAS_NUMERAR`, `BACIAS_TABELA`, `BACIAS_CSV`, `BACIAS_RECARREGAR`, `BACIAS_APAGAR_BLOCOS`
+
+**Objetivo:** Numerar bacias hidrográficas identificadas por layers iniciadas com `BC` e montar uma tabela-resumo no AutoCAD com os dados de uma planilha exportada para CSV.
+
+**Funcionamento:** Para cada layer de bacia reconhecida, procura uma geometria no Model Space e cria uma MLEADER com a ponta de referência na bacia e o número dentro de um círculo. Também lê um CSV, associa os dados pelo código da bacia e gera uma tabela com estaca, curso d'água, área, comprimento do talvegue, desnível, declividade e tempo de concentração. A tabela anterior é substituída mantendo seu ponto de inserção; os marcadores já existentes mantêm a posição ao executar novamente.
+
+**Como utilizar:**
+1. No Excel, salve a planilha como CSV separado por ponto e vírgula, com dados/cabeçalhos compatíveis com a rotina.
+2. Preferencialmente, deixe o arquivo CSV cujo nome contenha `BACIA` na mesma pasta do DWG; caso contrário, use `BACIAS_CSV` para selecioná-lo.
+3. Carregue `BACIAS_QUADRO.lsp` com `APPLOAD`.
+4. Execute `BACIAS_QUADRO` para numerar as bacias e criar/atualizar a tabela. Para tarefas separadas, use `BACIAS_NUMERAR` ou `BACIAS_TABELA`.
+5. Depois de alterar o CSV, execute `BACIAS_RECARREGAR` antes de reler os dados.
+
+**Requisitos e dependências:** AutoCAD com AutoLISP, Visual LISP/ActiveX e suporte a MLEADER e tabelas do AutoCAD. As layers das bacias devem começar com `BC`; os dados tabulares precisam estar em CSV.
+
+**Status:** Arquivo incluído na biblioteca; não foi executado em ambiente AutoCAD nesta atualização.
+
+**Limitações e cuidados:** A identificação da geometria usa objetos do Model Space na layer correspondente; quando não encontra curva fechada, pode usar a curva aberta mais longa como referência. A rotina usa mapeamento de cabeçalhos e posições predefinidas no CSV, então confira a correspondência dos campos, as unidades e os separadores decimais antes de gerar a tabela. A configuração inicial define altura, cores, layers e afastamento dos números. O comando `BACIAS_APAGAR_BLOCOS` destina-se a blocos de uma versão anterior, não às MLEADER atuais. Teste em cópia do DWG antes de usar em produção.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
