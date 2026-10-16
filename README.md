@@ -16,7 +16,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
 | **Lisps** | AutoLISP / AutoCAD / Civil 3D | 9 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
-| **VBA** | VBA / Excel | 2 | [Ver catálogo](./VBA/README.md) |
+| **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
 
 ## Índice completo de ferramentas
 
@@ -52,7 +52,8 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | Rotina | Descrição |
 |---|---|
 | [`Macro Automação Perfis.txt`](./VBA/Macro%20Automa%C3%A7%C3%A3o%20Perfis.txt) | Cálculo automatizado de uma fórmula em planilha de perfis. |
-| [`Macro Lista de Abas Automática Excel.txt`](./VBA/Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.txt) | Listagem automática dos nomes das abas de uma pasta de trabalho Excel. |
+| [`Macro Lista de Abas Automática Excel.txt`](./VBA/Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.txt) | Versão legada: lista os nomes de todas as abas do Excel. |
+| [`ListarAbasOndeEuClicar.bas`](./VBA/ListarAbasOndeEuClicar.bas) | Versão atual: lista somente planilhas com nomes iniciados por BC seguido de um dígito. |
 
 ## Padrão de documentação
 
