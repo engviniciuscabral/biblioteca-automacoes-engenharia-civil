@@ -1,0 +1,15 @@
+Attribute VB_Name = "MacroListaAbasLegada"
+Sub ListarAbasOndeEuClicar()
+    Dim i As Integer
+    Dim linhaAtual As Long
+    Dim colunaAtual As Integer
+    
+    ' Descobre qual célula você está clicando no momento
+    linhaAtual = ActiveCell.Row
+    colunaAtual = ActiveCell.Column
+    
+    For i = 1 To Sheets.Count
+        Cells(linhaAtual, colunaAtual).Value = Sheets(i).Name
+        linhaAtual = linhaAtual + 1 ' Pula para a próxima linha abaixo
+    Next i
+End Sub
