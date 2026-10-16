@@ -6,17 +6,17 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 ## Índice de rotinas
 
-| Arquivo | Comando / entrada | Finalidade |
-|---|---|---|
-| [`CONT_AREA.lsp`](./CONT_AREA.lsp) | `CONT_AREA` | Exportação de áreas de hachuras e polilinhas fechadas para Excel. |
-| [`CONT_AREA_POLILINHA.lsp`](./CONT_AREA_POLILINHA.lsp) | `CONT_AREA` | Exportação de áreas dos objetos selecionados para Excel. |
-| [`COTAS_TALVEGUES.lsp`](./COTAS_TALVEGUES.lsp) | `COTASTALVEGUES` | Exportação de cotas e distâncias de perfis de talvegues do Civil 3D. |
-| [`CONT_COMP.lsp`](./CONT_COMP.lsp) | `CONT_COMP` | Exportação dos comprimentos de polilinhas selecionadas para Excel. |
-| [`GEOIMG.lsp`](./GEOIMG.lsp) | `GEOIMG` | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
-| [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. |
-| [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. |
-| [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. |
-| [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. |
+| Arquivo | Comando / entrada | Finalidade | Documentação |
+|---|---|---|---|
+| [`CONT_AREA.lsp`](./CONT_AREA.lsp) | `CONT_AREA` | Exportação de áreas de hachuras e polilinhas fechadas para Excel. | [Ver detalhes](#1-cont_arealsp) |
+| [`CONT_AREA_POLILINHA.lsp`](./CONT_AREA_POLILINHA.lsp) | `CONT_AREA` | Exportação de áreas dos objetos selecionados para Excel. | [Ver detalhes](#2-cont_area_polilinhalsp) |
+| [`COTAS_TALVEGUES.lsp`](./COTAS_TALVEGUES.lsp) | `COTASTALVEGUES` | Exportação de cotas e distâncias de perfis de talvegues do Civil 3D. | [Ver detalhes](#7-cotas_talvegueslsp) |
+| [`CONT_COMP.lsp`](./CONT_COMP.lsp) | `CONT_COMP` | Exportação dos comprimentos de polilinhas selecionadas para Excel. | [Ver detalhes](#3-cont_complsp) |
+| [`GEOIMG.lsp`](./GEOIMG.lsp) | `GEOIMG` | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. | [Ver detalhes](#4-geoimglsp) |
+| [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. | [Ver detalhes](#5-unirconectadoslsp) |
+| [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. | [Ver detalhes](#8-texto_bacia_2lsp) |
+| [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
+| [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
 
 ## Documentação das rotinas
 
