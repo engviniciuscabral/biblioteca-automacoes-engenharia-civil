@@ -51,8 +51,8 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 
 | Rotina | Descrição |
 |---|---|
-| [`Macro Automação Perfis.txt`](./VBA/Macro%20Automa%C3%A7%C3%A3o%20Perfis.txt) | Cálculo automatizado de uma fórmula em planilha de perfis. |
-| [`Macro Lista de Abas Automática Excel.txt`](./VBA/Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.txt) | Versão legada: lista os nomes de todas as abas do Excel. |
+| [`Macro Automação Perfis.bas`](./VBA/Macro%20Automa%C3%A7%C3%A3o%20Perfis.bas) | Cálculo automatizado de uma fórmula em planilha de perfis. |
+| [`Macro Lista de Abas Automática Excel.bas`](./VBA/Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.bas) | Versão legada: lista os nomes de todas as abas do Excel. |
 | [`ListarAbasOndeEuClicar.bas`](./VBA/ListarAbasOndeEuClicar.bas) | Versão atual: lista somente planilhas com nomes iniciados por BC seguido de um dígito. |
 
 ## Padrão de documentação
@@ -69,4 +69,4 @@ Cada pasta contém um `README.md` com índice de arquivos e seções individuais
 
 ## Observações
 
-As duas variantes de `CONT_AREA` definem o **mesmo comando**; consulte as diferenças no catálogo de Lisps. Os scripts em `.txt` permanecem com suas extensões originais, embora contenham código executável em ambientes específicos.
+As duas variantes de `CONT_AREA` definem o **mesmo comando**; consulte as diferenças no catálogo de Lisps. As rotinas VBA são armazenadas em módulos `.bas` para facilitar a importação no editor VBA e o reconhecimento da linguagem pelo GitHub.
