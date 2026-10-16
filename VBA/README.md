@@ -8,15 +8,15 @@ Macros VBA para automatizar operações e cálculos em planilhas do Microsoft Ex
 
 | Arquivo | Comando / entrada | Finalidade |
 |---|---|---|
-| [`Macro Automação Perfis.txt`](./Macro%20Automa%C3%A7%C3%A3o%20Perfis.txt) | `GerarFormulaECalcular` | Cálculo automatizado de uma fórmula em planilha de perfis. |
-| [`Macro Lista de Abas Automática Excel.txt`](./Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.txt) | `ListarAbasOndeEuClicar` | Versão legada: lista todas as abas do Excel. |
+| [`Macro Automação Perfis.bas`](./Macro%20Automa%C3%A7%C3%A3o%20Perfis.bas) | `GerarFormulaECalcular` | Cálculo automatizado de uma fórmula em planilha de perfis. |
+| [`Macro Lista de Abas Automática Excel.bas`](./Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.bas) | `ListarAbasOndeEuClicar` | Versão legada: lista todas as abas do Excel. |
 | [`ListarAbasOndeEuClicar.bas`](./ListarAbasOndeEuClicar.bas) | `ListarAbasOndeEuClicar` | Versão atual: lista somente planilhas BC. |
 
 ## Documentação das rotinas
 
-### 1. Macro Automação Perfis.txt
+### 1. Macro Automação Perfis.bas
 
-**Arquivo:** [`Macro Automação Perfis.txt`](./Macro%20Automa%C3%A7%C3%A3o%20Perfis.txt)  
+**Arquivo:** [`Macro Automação Perfis.bas`](./Macro%20Automa%C3%A7%C3%A3o%20Perfis.bas)  
 **Comando / entrada:** `GerarFormulaECalcular`  
 **Objetivo:** Cálculo automatizado de uma fórmula em planilha de perfis.
 
@@ -34,9 +34,9 @@ Macros VBA para automatizar operações e cálculos em planilhas do Microsoft Ex
 
 ---
 
-### 2. Macro Lista de Abas Automática Excel.txt (legada)
+### 2. Macro Lista de Abas Automática Excel.bas (legada)
 
-**Arquivo:** [`Macro Lista de Abas Automática Excel.txt`](./Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.txt)  
+**Arquivo:** [`Macro Lista de Abas Automática Excel.bas`](./Macro%20Lista%20de%20Abas%20Autom%C3%A1tica%20Excel.bas)  
 **Comando / entrada:** `ListarAbasOndeEuClicar`  
 **Objetivo:** Listagem automática de todas as abas de uma pasta de trabalho Excel (versão legada).
 
