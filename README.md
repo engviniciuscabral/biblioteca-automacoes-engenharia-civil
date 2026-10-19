@@ -16,6 +16,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
 | **Lisps** | AutoLISP / AutoCAD / Civil 3D | 10 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
+| **Python** | Python / Tkinter / NumPy / Matplotlib | 1 | [Ver catálogo](./Python/README.md) |
 | **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
 
 ## Índice completo de ferramentas
@@ -41,6 +42,12 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
 | [`BUEIROS_PERFIL.lsp`](./Lisps/BUEIROS_PERFIL.lsp) | Lançamento dos bueiros projetados do cadastro (CSV) no eixo e na vista de perfil do Civil 3D, com desenho da obra e legenda. [Arquivos de exemplo](./Lisps/exemplos/BUEIROS_PERFIL/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
+
+### [Python](./Python/README.md)
+
+| Rotina | Descrição |
+|---|---|
+| [`hut_goinfra.py`](./Python/hut_goinfra.py) | Aplicação gráfica para cálculo hidrológico com HUT, chuva efetiva SCS/CN e hidrogramas de projeto (caso implementado: A > 20 km² e Tc < 24 h). |
 
 ### [QGIS](./QGIS/README.md)
 
