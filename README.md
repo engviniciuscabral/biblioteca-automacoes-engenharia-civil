@@ -40,7 +40,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`UnirConectados.lsp`](./Lisps/UnirConectados.lsp) | União de entidades lineares conectadas por extremidades. |
 | [`TEXTO_BACIA_2.lsp`](./Lisps/TEXTO_BACIA_2.lsp) | Criação e atualização de chamadas MLEADER de bacias com dados de CSV. |
 | [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
-| [`BUEIROS_PERFIL.lsp`](./Lisps/BUEIROS_PERFIL.lsp) | Lançamento dos bueiros projetados do cadastro (CSV) no eixo e na vista de perfil do Civil 3D, com desenho da obra e legenda. [Arquivos de exemplo](./Lisps/exemplos/BUEIROS_PERFIL/). |
+| [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 
 ### [Python](./Python/README.md)
