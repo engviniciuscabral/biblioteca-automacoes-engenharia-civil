@@ -18,6 +18,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
 | [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
+| [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | Inserção e criação de blocos de bocas de bueiros tubulares, com 18 modelos BSTC/BDTC/BTTC. | [Ver detalhes](#template_bocaslsp) |
 
 ## Documentação das rotinas
 
@@ -237,6 +238,36 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 - Linhas do cadastro sem `COD. BACIA` geram descrição do ponto iniciada por ` - `.
 - Obras fora do intervalo de estacas da vista de perfil são listadas no relatório e não são desenhadas.
 - Teste em cópia do DWG antes de usar em produção.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### TEMPLATE_BOCAS.lsp
+
+**Arquivo:** [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp)  
+**Comandos principais:** `BOCASCADASTRO`, `BOCASCADBASE`, `BOCASCADDIN`, `BOCASADDIN`.  
+**Objetivo:** disponibilizar modelos de bocas de bueiros tubulares de concreto e facilitar sua inserção e organização como blocos no AutoCAD/Civil 3D.
+
+**Funcionamento:** contém 18 templates em planta para bueiros simples, duplos e triplos (`BSTC`, `BDTC` e `BTTC`), com diâmetros de 1,00, 1,20, 1,50, 2,00, 2,50 e 3,00 m. As geometrias são definidas por coordenadas em centímetros e convertidas conforme `INSUNITS`. A rotina cria camadas, tipos de linha e blocos; o comando de inserção solicita tipo, diâmetro, ponto e rotação. Também contém uma família de blocos com referência a modelos DNIT (BNAR, BNAA e BEAA 15°/30°/45°).
+
+**Como utilizar:**
+1. Abra preferencialmente um DWG novo e vazio para criar a biblioteca de blocos; confira as unidades do desenho.
+2. Carregue a LISP com `APPLOAD`.
+3. Execute `BOCASCADASTRO` para escolher BSTC/BDTC/BTTC, diâmetro, ponto de inserção e rotação.
+4. Use `BOCASCADBASE` para criar os 18 blocos estáticos de cadastro; `BOCASCADDIN` (ou `BOCASADDIN`) tenta criar e validar um bloco dinâmico com 18 estados de visibilidade.
+5. Confira os blocos e suas dimensões antes de aplicá-los em desenhos de projeto.
+
+**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP e suporte aos comandos e à API ActiveX de edição de blocos. O código reconhece `INSUNITS` 6 (metros), 5 (centímetros), 4 (milímetros) e 0 (assume metros). A criação dinâmica depende da disponibilidade e do comportamento dos comandos do Editor de Blocos na versão utilizada.
+
+**Status:** arquivo incluído na biblioteca em 19/10/2026; não houve validação de execução no AutoCAD/Civil 3D.
+
+**Limitações e cuidados:**
+- O cabeçalho cita DNIT IPR-736, Emenda 3, como referência para modelos BNAR/BNAA/BEAA; os diâmetros 2,00, 2,50 e 3,00 m desses modelos são **extrapolados** e não possuem respaldo declarado no álbum DNIT.
+- Os 18 templates de cadastro são descritos no código como extraídos de um DWG de conferência. Verifique dimensões e adequação às especificações do projeto.
+- O código redefine alguns comandos ao longo do arquivo; na versão final, `BOCASTESTE` chama `BOCASCADDIN` (não é apenas um teste simples, apesar da descrição inicial).
+- A criação de blocos e layers **modifica o DWG**; execute inicialmente em um desenho de teste e faça backup.
+- A criação de blocos dinâmicos pode depender de prompts específicos da versão e do idioma do AutoCAD; confira o resultado.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
