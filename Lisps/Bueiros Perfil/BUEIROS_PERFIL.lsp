@@ -24,8 +24,8 @@
 (setq *bp:estaca*     20.0)          ; metros por estaca
 (setq *bp:txth*        2.0)          ; altura do texto da legenda (unid. desenho)
 (setq *bp:txtgap*      4.0)          ; distancia do fundo da obra ao topo da legenda
-(setq *bp:ref-cota*   "TOPO")        ; "TOPO" = topo externo da obra no COGO point (obra abaixo)
-                                     ; "FUNDO" = fundo interno (soleira/geratriz inf.) no COGO point
+(setq *bp:ref-cota*   "TOPO")        ; "TOPO"  = topo da parede INTERNA no COGO point (obra abaixo)
+                                     ; "FUNDO" = fundo da parede interna (soleira/geratriz inf.) no COGO point
 (setq *bp:tol*        30.0)          ; tolerancia (m) p/ associar ponto COGO <-> cadastro
 (setq *bp:cogo-ordem* "PNEZD")       ; "PNEZD" ou "PENZD"
 (setq *bp:grupo*      "OAC - EIXO")  ; grupo de pontos para os pontos criados
@@ -455,7 +455,7 @@
   (setq esp  (car (bp:cel-dims L n hat))                 ; d
         wext (+ (* n L) (* (1+ n) esp))                  ; A
         hext (+ H (* 2.0 esp))                           ; B
-        ytop (if (= (strcase *bp:ref-cota*) "FUNDO") (+ y0 (* (+ H esp) vs)) y0)
+        ytop (if (= (strcase *bp:ref-cota*) "FUNDO") (+ y0 (* (+ H esp) vs)) (+ y0 (* esp vs)))
         ybot (- ytop (* hext vs))
         xl   (- x0 (* 0.5 wext hs)))
   (bp:rect xl ybot (* wext hs) (* hext vs))              ; parede externa
@@ -470,7 +470,7 @@
   (setq dm   (bp:tub-dims D) esp (cadr dm) ew (caddr dm) ; B = espaco entre tubos, e
         dext (+ D (* 2.0 ew))
         wt   (+ (* n dext) (* (1- n) esp))
-        ytop (if (= (strcase *bp:ref-cota*) "FUNDO") (+ y0 (* (+ D ew) vs)) y0)
+        ytop (if (= (strcase *bp:ref-cota*) "FUNDO") (+ y0 (* (+ D ew) vs)) (+ y0 (* ew vs)))
         xl   (- x0 (* 0.5 wt hs)) i 0)
   (repeat n
     (setq cx (+ xl (* (+ (* 0.5 dext) (* i (+ dext esp))) hs)))
