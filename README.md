@@ -14,7 +14,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 9 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 10 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
 
@@ -39,6 +39,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`UnirConectados.lsp`](./Lisps/UnirConectados.lsp) | União de entidades lineares conectadas por extremidades. |
 | [`TEXTO_BACIA_2.lsp`](./Lisps/TEXTO_BACIA_2.lsp) | Criação e atualização de chamadas MLEADER de bacias com dados de CSV. |
 | [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
+| [`BUEIROS_PERFIL.lsp`](./Lisps/BUEIROS_PERFIL.lsp) | Lançamento dos bueiros projetados do cadastro (CSV) no eixo e na vista de perfil do Civil 3D, com desenho da obra e legenda. [Arquivos de exemplo](./Lisps/exemplos/BUEIROS_PERFIL/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 
 ### [QGIS](./QGIS/README.md)

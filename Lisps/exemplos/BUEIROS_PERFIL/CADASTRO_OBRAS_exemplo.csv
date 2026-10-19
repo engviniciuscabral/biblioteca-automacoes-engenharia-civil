@@ -1,0 +1,29 @@
+CADASTRO DAS OBRAS DE ARTE CORRENTES PROJETADAS - EIXO;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+COD. BACIA;COD. BUEIRO;ESTACA;;;DESCRIÇÃO;LOCAÇÃO;OBRA PROJETADA;TIPO TUBO PROJETADO;RAIO HIDRÁULICO ORIFÍCIO;RAIO HIDRÁULICO CANAL ;DIÂMETRO TUBO PROJETADO (m);VELO. ESCOA. PROJ. COMO ORIFÍCIO (m/s);VELO. ESCOA. PROJ. COMO CANAL (m/s);LADO MONTANTE;DECLIV. OBRA PROJETADA;COTA MONTANTE;COTA JUSANTE;ESCONS. DO TUBO;L PROJETADO (m);L TOTAL  DA OBRA PROJETADA (m);ATERRO ACIMA GERATRIZ SUP.(m);BOCAS (unid);Descida d'água;Dissipador de Energia;Caixa (und);CONDIÇÃO DA OBRA;SERVIÇO;;;
+BC01;B01_Proj.;33;+;0,46;Grota seca;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BTTC d = 1,2;Concreto Armado;;;;;#VALOR!;E;1,00%;225,07;224,86;0º;21;;2,07;2;-;-;-;-;Executar;;;
+BC02;B02_Proj.;49;+;18,59;Grota seca;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BDTC d = 1,5;Concreto Armado;;0,41;;;#VALOR!;E;0,60%;228,542;228,414;20º;20;;2,04;2;-;-;-;-;Executar;;;
+BC03;B03_Proj.;148;+;7,27;Córrego A;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BDCC 3,0 x 3,0;Concreto Armado;;0,34;;;#VALOR!;E;0,70%;235,338;235,202;15º;19;38;0,91;2;-;-;-;Eixo da via deslocado, ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;235,27
+BC04;B04_Proj.;214;+;13,34;Córrego B;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BDCC 2,5 x 2,5;Concreto Armado;;0,27;;;#VALOR!;E;0,70%;225,3;225,157;0º;22;44;2,9;2;-;-;-;Ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;225,23
+BC05;B05_Proj.;314;+;11,93;Córrego C;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BDCC 2,5 x 2,5;Concreto Armado;;0,36;;;#VALOR!;E;0,50%;223,952;223,86;15º;17;;0,7;2;-;-;-;Eixo da via deslocado, ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC06;B06_Proj.;397;+;4,42;Córrego D;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BTCC 3,0 x 3,0;Concreto Armado;;0,18;;;#VALOR!;E;0,50%;231,97;231,88;0º;18;;1,05;2;-;-;-;Eixo da via deslocado, ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC07;B07_Proj.;496;+;14,93;Córrego E;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BDCC 3,0 x 3,0;Concreto Armado;;0,24;;;#VALOR!;E;0,70%;215,57;215,409;30º;22;;1,13;2;-;-;-;Eixo da via deslocado, ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC08;B08_Proj.;542;+;6,47;Córrego F;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BSCC 3,0 x 3,0;Concreto Armado;;0,29;;;#VALOR!;E;0,70%;217,941;217,767;0º;25;;3,9;2;-;-;-;Ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC09;B09_Proj.;754;+;8,2;Córrego G;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BDCC 3,0 x 3,0;Concreto Armado;;0,29;;;#VALOR!;E;0,73%;202,07;201,924;0º;20;;2,37;2;;-;;Eixo da via deslocado, ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC10;B10_Proj.;847;+;15,87;Talvegue;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BSCC 2,5 x 2,5;Concreto Armado;;0,29;;;#VALOR!;E;0,50%;221,84;221,673;0º;33;;4,16;2;;-;;Eixo da via deslocado, ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC11;B11_Proj.;893;+;18,6;Córrego H;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BTTC d = 1,5;Concreto Armado;;0,29;;;#VALOR!;E;1,00%;222,05;221,743;0º;31;;3,6;2;;-;;Ponte com a largura menor que a largura da pista projetada;Substituir obra existente de acordo com o Anteprojeto;;;
+BC12;B12_Proj.;1069;+;0;Grota seca;RODOVIA EXEMPLO - TRECHO A / TRECHO B;BTTC d = 1,2;Concreto Armado;;0,23;;;#VALOR!;E;1,00%;207,147;206,947;0º;20;;1,8;2;-;-;-;-;Executar;;;
+;;75;+;11,79;Greide;;BSTC d = 1,00m;;;;;;;;0,60%;233,823;;;18;;;;;;;;;;;
+;;115;+;11,6;Greide;;BSTC d = 1,00m;;;;;;;;0,50%;237,23;;;19;;;;;;;;;;;
+;;288;+;11,21;Greide;;BSTC d = 1,00m;;;;;;;;0,50%;226,318;;;16;;;;;;;;;;;
+;;334;+;16,65;Canal de drenagem;;BSTC d = 0,60m;;;;;;;;1,00%;233,427;;;18;;;;;;;;;;;
+;;377;+;1,42;Canal de drenagem;;BSTC d = 0,60m;;;;;;;;1,10%;241,911;;;16;;;;;;;;;;;
+;;381;+;13,72;Canal de drenagem;;BSTC d = 0,60m;;;;;;;;1,10%;242,47;;;18;;;;;;;;;;;
+;;706;+;8,09;Canal de drenagem;;BSTC d = 0,60m;;;;;;;;0,70%;231,214;;;15;;;;;;;;;;;
+;;918;+;18,2;Canal de drenagem;;BSTC d = 0,60m;;;;;;;;1,10%;249,184;;;16;;;;;;;;;;;
+;;925;+;2,11;Canal de drenagem;;BSTC d = 0,60m;;;;;;;;1,20%;249,099;;;18;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+*Bacia sem curso d'água permanente.;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+*Carga hidráulica= 1,2*D;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

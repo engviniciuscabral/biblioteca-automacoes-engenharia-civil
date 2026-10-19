@@ -16,6 +16,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. | [Ver detalhes](#5-unirconectadoslsp) |
 | [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. | [Ver detalhes](#8-texto_bacia_2lsp) |
 | [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
+| [`BUEIROS_PERFIL.lsp`](./BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
 
 ## Documentação das rotinas
@@ -202,6 +203,38 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 **Status:** Arquivo incluído na biblioteca; não foi executado em ambiente AutoCAD nesta atualização.
 
 **Limitações e cuidados:** A identificação da geometria usa objetos do Model Space na layer correspondente; quando não encontra curva fechada, pode usar a curva aberta mais longa como referência. A rotina usa mapeamento de cabeçalhos e posições predefinidas no CSV, então confira a correspondência dos campos, as unidades e os separadores decimais antes de gerar a tabela. A configuração inicial define altura, cores, layers e afastamento dos números. O comando `BACIAS_APAGAR_BLOCOS` destina-se a blocos de uma versão anterior, não às MLEADER atuais. Teste em cópia do DWG antes de usar em produção.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### 9. BUEIROS_PERFIL.lsp
+
+**Arquivo:** [`BUEIROS_PERFIL.lsp`](./BUEIROS_PERFIL.lsp)  
+**Comando / entrada:** `BUEIROPERFIL`  
+**Arquivos de exemplo:** [`CADASTRO_OBRAS_exemplo.csv`](./exemplos/BUEIROS_PERFIL/CADASTRO_OBRAS_exemplo.csv) (cadastro das obras, ANSI/Windows-1252) e [`COGOpoints.csv`](./exemplos/BUEIROS_PERFIL/COGOpoints.csv) (pontos PNEZD). Os dados são fictícios: trecho, nomes de cursos d'água, cotas e coordenadas foram alterados; servem apenas para mostrar o formato esperado.  
+**Objetivo:** Lançar os bueiros projetados do cadastro de obras de arte correntes no eixo e na vista de perfil do Civil 3D, com desenho da seção da obra e legenda.
+
+**Funcionamento:**
+1. Lê o CSV do **cadastro das obras** (separador `;`, decimal `,`, ANSI/Windows-1252 ou UTF-8). O cabeçalho é localizado pela linha que contém `ESTACA` e `COTA MONTANTE`; as colunas são reconhecidas pelos títulos `COD. BACIA`, `COD. BUEIRO`, `ESTACA` (com `+` e fração nas colunas seguintes ou no mesmo campo), `DESCRIÇÃO`, `OBRA PROJETADA`, `DECLIV.`/`INCLINA…`, `COTA MONTANTE` e `L PROJETADO`. Se algum título não for encontrado, usa posições predefinidas.
+2. Opcionalmente lê o **COGOpoints.csv** (formato `PNEZD`, separador `,`). Cada ponto é projetado no eixo (`StationOffset`), associado à obra do cadastro de estaca mais próxima (tolerância de 30 m) e recriado como COGO point no eixo (offset 0), com a elevação do arquivo ou a cota montante do cadastro, à escolha do usuário. Se o COGOpoints for cancelado, usa estaca e cota montante do próprio cadastro.
+3. Desenha a obra na vista de perfil, já na escala e no exagero vertical da vista: células retangulares para `BSCC`/`BDCC`/`BTCC`/`BQCC` (dimensões lidas do texto, ex.: `BDCC 3,0 x 3,0`) e tubos (lentes de dois arcos) para `BSTC`/`BDTC`/`BTTC` (diâmetro lido de `d = 1,2`). Obras de outro tipo recebem um marcador em cruz.
+4. Insere abaixo da obra um MTEXT com Estaca, Descrição, Obra projetada, L, Cota montante e Inclinação.
+5. Adiciona os pontos criados ao grupo de pontos `OAC - EIXO` e, por padrão, projeta-os na vista de perfil com `PROJECTOBJECTSTOPROF`. Tudo o que a rotina cria vai para a layer `OBRAS PROJETADAS`.
+
+**Como utilizar:** Abra o DWG com o alinhamento e a vista de perfil; carregue com `APPLOAD`; execute `BUEIROPERFIL`; selecione a vista de perfil (o alinhamento é obtido dela ou solicitado); escolha o CSV do cadastro (passo 1) e o COGOpoints.csv (passo 2, ou Cancelar para usar só o cadastro). Com COGOpoints, responda à origem da elevação (`Cogo`/`Montante`) e se deve processar apenas pontos associados a uma obra. Na janela de estilos da projeção, confirme com OK. Se o arquivo de pontos for escolhido no passo 1 por engano, a rotina o reconhece e pede o cadastro novamente. Ajuste estaca (20 m), altura do texto, tolerância, ordem `PNEZD`/`PENZD`, grupo, layer e projeção automática nas variáveis `*bp:...` do início do arquivo.
+
+**Requisitos e dependências:** AutoCAD Civil 3D para Windows com AutoLISP, Visual LISP/ActiveX e a API COM do Civil 3D (`AeccXUiLand`); `ADODB.Stream` para leitura dos CSVs; alinhamento com vista de perfil; valores em metros.
+
+**Status:** Código original incluído sem alterações; funcionamento não verificado por execução nesta revisão.
+
+**Limitações e cuidados:**
+- A estaca do cadastro é convertida em `estaca × 20 + fração`, presumindo que o alinhamento começa na estaca 0+0,00. Confira se o estaqueamento do eixo segue essa convenção.
+- A obra é desenhada com o **topo** na cota do ponto e o corpo abaixo dela, embora o cabeçalho do arquivo mencione "fundo na cota". Se a cota usada for a cota de fundo (cota montante do cadastro), confira a posição vertical do desenho.
+- Cada execução cria novos COGO points e novos desenhos, sem atualizar os anteriores: para refazer, apague o que foi gerado (layer `OBRAS PROJETADAS`) e os pontos do grupo `OAC - EIXO`.
+- Linhas do cadastro sem `COD. BACIA` geram descrição do ponto iniciada por ` - `.
+- Obras fora do intervalo de estacas da vista de perfil são listadas no relatório e não são desenhadas.
+- Teste em cópia do DWG antes de usar em produção.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
