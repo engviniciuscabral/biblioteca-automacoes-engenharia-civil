@@ -16,7 +16,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. | [Ver detalhes](#5-unirconectadoslsp) |
 | [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. | [Ver detalhes](#8-texto_bacia_2lsp) |
 | [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
-| [`BUEIROS_PERFIL.lsp`](./BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
+| [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
 
 ## Documentação das rotinas
@@ -210,9 +210,9 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 ### 9. BUEIROS_PERFIL.lsp
 
-**Arquivo:** [`BUEIROS_PERFIL.lsp`](./BUEIROS_PERFIL.lsp)  
+**Arquivo:** [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp)  
 **Comando / entrada:** `BUEIROPERFIL`  
-**Arquivos de exemplo:** [`CADASTRO_OBRAS_exemplo.csv`](./exemplos/BUEIROS_PERFIL/CADASTRO_OBRAS_exemplo.csv) (cadastro das obras, ANSI/Windows-1252) e [`COGOpoints.csv`](./exemplos/BUEIROS_PERFIL/COGOpoints.csv) (pontos PNEZD). Os dados são fictícios: trecho, nomes de cursos d'água, cotas e coordenadas foram alterados; servem apenas para mostrar o formato esperado.  
+**Arquivos de exemplo:** [`CADASTRO_OBRAS_exemplo.csv`](./Bueiros%20Perfil/CADASTRO_OBRAS_exemplo.csv) (cadastro das obras, ANSI/Windows-1252) e [`COGOpoints.csv`](./Bueiros%20Perfil/COGOpoints.csv) (pontos PNEZD). Os dados são fictícios: trecho, nomes de cursos d'água, cotas e coordenadas foram alterados; servem apenas para mostrar o formato esperado.  
 **Objetivo:** Lançar os bueiros projetados do cadastro de obras de arte correntes no eixo e na vista de perfil do Civil 3D, com desenho da seção da obra e legenda.
 
 **Funcionamento:**
@@ -226,11 +226,13 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 **Requisitos e dependências:** AutoCAD Civil 3D para Windows com AutoLISP, Visual LISP/ActiveX e a API COM do Civil 3D (`AeccXUiLand`); `ADODB.Stream` para leitura dos CSVs; alinhamento com vista de perfil; valores em metros.
 
-**Status:** Código original incluído sem alterações; funcionamento não verificado por execução nesta revisão.
+**Status:** Atualizado com a versão enviada em 19/10/2026; alteração conferida por comparação de código, sem validação por execução no Civil 3D.
+
+**Alteração desta versão:** Na configuração `*bp:ref-cota* = "TOPO"`, a cota de referência passa a coincidir com o **topo interno** da seção do bueiro. O desenho é deslocado verticalmente pela espessura superior da seção celular (`esp`) ou tubular (`ew`), já considerando o exagero vertical da vista. A opção `"FUNDO"` continua referenciada ao fundo interno. Essa mudança corrige a interpretação da cota de referência sem alterar o fluxo de leitura dos CSVs e geração de pontos.
 
 **Limitações e cuidados:**
 - A estaca do cadastro é convertida em `estaca × 20 + fração`, presumindo que o alinhamento começa na estaca 0+0,00. Confira se o estaqueamento do eixo segue essa convenção.
-- A obra é desenhada com o **topo** na cota do ponto e o corpo abaixo dela, embora o cabeçalho do arquivo mencione "fundo na cota". Se a cota usada for a cota de fundo (cota montante do cadastro), confira a posição vertical do desenho.
+- Com `*bp:ref-cota* = "TOPO"`, o **topo interno** da seção coincide com a cota do ponto; a face externa superior fica acima dessa cota pela espessura correspondente. Com `"FUNDO"`, a referência é o fundo interno. Confira se a cota montante do cadastro representa o topo ou o fundo pretendido antes de gerar o desenho.
 - Cada execução cria novos COGO points e novos desenhos, sem atualizar os anteriores: para refazer, apague o que foi gerado (layer `OBRAS PROJETADAS`) e os pontos do grupo `OAC - EIXO`.
 - Linhas do cadastro sem `COD. BACIA` geram descrição do ponto iniciada por ` - `.
 - Obras fora do intervalo de estacas da vista de perfil são listadas no relatório e não são desenhadas.
