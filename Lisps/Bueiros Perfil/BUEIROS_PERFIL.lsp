@@ -11,7 +11,9 @@
 ;;;      (tolerancia *bp:tol*).
 ;;;    - Se o COGOpoints for cancelado, usa estaca + cota montante do cadastro.
 ;;; 3) Desenha na vista de perfil a obra (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC)
-;;;    com fundo na cota, ja na escala/exagero da vista, e a legenda:
+;;;    abaixo do COGO point, ja na escala/exagero da vista, com as espessuras
+;;;    das tabelas (celular: d/a/b por secao L e aterro h; tubular: quadro de
+;;;    dimensoes D/A/B/e), e a legenda:
 ;;;       Estaca / Descricao / Obra projetada / L / Cota montante / Inclinacao
 ;;; 4) Coloca os pontos criados no grupo de pontos *bp:grupo*.
 ;;; =====================================================================
@@ -22,7 +24,8 @@
 (setq *bp:estaca*     20.0)          ; metros por estaca
 (setq *bp:txth*        2.0)          ; altura do texto da legenda (unid. desenho)
 (setq *bp:txtgap*      4.0)          ; distancia do fundo da obra ao topo da legenda
-(setq *bp:tub-gap*     0.0)          ; espaco entre tubos (fracao do diametro; 0 = encostados)
+(setq *bp:ref-cota*   "TOPO")        ; "TOPO" = topo externo da obra no COGO point (obra abaixo)
+                                     ; "FUNDO" = fundo interno (soleira/geratriz inf.) no COGO point
 (setq *bp:tol*        30.0)          ; tolerancia (m) p/ associar ponto COGO <-> cadastro
 (setq *bp:cogo-ordem* "PNEZD")       ; "PNEZD" ou "PENZD"
 (setq *bp:grupo*      "OAC - EIXO")  ; grupo de pontos para os pontos criados
@@ -272,7 +275,7 @@
   (vl-catch-all-apply 'vlax-invoke-method (list pg 'Update)))
 
 ;; ----------------------------- LEITURA CSV ------------------------------
-(defun bp:read-cadastro (f quiet / lines hdr dl fl ie id io ic ii il ib ia est frac en p r)
+(defun bp:read-cadastro (f quiet / lines hdr dl fl ie id io ic ii il ib ia iat est frac en p r)
   (setq lines (bp:readlines f))
   (foreach l lines
     (cond
@@ -288,13 +291,15 @@
                  ic  (bp:col hdr '("COTA MONTANTE"))
                  ii  (bp:col hdr '("DECLIV*" "INCLINA*"))
                  il  (bp:col hdr '("L PROJETADO*"))
+                 iat (bp:col hdr '("ATERRO*"))
                  ib  (bp:col hdr '("COD*BUEIRO*"))
                  ia  (bp:col hdr '("COD*BACIA*")))
            ;; padroes caso algum titulo nao seja encontrado
            (if (null ie) (setq ie 2))  (if (null id) (setq id 5))
            (if (null io) (setq io 7))  (if (null ic) (setq ic 16))
            (if (null ii) (setq ii 15)) (if (null il) (setq il 19))
-           (if (null ib) (setq ib 1))  (if (null ia) (setq ia 0)))))
+           (if (null ib) (setq ib 1))  (if (null ia) (setq ia 0))
+           (if (null iat) (setq iat 21)))))
       (t
        (setq fl (mapcar 'bp:trim (bp:csvsplit l dl))
              est (nth ie fl)
@@ -315,7 +320,8 @@
                              (cons "OBRA"   (bp:trim (nth io fl)))
                              (cons "COTA"   (bp:num-br (nth ic fl)))
                              (cons "INC"    (bp:num-br (nth ii fl)))
-                             (cons "L"      (bp:num-br (nth il fl))))
+                             (cons "L"      (bp:num-br (nth il fl)))
+                             (cons "ATERRO" (bp:num-br (nth iat fl))))
                        r))))))
   ;; diagnostico
   (if (and (null r) (not quiet))
@@ -384,38 +390,114 @@
                  (list 10 cx ytop) '(40 . 0.0) '(41 . 0.0) (cons 42 b)
                  (list 10 cx (- ytop alt)) '(40 . 0.0) '(41 . 0.0) (cons 42 b))))
 
+;; ----------------------------- TABELAS ----------------------------------
+;; Bueiros celulares (BSCC/BDCC/BTCC) - por secao L (cm) e faixa de aterro h (cm):
+;; faixas: 0-100, 100-250, 250-500, 500-750, 750-1000, 1000-1250, 1250-1500
+;; cada faixa: ((d a b)SIMPLES (d a b)DUPLO (d a b)TRIPLO)  [cm]
+;;   d = espessura de paredes e lajes, a = misula externa, b = misula na parede interna
+;;   A = n*L + (n+1)*d ; B = H + 2d ; C (lastro) = A + 30
+(setq *bp:tab-cel*
+  '((150 ((15 10 0) (15 10 30) (15 10 30)) ((15 10 0) (15 10 30) (15 10 30))
+         ((15 10 0) (15 10 30) (15 10 30)) ((15 10 0) (15 10 30) (15 10 30))
+         ((20 15 0) (15 10 30) (15 10 30)) ((20 15 0) (20 15 45) (20 15 45))
+         ((20 15 0) (20 15 45) (20 15 45)))
+    (200 ((15 10 0) (15 10 30) (15 10 30)) ((15 10 0) (15 10 30) (15 10 30))
+         ((20 15 0) (15 10 30) (15 10 30)) ((20 15 0) (20 15 45) (20 15 45))
+         ((25 15 0) (20 15 45) (20 15 45)) ((25 15 0) (25 15 45) (25 15 45))
+         ((25 15 0) (25 15 45) (25 15 45)))
+    (250 ((20 15 0) (15 15 45) (15 15 45)) ((20 15 0) (15 15 45) (15 15 45))
+         ((20 15 0) (20 15 45) (20 15 45)) ((25 15 0) (20 15 45) (20 15 45))
+         ((25 15 0) (25 15 45) (25 15 45)) ((30 25 0) (25 15 45) (25 15 45))
+         ((35 25 0) (25 15 45) (25 15 45)))
+    (300 ((25 15 0) (20 15 45) (20 15 45)) ((25 15 0) (20 15 45) (20 15 45))
+         ((30 25 0) (25 15 45) (25 15 45)) ((30 25 0) (25 15 45) (25 15 45))
+         ((35 25 0) (30 25 75) (30 25 75)) ((35 25 0) (30 25 75) (30 25 75))
+         ((40 30 0) (30 25 75) (30 25 75)))))
+
+;; Bueiros tubulares (BSTC/BDTC/BTTC) - quadro de dimensoes (cm): (D A B e)
+;;   e = parede do tubo, B = espaco entre tubos, A = altura do berco
+;;   C = D + 2e + 20 ; E = C + (D+2e) + B ; F = E + (D+2e) + B
+(setq *bp:tab-tub*
+  '((40 25 20 6) (60 30 20 8) (80 35 20 10) (100 40 25 12) (120 45 30 13) (150 50 30 14)))
+
+(defun bp:faixa (hat / h)
+  (setq h (if hat (* 100.0 hat) 0.0))
+  (cond ((<= h 100.0) 0) ((<= h 250.0) 1) ((<= h 500.0) 2) ((<= h 750.0) 3)
+        ((<= h 1000.0) 4) ((<= h 1250.0) 5) (t 6)))
+
+;; retorna (d a b) em metros
+(defun bp:cel-dims (L n hat / tab)
+  (setq tab (cdr (assoc (fix (+ (* L 100.0) 0.5)) *bp:tab-cel*)))
+  (if tab
+    (mapcar '(lambda (x) (/ x 100.0)) (nth (min (1- n) 2) (nth (bp:faixa hat) tab)))
+    (progn
+      (princ (strcat "\nAviso: celula L=" (bp:fmt L 2)
+                     " m fora das tabelas (1,5/2,0/2,5/3,0); usando d=0,20 a=0,15 b=0,45."))
+      '(0.20 0.15 0.45))))
+
+;; retorna (A B e) em metros
+(defun bp:tub-dims (D / dc best)
+  (setq dc (* D 100.0))
+  (foreach x *bp:tab-tub*
+    (if (or (null best) (< (abs (- (car x) dc)) (abs (- (car best) dc)))) (setq best x)))
+  (if (> (abs (- (car best) dc)) 0.5)
+    (princ (strcat "\nAviso: diametro " (bp:fmt D 2) " m fora do quadro; usando dimensoes do D="
+                   (itoa (car best)) " cm.")))
+  (mapcar '(lambda (x) (/ x 100.0)) (cdr best)))
+
+;; ----------------------------- DESENHO DAS OBRAS ------------------------
+(defun bp:rect (x y w h)
+  (bp:pline (list (list x y) (list (+ x w) y) (list (+ x w) (+ y h)) (list x (+ y h)))
+            *bp:layer* T))
+
+;; bueiro celular: n celulas L x H (m), paredes/lajes de espessura d. retorna o Y mais baixo
+(defun bp:draw-cel (x0 y0 hs vs n L H hat / esp wext hext ytop ybot xl i)
+  (setq esp  (car (bp:cel-dims L n hat))                 ; d
+        wext (+ (* n L) (* (1+ n) esp))                  ; A
+        hext (+ H (* 2.0 esp))                           ; B
+        ytop (if (= (strcase *bp:ref-cota*) "FUNDO") (+ y0 (* (+ H esp) vs)) y0)
+        ybot (- ytop (* hext vs))
+        xl   (- x0 (* 0.5 wext hs)))
+  (bp:rect xl ybot (* wext hs) (* hext vs))              ; parede externa
+  (setq i 0)
+  (repeat n                                              ; paredes internas (celulas)
+    (bp:rect (+ xl (* (+ esp (* i (+ L esp))) hs)) (+ ybot (* esp vs)) (* L hs) (* H vs))
+    (setq i (1+ i)))
+  ybot)
+
+;; bueiro tubular: n tubos de diametro D (m), parede de espessura e. retorna o Y mais baixo
+(defun bp:draw-tub (x0 y0 hs vs n D / dm esp ew dext wt ytop xl i cx)
+  (setq dm   (bp:tub-dims D) esp (cadr dm) ew (caddr dm) ; B = espaco entre tubos, e
+        dext (+ D (* 2.0 ew))
+        wt   (+ (* n dext) (* (1- n) esp))
+        ytop (if (= (strcase *bp:ref-cota*) "FUNDO") (+ y0 (* (+ D ew) vs)) y0)
+        xl   (- x0 (* 0.5 wt hs)) i 0)
+  (repeat n
+    (setq cx (+ xl (* (+ (* 0.5 dext) (* i (+ dext esp))) hs)))
+    (bp:lens cx ytop (* dext vs) (* dext hs) *bp:layer*)                      ; parede externa
+    (bp:lens cx (- ytop (* ew vs)) (* D vs) (* D hs) *bp:layer*)              ; parede interna
+    (setq i (1+ i)))
+  (- ytop (* dext vs)))
+
+;; m ou cm -> m
+(defun bp:m (x) (if (and x (> x 10.0)) (/ x 100.0) x))
+
 ;; x0,y0 = estaca/cota (COGO point) na vista ; hs,vs = unid. desenho por metro (H e V)
-;; a obra e desenhada ABAIXO do ponto (topo da obra no ponto).
+;; hat = aterro acima da geratriz superior (m), define a faixa das tabelas
 ;; retorna o Y mais baixo desenhado (para posicionar a legenda)
-(defun bp:draw-obra (x0 y0 hs vs obra / tp nums n w h d tw xl i a yb r)
-  (setq tp (bp:obra-tipo obra) nums (bp:nums-in (if obra obra "")))
+(defun bp:draw-obra (x0 y0 hs vs obra hat / tp nums r)
+  (setq tp (bp:obra-tipo obra) nums (mapcar 'bp:m (bp:nums-in (if obra obra ""))))
   (cond
-    ;; bueiro celular: n celulas W x H
     ((and (eq (car tp) 'CEL) nums)
-     (setq n (cadr tp) w (car nums) h (if (cadr nums) (cadr nums) w)
-           tw (* n w) xl (- x0 (* 0.5 tw hs)) yb (- y0 (* h vs)) i 0)
-     (repeat n
-       (setq a (+ xl (* i w hs)))
-       (bp:pline (list (list a yb) (list (+ a (* w hs)) yb)
-                       (list (+ a (* w hs)) y0) (list a y0))
-                 *bp:lay-obra* T)
-       (setq i (1+ i)))
-     yb)
-    ;; bueiro tubular: n tubos de diametro D (lente de 2 arcos, no exagero vertical)
+     (bp:draw-cel x0 y0 hs vs (cadr tp) (car nums)
+                  (if (cadr nums) (cadr nums) (car nums)) hat))
     ((and (eq (car tp) 'TUB) nums)
-     (setq n (cadr tp) d (car nums)
-           tw (+ (* n d) (* (1- n) *bp:tub-gap* d))
-           xl (- x0 (* 0.5 tw hs)) yb (- y0 (* d vs)) i 0)
-     (repeat n
-       (bp:lens (+ xl (* (+ (* i d (+ 1.0 *bp:tub-gap*)) (* 0.5 d)) hs))
-                y0 (* d vs) (* d hs) *bp:lay-obra*)
-       (setq i (1+ i)))
-     yb)
+     (bp:draw-tub x0 y0 hs vs (cadr tp) (car nums)))
     ;; outros (ponte etc.): marcador em cruz
     (t
      (setq r (* 0.5 *bp:txth*))
-     (bp:pline (list (list (- x0 r) y0) (list (+ x0 r) y0)) *bp:lay-obra* nil)
-     (bp:pline (list (list x0 (- y0 r)) (list x0 (+ y0 r))) *bp:lay-obra* nil)
+     (bp:pline (list (list (- x0 r) y0) (list (+ x0 r) y0)) *bp:layer* nil)
+     (bp:pline (list (list x0 (- y0 r)) (list x0 (+ y0 r))) *bp:layer* nil)
      (- y0 r))))
 
 (defun bp:label (rec sta elev desc / l v)
@@ -524,7 +606,9 @@
          (progn
            (setq hs (abs (- (car pvxy2) (car pvxy)))
                  vs (abs (- (cadr pvxy2) (cadr pvxy))))
-           (setq ybot (bp:draw-obra (car pvxy) (cadr pvxy) hs vs (if rec (bp:get "OBRA" rec) "")))
+           (setq ybot (bp:draw-obra (car pvxy) (cadr pvxy) hs vs
+                                    (if rec (bp:get "OBRA" rec) "")
+                                    (if rec (bp:get "ATERRO" rec))))
            (bp:mtext (list (car pvxy) (- ybot *bp:txtgap*))
                      (bp:label rec sta elev desc) *bp:lay-leg*)
            (setq nperf (1+ nperf)))
