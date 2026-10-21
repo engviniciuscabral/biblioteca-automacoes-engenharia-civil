@@ -19,6 +19,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
 | [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | Inserção e criação de blocos de bocas de bueiros tubulares, com 18 modelos BSTC/BDTC/BTTC. | [Ver detalhes](#template_bocaslsp) |
+| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASBUEIRO` / `BBU` / `BBDIAG` | Inserção de bocas de montante e jusante em bueiros selecionados e, quando aplicável, dissipador de energia. | [Ver detalhes](#bocas_bueeirolsp) |
 
 ## Documentação das rotinas
 
@@ -268,6 +269,37 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 - O código redefine alguns comandos ao longo do arquivo; na versão final, `BOCASTESTE` chama `BOCASCADDIN` (não é apenas um teste simples, apesar da descrição inicial).
 - A criação de blocos e layers **modifica o DWG**; execute inicialmente em um desenho de teste e faça backup.
 - A criação de blocos dinâmicos pode depender de prompts específicos da versão e do idioma do AutoCAD; confira o resultado.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+
+---
+
+### BOCAS_BUEIRO.lsp
+
+**Arquivo:** [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp)  
+**Comandos:** `BOCASBUEIRO` (atalho `BBU`) e `BBDIAG` (diagnóstico).
+
+**Objetivo:** Automatizar a inserção de bocas de bueiros no Civil 3D, a montante e a jusante de tubos selecionados de uma ou mais redes de tubulação.
+
+**Funcionamento:** A rotina agrupa tubos paralelos e próximos para identificar bueiros simples, duplos ou triplos. Lê as propriedades de dimensão, forma e extremidades dos tubos; usa as cotas Z para determinar o sentido do fluxo, considerando a extremidade de menor cota como jusante. Em seguida, insere os blocos de boca orientados conforme o eixo do bueiro e define o estado de visibilidade correspondente ao tipo e à dimensão. Para bueiros tubulares com diâmetro dentro do limite configurado (por padrão, até 1,50 m), também pode inserir um dissipador de energia a jusante.
+
+**Como utilizar:**
+1. Verifique se o desenho contém as redes de tubulação e os blocos dinâmicos ou blocos de boca esperados pela rotina.
+2. Se necessário, ajuste as variáveis de configuração no início do arquivo, como nomes dos blocos, ângulos de orientação, limite de diâmetro do dissipador, camadas e tolerâncias de agrupamento.
+3. Carregue `BOCAS_BUEIRO.lsp` com `APPLOAD`.
+4. Execute `BOCASBUEIRO` (ou `BBU`) e selecione os tubos dos bueiros a processar.
+5. Confira as bocas, o sentido do fluxo e os dissipadores inseridos. Use `BBDIAG` para diagnóstico quando necessário.
+
+**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP, Visual LISP/ActiveX e redes de tubulação (Pipe Networks) com propriedades de diâmetro/largura, altura e pontos inicial/final acessíveis. A rotina depende de blocos de boca compatíveis com os estados de visibilidade esperados; o dissipador é opcional e pode ser escolhido ou informado conforme os prompts.
+
+**Status:** Arquivo incluído na biblioteca; não foi executado em ambiente AutoCAD/Civil 3D nesta atualização.
+
+**Limitações e cuidados:**
+- A direção do fluxo é inferida pela diferença de cota Z entre as extremidades. Se as cotas estiverem ausentes, iguais ou não representarem o sentido hidráulico real, confira manualmente a montante e a jusante.
+- O agrupamento depende das tolerâncias de paralelismo e distância configuradas; tubos próximos de bueiros diferentes podem exigir seleção separada ou ajuste das tolerâncias.
+- O dissipador é condicionado à forma tubular e ao limite de diâmetro configurado. O bloco e a orientação precisam ser verificados no desenho.
+- A rotina insere entidades e pode criar ou alterar propriedades de blocos/camadas no DWG. Faça cópia de segurança e valide primeiro em um desenho de teste.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
