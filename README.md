@@ -13,7 +13,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
-| **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
+| **Dynamo** | Dynamo / Civil 3D | 3 | [Ver catálogo](./Dynamo/README.md) |
 | **Lisps** | AutoLISP / AutoCAD / Civil 3D | 12 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **Python** | Python / Tkinter / NumPy / Matplotlib | 1 | [Ver catálogo](./Python/README.md) |
@@ -27,6 +27,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 |---|---|
 | [`Dynamo Identificador de Queda(att).dyn`](./Dynamo/Dynamo%20Identificador%20de%20Queda(att).dyn) | Identificação e registro de quedas em estruturas de redes de drenagem. |
 | [`Fluxo Dynamo Desap.dyn`](./Dynamo/Fluxo%20Dynamo%20Desap.dyn) | Automação de pontos ao longo de alinhamentos para fluxo de desapropriação. |
+| [`Criar_Valetas_Eixo_Saia_3m_V48.dyn`](./Dynamo/Criar_Valetas_Eixo_Saia_3m_V48.dyn) | Análise de drenagem lateral e criação de valetas de corte/aterro no Civil 3D, com saídas, dissipadores e relatórios CSV. |
 
 ### [Lisps](./Lisps/README.md)
 
