@@ -10,6 +10,7 @@ Grafos Dynamo associados a fluxos de trabalho do AutoCAD Civil 3D.
 |---|---|---|
 | [`Dynamo Identificador de Queda(att).dyn`](./Dynamo%20Identificador%20de%20Queda(att).dyn) | `Grafo Dynamo` | Identificação e registro de quedas em estruturas de redes de drenagem. |
 | [`Fluxo Dynamo Desap.dyn`](./Fluxo%20Dynamo%20Desap.dyn) | `Grafo Dynamo` | Automação de pontos ao longo de alinhamentos para fluxo de desapropriação. |
+| [`Criar_Valetas_Eixo_Saia_3m_V48.dyn`](./Criar_Valetas_Eixo_Saia_3m_V48.dyn) | `Grafo Dynamo` | Análise de drenagem lateral e geração de valetas de corte/aterro, saídas, dissipadores e relatórios CSV. |
 
 ## Documentação das rotinas
 
@@ -48,6 +49,28 @@ Grafos Dynamo associados a fluxos de trabalho do AutoCAD Civil 3D.
 **Status:** Disponível na biblioteca; funcionamento não verificado por execução nesta revisão.
 
 **Limitações e cuidados:** Grafo extenso, com múltiplos nós; o comportamento completo não foi validado por execução. Confira parâmetros e eventuais operações de criação/alteração de objetos antes de rodar em projeto real.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### 3. Criar_Valetas_Eixo_Saia_3m_V48.dyn
+
+**Arquivo:** [`Criar_Valetas_Eixo_Saia_3m_V48.dyn`](./Criar_Valetas_Eixo_Saia_3m_V48.dyn)  
+**Comando / entrada:** grafo Dynamo com nó Python (IronPython) e entradas configuráveis.  
+**Objetivo:** analisar o escoamento superficial nas laterais de uma rodovia e identificar, desenhar e documentar valetas de corte e aterro ao longo de um alinhamento do Civil 3D.
+
+**Funcionamento:** o nó Python consulta um alinhamento e uma superfície do Civil 3D, lê um CSV de taludes e amostra o terreno em distâncias laterais configuradas. Avalia caimentos e condições de corte/aterro, agrupa trechos compatíveis, procura continuidade hidráulica e desenha polilinhas de valetas, saídas e dissipadores. O código inclui tolerâncias para unir pacotes próximos, evitar dissipadores quando a saída alcança outra valeta do mesmo lado, e gerar setas de caimento. Produz CSVs de análise, lista de valetas, base para planilha e diagnóstico dos pacotes, além de arquivo de status. Há modo de **somente nota de serviço**, que lê valetas existentes sem apagá-las ou redesenhá-las.
+
+**Entradas do nó Python:** `IN[0]` nome do alinhamento; `IN[1]` nome da superfície; `IN[2]` caminho completo do CSV de taludes; `IN[3..7]` distâncias laterais de análise; `IN[8]` declividade mínima em direção à pista (%); `IN[9]` altura mínima para caracterizar corte (m); `IN[10]` intervalo máximo para unir pontos (m); `IN[11]` comprimento mínimo do trecho (m); `IN[12]` afastamento adicional além do encontro do talude (m); `IN[13]` tolerância de ruído vertical (m); `IN[14]` comprimento máximo de ruído pontual a absorver (m); `IN[15]` opção de somente nota de serviço (`True`).
+
+**Como utilizar:** abra uma cópia do DWG no Civil 3D; carregue o grafo no Dynamo; substitua os nomes de alinhamento e superfície de exemplo pelos do projeto; informe um caminho válido para o CSV de taludes; revise as distâncias, tolerâncias e a opção de nota de serviço. Execute manualmente e confira a geometria criada e os relatórios antes de utilizar os resultados em projeto.
+
+**Requisitos e dependências:** AutoCAD Civil 3D com Dynamo e nó Python compatível com IronPython e as bibliotecas .NET `AcMgd`, `AcDbMgd` e `AeccDbMgd`. O cabeçalho do script indica Civil 3D 2021 / Dynamo 2.5. Requer alinhamento, superfície e CSV com estrutura esperada pelo script.
+
+**Status:** versão V48 incluída na biblioteca em 21/10/2026; estrutura JSON e código analisados, sem teste de execução no Civil 3D.
+
+**Limitações e cuidados:** no modo normal, **cria e pode substituir polilinhas existentes no DWG**. Use uma cópia do projeto, confira layers, sentidos de escoamento, ligações entre valetas e dissipadores. A validação hidráulica, a capacidade de vazão e o dimensionamento das seções não são substituídos pela análise geométrica automatizada. O grafo contém nomes de alinhamento e superfície de exemplo, que devem ser alterados antes da execução. O código possui regras e tolerâncias específicas para continuidade de trechos, que precisam ser avaliadas conforme o projeto e os dados do CSV.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
