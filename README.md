@@ -14,7 +14,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D | 2 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 11 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 12 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **Python** | Python / Tkinter / NumPy / Matplotlib | 1 | [Ver catálogo](./Python/README.md) |
 | **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
@@ -43,6 +43,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 | [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | Geração e inserção de 18 modelos de bocas de bueiros tubulares BSTC/BDTC/BTTC, com comandos para blocos estáticos e dinâmicos. |
+| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Inserção de bocas a montante e jusante de bueiros selecionados no Civil 3D, com orientação pelo fluxo e dissipador configurável. |
 
 ### [Python](./Python/README.md)
 
