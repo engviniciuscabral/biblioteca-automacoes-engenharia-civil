@@ -1,0 +1,921 @@
+{
+  "Uuid": "0723b57d-f9b3-4d7d-85c4-a4a448c98b24",
+  "IsCustomNode": false,
+  "Description": "V44 = V37 + tolerancia de encosto acompanhando o IN[10] + supressao do dissipador quando a saida cai sobre outra valeta do mesmo lado. Gera tambem o CSV _valetas_pacotes_debug.csv para diagnostico.",
+  "Name": "Criar_Valetas_Eixo_Saia_3m_V48",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "59c4b0d248c74e60b61c767e4ae7d202",
+      "Name": "1. Nome exato do alinhamento",
+      "Type": "string",
+      "Value": "EIXO GO-188",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "9cefec7db16b4a83930557cc7da9bfd7",
+      "Name": "2. Nome exato da superficie",
+      "Type": "string",
+      "Value": "TN_QA-210",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "fd129c99ad7c4a2fa18ecab883d608ad",
+      "Name": "4. Distancia de analise 1 (m)",
+      "Type": "number",
+      "Value": "3",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "74e83314b6244d4b81ad8b641cedd877",
+      "Name": "5. Distancia de analise 2 (m)",
+      "Type": "number",
+      "Value": "5",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "626f08a9f1b64a9eaa623efd8ed0ef07",
+      "Name": "6. Distancia de analise 3 (m)",
+      "Type": "number",
+      "Value": "10",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "4faf9ac5aad74f639a2d97746d302e86",
+      "Name": "7. Distancia de analise 4 (m)",
+      "Type": "number",
+      "Value": "40",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "8c49f7cf3c5549f3ab12a5bc857ad3af",
+      "Name": "8. Distancia de analise 5 (m)",
+      "Type": "number",
+      "Value": "70",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "8e2adb9556464670b59f5a697b936f4a",
+      "Name": "9. Declividade minima para agua indo a pista (%)",
+      "Type": "number",
+      "Value": ".5",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "f987fe97fbbf4a6eb8335b55e223c4de",
+      "Name": "10. Tolerancia minima do sinal de corte (m)",
+      "Type": "number",
+      "Value": ".05",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "24c7610d31214efd91fac538c4550a33",
+      "Name": "11. Intervalo maximo para unir pontos (m)",
+      "Type": "number",
+      "Value": "25",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "1281b31f90784a80b62a98b6f0289575",
+      "Name": "12. Comprimento minimo da valeta (m)",
+      "Type": "number",
+      "Value": "60",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "10f3dfc100cd4022856737f200c03abc",
+      "Name": "13. Distancia da saia ate a valeta (m)",
+      "Type": "number",
+      "Value": "3",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "cc04339c5f3a4bbb9775c0e0e908d2c1",
+      "Name": "14. Ruido vertical ignorado no caimento (m)",
+      "Type": "number",
+      "Value": "4",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "1c53d116e7204c57aebe984c09686ca4",
+      "Name": "15. Comprimento maximo de ruido pontual (m)",
+      "Type": "number",
+      "Value": "20",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "e6f8c33159784ce295e7136d65f11b63",
+      "Name": "16. Somente nota de servico (True = nao apaga/desenha)",
+      "Type": "boolean",
+      "Value": "false",
+      "Description": "Selection between a true and false."
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "8ed666134a994f788b9200845012370c",
+      "Name": "Executar analise de valetas",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "EIXO GO-188",
+      "Id": "59c4b0d248c74e60b61c767e4ae7d202",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e3e5bf93e1f14c05aef9c8a9934379b4",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "TN_QA-210",
+      "Id": "9cefec7db16b4a83930557cc7da9bfd7",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "31123ab9c7204d75a99649d3bf5e4d7a",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 3.0,
+      "Id": "fd129c99ad7c4a2fa18ecab883d608ad",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3621a28f63f148baaf85be2b518d3813",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 5.0,
+      "Id": "74e83314b6244d4b81ad8b641cedd877",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c32de318a10f4c9e88775282252c8910",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 10.0,
+      "Id": "626f08a9f1b64a9eaa623efd8ed0ef07",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b0d74b837b0340b182ea5bdd30b4ccc3",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 40.0,
+      "Id": "4faf9ac5aad74f639a2d97746d302e86",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "888218fa266741c4843c7a77ac5d9dc9",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 70.0,
+      "Id": "8c49f7cf3c5549f3ab12a5bc857ad3af",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e4b31e504c8e4db69ff973fd4a707ea2",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 0.5,
+      "Id": "8e2adb9556464670b59f5a697b936f4a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a782564581e0474b8f90c7b7f31b82bf",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 0.05,
+      "Id": "f987fe97fbbf4a6eb8335b55e223c4de",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "914bac70f7c849ed804f9788f170645b",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 25.0,
+      "Id": "24c7610d31214efd91fac538c4550a33",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "551364dd8c77416dbe43ff31867e0850",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 60.0,
+      "Id": "1281b31f90784a80b62a98b6f0289575",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "677cb498af404e098b70c54f8fc7b23f",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 3.0,
+      "Id": "10f3dfc100cd4022856737f200c03abc",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "51555ebdaeb843b5bd24dd804bf16a3b",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 4.0,
+      "Id": "cc04339c5f3a4bbb9775c0e0e908d2c1",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "60b55afe5aa348b2a95f489e1a78a852",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 20.0,
+      "Id": "1c53d116e7204c57aebe984c09686ca4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6f027d9124a3448c9208c15a383df707",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Analise generica de valetas de corte - Civil 3D 2021 / Dynamo 2.5\n# IN[0] nome do alinhamento\n# IN[1] nome da superficie\n# IN[2] caminho completo do CSV de taludes\n# IN[3..7] distancias de analise\n# IN[8] declividade minima para agua indo para a pista (%)\n# IN[9] tolerancia minima para considerar sinal de corte (m)\n# IN[10] intervalo maximo para unir pontos (m)\n# IN[11] comprimento minimo do trecho (m)\n# IN[12] afastamento adicional para fora do encontro do talude (m)\n# IN[13] ruido vertical maximo ignorado no caimento (m)\n# IN[14] comprimento maximo de ruido pontual para absorver (m)\n# IN[15] somente nota de servico (True = nao apaga/desenha, le as valetas ja existentes)\n\nimport csv\nimport os\nimport clr\n\nclr.AddReference(\"AcMgd\")\nclr.AddReference(\"AcDbMgd\")\nclr.AddReference(\"AeccDbMgd\")\n\nfrom Autodesk.AutoCAD.ApplicationServices import Application\nfrom Autodesk.AutoCAD.Colors import Color, ColorMethod\nfrom Autodesk.AutoCAD.DatabaseServices import (\n    BlockTable, BlockTableRecord, Circle, Hatch, HatchLoopTypes,\n    HatchPatternType, LayerTable, LayerTableRecord, Line, LineWeight,\n    ObjectIdCollection, OpenMode, Polyline\n)\nfrom Autodesk.AutoCAD.Geometry import Point2d, Point3d, Vector3d\nfrom Autodesk.Civil.ApplicationServices import CivilApplication\n\nALIGNMENT_NAME = str(IN[0]).strip()\nSURFACE_NAME = str(IN[1]).strip()\nCSV_INPUT = str(IN[2]).strip().strip('\"')\nSAMPLE_DISTANCES = [float(IN[3]), float(IN[4]), float(IN[5]), float(IN[6]), float(IN[7])]\nMIN_SLOPE_TO_ROAD_PCT = float(IN[8])\nMIN_CUT_HEIGHT = float(IN[9])\nMAX_STATION_GAP = float(IN[10])\nMIN_SEGMENT_LENGTH = float(IN[11])\nDITCH_EXTRA_OFFSET = float(IN[12])\nVERTICAL_NOISE_TOL = float(IN[13])\nNOISE_GAP_LENGTH = float(IN[14])\ntry:\n    NOTA_ONLY = len(IN) > 15 and str(IN[15]).strip().upper() in [\"TRUE\", \"1\", \"SIM\", \"S\"]\nexcept Exception:\n    NOTA_ONLY = False\nVALETA_WIDTH = 0.50\nOUTLET_LENGTH = 7.0\nDISS_LENGTH = 4.0\nDISS_WIDTH = 1.5\nLOW_POINT_SPLIT_GAP = 20.0\nHIGH_POINT_SPLIT_GAP = 5.0\nMIN_LOCAL_SEGMENT_LENGTH = 20.0\nJOIN_VALETA_GAP = 60.0\nMAX_OPPOSITE_TYPE_GAP = 40.0\nPACKAGE_JOIN_MAX_DISTANCE = 40.0\n# Distancia (m) de vazio entre a saida de um pacote e o inicio do proximo para\n# considerar que eles \"encostam\" um no outro (vazao acumula direto, sem dissipador).\n# O valor fixo de 18m assumia amostragem de ate 18m entre estacas. Num CSV de estaca\n# cheia (20m), uma unica estaca de vazio entre dois pacotes ja estoura esse limite por\n# 2m: o script entendia que o trecho terminava ali, desenhava o rabicho de saida mais\n# o dissipador, e comecava outro pacote colado. Por isso a tolerancia passa a\n# acompanhar o \"intervalo maximo para unir pontos\" (IN[10]): se dois pontos a essa\n# distancia podem formar uma mesma valeta, dois pacotes a essa distancia tambem devem\n# se conectar em vez de dissipar.\nPACKAGE_TOUCH_TOLERANCE = 18.0\n# V45: desnivel minimo (m) entre as pontas para decidir o sentido do caimento.\nFLOW_DIRECTION_TOL = 0.05\n\n\ndef package_touch_tolerance():\n    return max(PACKAGE_TOUCH_TOLERANCE, MAX_STATION_GAP)\nFLOW_ARROW_LENGTH = 2.40\nFLOW_ARROW_SPACING = 30.0\nFLOW_TRACE_STEP = 2.0\nFLOW_TRACE_MIN_DROP = 0.01\nFLOW_TRACE_MAX_LENGTH = 80.0\nFLOW_TRACE_CROSS_TOL = 0.50\nFLOW_TRACE_CAPTURE_TOL = 3.50\nWATERDROP_TOTAL_REQUIRED = 2\n# Quanto o caminho pode subir (m) durante a busca do aterro de saida do corte, em\n# relacao ao ponto mais baixo ja alcancado na caminhada. Pequenas ondulacoes de\n# terreno sao toleradas, mas uma subida real interrompe a busca -- agua nao escoa\n# ladeira acima, entao nao faz sentido conectar a um aterro que so existe subindo.\nCUT_EXTENSION_CLIMB_TOL = 0.50\nFLOW_TRACE_DIRS = [\n    (-1.0, 0.0), (1.0, 0.0), (0.0, -1.0), (0.0, 1.0),\n    (-0.70710678, -0.70710678), (-0.70710678, 0.70710678),\n    (0.70710678, -0.70710678), (0.70710678, 0.70710678),\n]\nELEVATION_CACHE = {}\n\n\ndef parse_number(text):\n    if text is None:\n        return 0.0\n    value = str(text).strip()\n    if value == \"\":\n        return 0.0\n    if \",\" in value:\n        value = value.replace(\".\", \"\").replace(\",\", \".\")\n    return float(value)\n\n\ndef fmt(value, digits=3):\n    if value is None:\n        return \"\"\n    return ((\"{0:.\" + str(digits) + \"f}\").format(float(value))).replace(\".\", \",\")\n\n\ndef station_offset_point(alignment, station, signed_offset):\n    x = clr.Reference[float]()\n    y = clr.Reference[float]()\n    alignment.PointLocation(float(station), float(signed_offset), x, y)\n    return float(x.Value), float(y.Value)\n\n\ndef offset_outward_sign(signed_offset):\n    if float(signed_offset) < 0.0:\n        return -1.0\n    return 1.0\n\n\ndef point_with_axis_reference(alignment, surface, station, signed_offset):\n    axis_x, axis_y = station_offset_point(alignment, station, 0.0)\n    x, y = station_offset_point(alignment, station, signed_offset)\n    z = elevation(surface, x, y)\n    away_x, away_y = unit_xy(x - axis_x, y - axis_y)\n    return {\n        \"x\": x, \"y\": y, \"z\": z,\n        \"axis_x\": axis_x, \"axis_y\": axis_y,\n        \"away_x\": away_x, \"away_y\": away_y,\n    }\n\n\ndef elevation(surface, x, y):\n    return float(surface.FindElevationAtXY(float(x), float(y)))\n\n\ndef cached_elevation(surface, x, y):\n    key = (round(float(x), 3), round(float(y), 3))\n    if key in ELEVATION_CACHE:\n        return ELEVATION_CACHE[key]\n    try:\n        value = elevation(surface, x, y)\n    except Exception:\n        value = None\n    ELEVATION_CACHE[key] = value\n    return value\n\n\ndef distance_to_skirt(point, skirt_point):\n    # Distancia euclidiana real ate o ponto da saia (nao projecao numa reta fixa).\n    # Uma projecao na direcao \"para fora\" calculada so no ponto inicial pode dar falso\n    # positivo em trecho curvo do alinhamento: a agua pode se afastar de verdade da\n    # rodovia e mesmo assim \"cruzar\" a reta projetada por causa da curvatura. Medindo\n    # a distancia real ate o ponto da saia, so conta como capturada a agua que de fato\n    # chegou perto do corpo do talude, nao qualquer agua que cruzou uma reta imaginaria.\n    return (\n        (point[\"x\"] - skirt_point[\"x\"]) ** 2 +\n        (point[\"y\"] - skirt_point[\"y\"]) ** 2\n    ) ** 0.5\n\n\ndef steepest_descent_neighbor(surface, point):\n    current_z = point.get(\"z\")\n    if current_z is None:\n        current_z = cached_elevation(surface, point[\"x\"], point[\"y\"])\n    if current_z is None:\n        return None, 0.0\n    best = None\n    best_drop = 0.0\n    for dx, dy in FLOW_TRACE_DIRS:\n        nx = point[\"x\"] + dx * FLOW_TRACE_STEP\n        ny = point[\"y\"] + dy * FLOW_TRACE_STEP\n        nz = cached_elevation(surface, nx, ny)\n        if nz is None:\n            continue\n        drop = current_z - nz\n        if drop > best_drop:\n            best_drop = drop\n            best = {\"x\": nx, \"y\": ny, \"z\": nz}\n    return best, best_drop\n\n\ndef trace_waterdrop_to_skirt(surface, start_point, skirt_point):\n    if start_point is None or skirt_point is None:\n        return {\"crossed\": None, \"path_length\": 0.0, \"min_distance\": None}\n    if start_point.get(\"x\") is None or start_point.get(\"y\") is None or start_point.get(\"z\") is None:\n        return {\"crossed\": None, \"path_length\": 0.0, \"min_distance\": None}\n    current = {\"x\": start_point[\"x\"], \"y\": start_point[\"y\"], \"z\": start_point[\"z\"]}\n    current_distance = distance_to_skirt(current, skirt_point)\n    min_distance = current_distance\n    path_length = 0.0\n    if current_distance <= FLOW_TRACE_CROSS_TOL:\n        return {\"crossed\": True, \"path_length\": path_length, \"min_distance\": min_distance}\n    max_steps = int(FLOW_TRACE_MAX_LENGTH / FLOW_TRACE_STEP) + 2\n    for _ in range(max_steps):\n        neighbor, best_drop = steepest_descent_neighbor(surface, current)\n        if neighbor is None or best_drop < FLOW_TRACE_MIN_DROP:\n            break\n        next_distance = distance_to_skirt(neighbor, skirt_point)\n        path_length += ((neighbor[\"x\"] - current[\"x\"]) ** 2 + (neighbor[\"y\"] - current[\"y\"]) ** 2) ** 0.5\n        min_distance = min(min_distance, next_distance)\n        if next_distance <= FLOW_TRACE_CROSS_TOL:\n            return {\"crossed\": True, \"path_length\": path_length, \"min_distance\": min_distance}\n        current = neighbor\n        current_distance = next_distance\n        if path_length >= FLOW_TRACE_MAX_LENGTH:\n            break\n    return {\"crossed\": False, \"path_length\": path_length, \"min_distance\": min_distance}\n\n\ndef waterdrop_sample_result(alignment, surface, station, skirt_offset, outward_sign, distance, skirt_point):\n    try:\n        start_point = point_with_axis_reference(\n            alignment, surface, station,\n            skirt_offset + outward_sign * distance\n        )\n    except Exception:\n        return {\n            \"crossed\": None,\n            \"label\": \"SEM_DADO\",\n            \"distance\": distance,\n            \"path_length\": 0.0,\n            \"min_distance\": None,\n        }\n    trace = trace_waterdrop_to_skirt(surface, start_point, skirt_point)\n    crossed = trace[\"crossed\"]\n    near_capture = False\n    if crossed is False and distance > FLOW_TRACE_CAPTURE_TOL:\n        min_distance = trace.get(\"min_distance\")\n        near_capture = min_distance is not None and min_distance <= FLOW_TRACE_CAPTURE_TOL\n    positive = bool(crossed) or near_capture\n    if crossed is None:\n        label = \"SEM_DADO\"\n    elif crossed:\n        label = \"CRUZOU\"\n    elif near_capture:\n        label = \"PERTO\"\n    else:\n        label = \"NAO\"\n    trace[\"positive\"] = positive\n    trace[\"near_capture\"] = near_capture\n    trace[\"label\"] = label\n    trace[\"distance\"] = distance\n    return trace\n\n\ndef waterdrop_to_road(alignment, surface, station, skirt_offset, skirt_point):\n    outward_sign = offset_outward_sign(skirt_offset)\n    results = []\n    short_valid = 0\n    short_hits = 0\n    total_valid = 0\n    total_hits = 0\n    for index, distance in enumerate(SAMPLE_DISTANCES):\n        result = waterdrop_sample_result(\n            alignment, surface, station, skirt_offset,\n            outward_sign, distance, skirt_point\n        )\n        results.append(result)\n        if result[\"crossed\"] is not None:\n            total_valid += 1\n            if result[\"positive\"]:\n                total_hits += 1\n        if index < 3 and result[\"crossed\"] is not None:\n            short_valid += 1\n            if result[\"positive\"]:\n                short_hits += 1\n    if total_valid < 3:\n        return None, results, short_hits, short_valid, total_hits, total_valid\n    return total_hits >= WATERDROP_TOTAL_REQUIRED, results, short_hits, short_valid, total_hits, total_valid\n\n\ndef read_latest_rows(path):\n    latest = {}\n    with open(path, \"rb\") as stream:\n        reader = csv.DictReader(stream, delimiter=\";\")\n        # CSVs UTF-8 gerados para Excel podem iniciar com BOM. No IronPython\n        # essa marca aparece como parte invisivel do primeiro cabecalho.\n        reader.fieldnames = [\n            str(name).lstrip(\"\\xef\\xbb\\xbf\").lstrip(u\"\\ufeff\").strip()\n            for name in reader.fieldnames\n        ]\n        required = [\"estaca_m\", \"offset_le\", \"le\", \"ld\", \"offset_ld\"]\n        missing = [name for name in required if name not in reader.fieldnames]\n        if missing:\n            raise Exception(\"Colunas ausentes no CSV: \" + \", \".join(missing))\n        for row in reader:\n            station = parse_number(row.get(\"estaca_m\"))\n            latest[station] = row\n    return [latest[key] for key in sorted(latest.keys())]\n\n\ndef group_candidates(profile, target_decision):\n    groups = []\n    current = []\n    for item in sorted(profile, key=lambda candidate: candidate[\"station\"]):\n        approved = item.get(\"decision\") == target_decision\n        continuous = (\n            current and\n            item[\"station\"] - current[-1][\"station\"] <= MAX_STATION_GAP\n        )\n        if approved and (not current or continuous):\n            current.append(item)\n        else:\n            if len(current) >= 2 and current[-1][\"station\"] - current[0][\"station\"] >= MIN_SEGMENT_LENGTH:\n                groups.append(current)\n            current = [item] if approved else []\n    if len(current) >= 2 and current[-1][\"station\"] - current[0][\"station\"] >= MIN_SEGMENT_LENGTH:\n        groups.append(current)\n    return groups\n\n\ndef extend_groups_to_downstream_aterro(groups, profiles):\n    packages = []\n    ordered = sorted(profiles, key=lambda item: item[\"station\"])\n    for group in groups:\n        flow_forward = group[-1][\"z\"] < group[0][\"z\"]\n        if flow_forward:\n            candidates = [item for item in ordered if item[\"station\"] > group[-1][\"station\"]]\n        else:\n            candidates = [item for item in reversed(ordered) if item[\"station\"] < group[0][\"station\"]]\n\n        additions = []\n        found_aterro = False\n        for item in candidates:\n            if item.get(\"x\") is None:\n                continue\n            if item[\"height\"] > MIN_CUT_HEIGHT:\n                additions.append(item)\n                found_aterro = True\n                break\n            additions.append(item)\n\n        cut_result = list(group)\n        fill_extension = []\n        outlet = None\n        if found_aterro:\n            outlet = additions[-1]\n            previous = additions[-2] if len(additions) > 1 else (group[-1] if flow_forward else group[0])\n            denominator = outlet[\"height\"] - previous[\"height\"]\n            ratio = 1.0 if abs(denominator) < 1e-9 else (-previous[\"height\"] / denominator)\n            ratio = max(0.0, min(1.0, ratio))\n            transition = {\n                \"station\": previous[\"station\"] + (outlet[\"station\"] - previous[\"station\"]) * ratio,\n                \"x\": previous[\"x\"] + (outlet[\"x\"] - previous[\"x\"]) * ratio,\n                \"y\": previous[\"y\"] + (outlet[\"y\"] - previous[\"y\"]) * ratio,\n                \"z\": previous[\"z\"] + (outlet[\"z\"] - previous[\"z\"]) * ratio,\n                \"height\": 0.0,\n                \"decision\": \"TRANSICAO\",\n            }\n            negative_extension = additions[:-1]\n            cut_result = sorted(group + negative_extension + [transition], key=lambda item: item[\"station\"])\n            fill_extension = sorted([transition, outlet], key=lambda item: item[\"station\"])\n        packages.append({\n            \"cut\": cut_result,\n            \"fill_extension\": fill_extension,\n            \"outlet\": outlet,\n        })\n    return packages\n\n\ndef fill_groups_to_packages(groups):\n    packages = []\n    for group in groups:\n        outlet = group[0] if group[0][\"z\"] <= group[-1][\"z\"] else group[-1]\n        packages.append({\n            \"cut\": [],\n            \"fill_extension\": group,\n            \"outlet\": outlet,\n        })\n    return packages\n\n\ndef group_any_valeta(profile):\n    groups = []\n    current = []\n    gap_span = 0.0\n    for item in sorted(profile, key=lambda candidate: candidate[\"station\"]):\n        approved = item.get(\"decision\") in [\"CRIAR_VALETA_CORTE\", \"CRIAR_VALETA_ATERRO\"]\n        gap = item[\"station\"] - current[-1][\"station\"] if current else 0.0\n        if approved and (not current or gap <= JOIN_VALETA_GAP):\n            current.append(item)\n            gap_span = 0.0\n        elif (not approved) and current and gap <= MAX_STATION_GAP and gap_span + gap <= JOIN_VALETA_GAP:\n            current.append(item)\n            gap_span += gap\n        else:\n            if len(current) >= 2:\n                groups.append(current)\n            current = [item] if approved else []\n            gap_span = 0.0\n    if len(current) >= 2:\n        groups.append(current)\n    return groups\n\n\ndef item_type(item):\n    # Na planilha do talude, positivo representa aterro e negativo representa corte.\n    if item[\"height\"] > MIN_CUT_HEIGHT:\n        return \"ATERRO\"\n    if item[\"height\"] < -MIN_CUT_HEIGHT:\n        return \"CORTE\"\n    return None\n\n\ndef decision_for_segment_type(segment_type):\n    if segment_type == \"CORTE\":\n        return \"CRIAR_VALETA_CORTE\"\n    if segment_type == \"ATERRO\":\n        return \"CRIAR_VALETA_ATERRO\"\n    return None\n\n\ndef segment_has_direct_support(points, segment_type):\n    target = decision_for_segment_type(segment_type)\n    if target is None:\n        return False\n    return any(item.get(\"decision\") == target for item in points)\n\n\ndef package_first_point(package):\n    best = None\n    for segment in package.get(\"segments\", []):\n        for point in segment.get(\"points\", []):\n            if point.get(\"x\") is None or point.get(\"y\") is None or point.get(\"z\") is None:\n                continue\n            if best is None or point[\"station\"] < best[\"station\"]:\n                best = point\n    return best\n\n\ndef package_last_point(package):\n    best = None\n    for segment in package.get(\"segments\", []):\n        for point in segment.get(\"points\", []):\n            if point.get(\"x\") is None or point.get(\"y\") is None or point.get(\"z\") is None:\n                continue\n            if best is None or point[\"station\"] > best[\"station\"]:\n                best = point\n    return best\n\n\ndef segment_touches_outlet(segment_points, outlet):\n    if outlet is None or not segment_points:\n        return False\n    segment_outlet = downstream_end_by_ends(segment_points)\n    if segment_outlet is None:\n        return False\n    if xy_distance(segment_outlet, outlet) <= max(0.75, VALETA_WIDTH * 2.0):\n        return True\n    return abs(float(segment_outlet.get(\"station\", 0.0)) - float(outlet.get(\"station\", 0.0))) <= 0.05\n\n\ndef first_approved_type(points):\n    for item in points:\n        decision = item.get(\"decision\")\n        if decision == \"CRIAR_VALETA_CORTE\":\n            return \"CORTE\"\n        if decision == \"CRIAR_VALETA_ATERRO\":\n            return \"ATERRO\"\n    for item in points:\n        value = item_type(item)\n        if value is not None:\n            return value\n    return None\n\n\ndef split_by_opposite_type_gap(points, base_type):\n    if base_type is None:\n        return [points]\n    result = []\n    current = []\n    opposite = []\n    for item in sorted(points, key=lambda candidate: candidate[\"station\"]):\n        value = item_type(item)\n        is_opposite = value is not None and value != base_type\n        if is_opposite:\n            opposite.append(item)\n            continue\n        if opposite:\n            span = opposite[-1][\"station\"] - opposite[0][\"station\"] if len(opposite) > 1 else 0.0\n            if span <= MAX_OPPOSITE_TYPE_GAP:\n                current.extend(opposite)\n            else:\n                if len(current) >= 2 and current[-1][\"station\"] - current[0][\"station\"] >= MIN_LOCAL_SEGMENT_LENGTH:\n                    result.append(current)\n                current = []\n            opposite = []\n        current.append(item)\n    if opposite and current:\n        span = opposite[-1][\"station\"] - opposite[0][\"station\"] if len(opposite) > 1 else 0.0\n        if span <= MAX_OPPOSITE_TYPE_GAP:\n            current.extend(opposite)\n    if len(current) >= 2 and current[-1][\"station\"] - current[0][\"station\"] >= MIN_LOCAL_SEGMENT_LENGTH:\n        result.append(current)\n    return result if result else []\n\n\ndef dominant_approved_type(points):\n    lengths = {\"CORTE\": 0.0, \"ATERRO\": 0.0}\n    ordered = sorted(points, key=lambda candidate: candidate[\"station\"])\n    for index, item in enumerate(ordered):\n        value = item_type(item)\n        if value is None:\n            continue\n        if index + 1 < len(ordered):\n            delta = max(0.0, ordered[index + 1][\"station\"] - item[\"station\"])\n        elif index > 0:\n            delta = max(0.0, item[\"station\"] - ordered[index - 1][\"station\"])\n        else:\n            delta = 0.0\n        lengths[value] += delta\n    if lengths[\"CORTE\"] > lengths[\"ATERRO\"]:\n        return \"CORTE\"\n    if lengths[\"ATERRO\"] > lengths[\"CORTE\"]:\n        return \"ATERRO\"\n    return first_approved_type(points)\n\n\ndef transition_between(a, b):\n    denominator = b[\"height\"] - a[\"height\"]\n    ratio = 0.5 if abs(denominator) < 1e-9 else (-a[\"height\"] / denominator)\n    ratio = max(0.0, min(1.0, ratio))\n    transition = {\n        \"station\": a[\"station\"] + (b[\"station\"] - a[\"station\"]) * ratio,\n        \"x\": a[\"x\"] + (b[\"x\"] - a[\"x\"]) * ratio,\n        \"y\": a[\"y\"] + (b[\"y\"] - a[\"y\"]) * ratio,\n        \"z\": a[\"z\"] + (b[\"z\"] - a[\"z\"]) * ratio,\n        \"height\": 0.0,\n        \"decision\": \"TRANSICAO\",\n    }\n    for key in [\"axis_x\", \"axis_y\", \"away_x\", \"away_y\"]:\n        if a.get(key) is not None and b.get(key) is not None:\n            transition[key] = a[key] + (b[key] - a[key]) * ratio\n    return transition\n\n\ndef interpolate_between(a, b, station):\n    denominator = b[\"station\"] - a[\"station\"]\n    ratio = 0.0 if abs(denominator) < 1e-9 else (station - a[\"station\"]) / denominator\n    ratio = max(0.0, min(1.0, ratio))\n    point = {\n        \"station\": a[\"station\"] + (b[\"station\"] - a[\"station\"]) * ratio,\n        \"x\": a[\"x\"] + (b[\"x\"] - a[\"x\"]) * ratio,\n        \"y\": a[\"y\"] + (b[\"y\"] - a[\"y\"]) * ratio,\n        \"z\": a[\"z\"] + (b[\"z\"] - a[\"z\"]) * ratio,\n        \"height\": a[\"height\"] + (b[\"height\"] - a[\"height\"]) * ratio,\n        \"decision\": a.get(\"decision\", \"INTERPOLADO\"),\n    }\n    for key in [\"axis_x\", \"axis_y\", \"away_x\", \"away_y\"]:\n        if a.get(key) is not None and b.get(key) is not None:\n            point[key] = a[key] + (b[key] - a[key]) * ratio\n    return point\n\n\ndef point_at_station(points, station):\n    if not points:\n        return None\n    ordered = sorted(points, key=lambda item: item[\"station\"])\n    if station <= ordered[0][\"station\"]:\n        return ordered[0]\n    if station >= ordered[-1][\"station\"]:\n        return ordered[-1]\n    for index in range(1, len(ordered)):\n        previous = ordered[index - 1]\n        item = ordered[index]\n        if previous[\"station\"] <= station <= item[\"station\"]:\n            return interpolate_between(previous, item, station)\n    return None\n\n\ndef crossing_station(a, b, target_z):\n    denominator = b[\"z\"] - a[\"z\"]\n    ratio = 0.5 if abs(denominator) < 1e-9 else (target_z - a[\"z\"]) / denominator\n    ratio = max(0.0, min(1.0, ratio))\n    return a[\"station\"] + (b[\"station\"] - a[\"station\"]) * ratio\n\n\ndef internal_break_candidate(points, index, kind):\n    if index <= 0 or index >= len(points) - 1:\n        return None\n    point = points[index]\n    if kind == \"HIGH\":\n        amplitude = point[\"z\"] - max(points[0][\"z\"], points[-1][\"z\"])\n        if amplitude <= VERTICAL_NOISE_TOL:\n            return None\n        threshold = point[\"z\"] - VERTICAL_NOISE_TOL\n        comparator = lambda item: item[\"z\"] <= threshold\n    else:\n        amplitude = min(points[0][\"z\"], points[-1][\"z\"]) - point[\"z\"]\n        if amplitude <= VERTICAL_NOISE_TOL:\n            return None\n        threshold = point[\"z\"] + VERTICAL_NOISE_TOL\n        comparator = lambda item: item[\"z\"] >= threshold\n\n    left_station = points[0][\"station\"]\n    right_station = points[-1][\"station\"]\n\n    for scan in range(index - 1, -1, -1):\n        if comparator(points[scan]):\n            left_station = crossing_station(points[scan], points[scan + 1], threshold)\n            break\n\n    for scan in range(index + 1, len(points)):\n        if comparator(points[scan]):\n            right_station = crossing_station(points[scan - 1], points[scan], threshold)\n            break\n\n    left_span = max(0.0, point[\"station\"] - left_station)\n    right_span = max(0.0, right_station - point[\"station\"])\n    support_span = max(0.0, right_station - left_station)\n    # Um espigao curto com um lado muito pequeno ainda e ruido local,\n    # mesmo se o outro lado se prolongar bastante ao longo da valeta.\n    if (\n        support_span <= NOISE_GAP_LENGTH or\n        min(left_span, right_span) <= (NOISE_GAP_LENGTH / 2.0)\n    ):\n        return None\n    return {\n        \"point\": point,\n        \"amplitude\": amplitude,\n        \"support_span\": support_span,\n        \"left_span\": left_span,\n        \"right_span\": right_span,\n        \"kind\": kind,\n    }\n\n\ndef split_at_internal_grade_break(group):\n    # Nesta versao a continuidade hidraulica da valeta prevalece sobre\n    # tentativas de dividir o trecho por extremos locais de terreno.\n    return [group]\n\n\ndef split_group_by_sign(group):\n    group = [\n        item for item in group\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(group) < 2:\n        return []\n    segments = []\n    current_type = item_type(group[0])\n    current = [group[0]]\n    for index in range(1, len(group)):\n        previous = group[index - 1]\n        item = group[index]\n        next_type = item_type(item)\n        if next_type is None:\n            continue\n        if current_type is None:\n            current_type = next_type\n            current = [item]\n        elif next_type == current_type:\n            current.append(item)\n        else:\n            transition = transition_between(previous, item)\n            current.append(transition)\n            if len(current) >= 2:\n                segments.append({\"type\": current_type, \"points\": list(current)})\n            current_type = next_type\n            current = [transition, item]\n    if current_type is not None and len(current) >= 2:\n        segments.append({\"type\": current_type, \"points\": current})\n    return segments\n\n\ndef segment_station_span(points):\n    if len(points) < 2:\n        return 0.0\n    return abs(points[-1][\"station\"] - points[0][\"station\"])\n\n\ndef merge_segment_points(segments):\n    merged = []\n    for segment in segments:\n        for point in segment[\"points\"]:\n            if not merged or abs(point[\"station\"] - merged[-1][\"station\"]) > 1e-6:\n                merged.append(point)\n    return merged\n\n\ndef valid_profile_points(profile):\n    return [\n        item for item in sorted(profile, key=lambda point: point[\"station\"])\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n\n\ndef build_profile_points_between(profile, start_station, end_station):\n    if end_station <= start_station:\n        return []\n    ordered = valid_profile_points(profile)\n    if len(ordered) < 2:\n        return []\n    start_point = point_at_station(ordered, start_station)\n    end_point = point_at_station(ordered, end_station)\n    if start_point is None or end_point is None:\n        return []\n    result = [start_point]\n    for item in ordered:\n        if start_station < item[\"station\"] < end_station:\n            result.append(item)\n    if abs(result[-1][\"station\"] - end_point[\"station\"]) > 1e-6:\n        result.append(end_point)\n    return result\n\n\ndef absorb_short_internal_opposites(segments):\n    collapsed = list(segments)\n    changed = True\n    while changed and len(collapsed) >= 3:\n        changed = False\n        index = 1\n        while index < len(collapsed) - 1:\n            previous = collapsed[index - 1]\n            current = collapsed[index]\n            following = collapsed[index + 1]\n            if (\n                previous[\"type\"] == following[\"type\"] and\n                current[\"type\"] != previous[\"type\"] and\n                segment_station_span(current[\"points\"]) <= MAX_OPPOSITE_TYPE_GAP\n            ):\n                merged_points = merge_segment_points([previous, current, following])\n                collapsed[index - 1:index + 2] = [{\n                    \"type\": previous[\"type\"],\n                    \"points\": merged_points,\n                }]\n                changed = True\n                break\n            index += 1\n    return collapsed\n\n\ndef merge_nearby_packages(packages, profile):\n    if not packages:\n        return []\n    ordered_packages = sorted(\n        packages,\n        key=lambda package: package_station_range(package)[0] if package_station_range(package) is not None else 0.0\n    )\n    merged = [ordered_packages[0]]\n    for package in ordered_packages[1:]:\n        previous = merged[-1]\n        prev_range = package_station_range(previous)\n        curr_range = package_station_range(package)\n        if prev_range is None or curr_range is None:\n            merged.append(package)\n            continue\n        prev_last = previous[\"segments\"][-1]\n        curr_first = package[\"segments\"][0]\n        prev_end_point = prev_last[\"points\"][-1]\n        curr_start_point = curr_first[\"points\"][0]\n        gap = curr_range[0] - prev_range[1]\n        join_distance = xy_distance(prev_end_point, curr_start_point)\n        if prev_end_point.get(\"z\") is None or curr_start_point.get(\"z\") is None:\n            delta_z = 1e12\n        else:\n            delta_z = abs(curr_start_point[\"z\"] - prev_end_point[\"z\"])\n        close_enough = (\n            gap <= PACKAGE_JOIN_MAX_DISTANCE and\n            join_distance <= PACKAGE_JOIN_MAX_DISTANCE and\n            delta_z <= VERTICAL_NOISE_TOL\n        )\n        can_merge = (\n            close_enough and\n            package_primary_type(previous) == package_primary_type(package)\n        )\n        if not can_merge:\n            merged.append(package)\n            continue\n        rebuilt = finalize_package_range(\n            profile,\n            min(prev_range[0], curr_range[0]),\n            max(prev_range[1], curr_range[1]),\n        )\n        if rebuilt is None:\n            merged.append(package)\n            continue\n        merged[-1] = rebuilt\n    return merged\n\n\ndef extend_cut_until_first_fill(group, profile):\n    if not group:\n        return list(group), None\n    outlet = downstream_end_by_ends(group)\n    if item_type(outlet) != \"CORTE\":\n        return list(group), outlet\n    ordered = [\n        item for item in sorted(profile, key=lambda candidate: candidate[\"station\"])\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(ordered) < 2:\n        return list(group), None\n    group_start = group[0][\"station\"]\n    group_end = group[-1][\"station\"]\n    forward = abs(outlet[\"station\"] - group_end) <= abs(outlet[\"station\"] - group_start)\n    if forward:\n        candidates = [item for item in ordered if item[\"station\"] > outlet[\"station\"]]\n    else:\n        candidates = [item for item in reversed(ordered) if item[\"station\"] < outlet[\"station\"]]\n    additions = []\n    last_station = outlet[\"station\"]\n    found_fill = None\n    lowest_z = outlet[\"z\"]\n    for item in candidates:\n        if item[\"z\"] > lowest_z + CUT_EXTENSION_CLIMB_TOL:\n            # O caminho comecou a subir de verdade a partir do ponto mais baixo ja\n            # alcancado -- nao ha escoamento por gravidade nesse sentido, entao para\n            # de procurar aterro aqui (mesmo que exista um aterro confirmado mais\n            # adiante, ele nao e alcancavel ladeira acima).\n            break\n        lowest_z = min(lowest_z, item[\"z\"])\n        additions.append(item)\n        last_station = item[\"station\"]\n        # So aceita como aterro de saida um ponto onde a agua foi de fato confirmada\n        # indo para a pista (decision == CRIAR_VALETA_ATERRO). Um ponto isolado com\n        # altura positiva mas sem agua comprovada (DISPENSAR_VALETA) e ruido de secao,\n        # nao um aterro real onde a valeta pode desaguar.\n        if item_type(item) == \"ATERRO\" and item.get(\"decision\") == \"CRIAR_VALETA_ATERRO\":\n            found_fill = item\n            break\n    if found_fill is None:\n        return list(group), None\n    return sorted(group + additions, key=lambda candidate: candidate[\"station\"]), found_fill\n\n\ndef finalize_package_segments(segments, profile):\n    segments = [\n        segment for segment in segments\n        if len(segment.get(\"points\", [])) >= 2\n    ]\n    if not segments:\n        return None\n    package_points = merge_segment_points(segments)\n    outlet = downstream_end_by_ends(package_points)\n    outlet_type = item_type(outlet) if outlet is not None else None\n    if outlet_type is None:\n        outlet_type = segments[-1][\"type\"]\n    if outlet_type == \"CORTE\":\n        extended_points, found_fill = extend_cut_until_first_fill(package_points, profile)\n        if found_fill is not None and len(extended_points) >= 2:\n            forced_segments = split_group_by_sign(extended_points)\n            forced_segments = absorb_short_internal_opposites(forced_segments)\n            forced_segments = [\n                segment for segment in forced_segments\n                if len(segment.get(\"points\", [])) >= 2\n            ]\n            if forced_segments:\n                segments = forced_segments\n                package_points = merge_segment_points(segments)\n                outlet = downstream_end_by_ends(package_points)\n                outlet_type = item_type(outlet) if outlet is not None else None\n                if outlet_type is None:\n                    outlet_type = segments[-1][\"type\"]\n    return {\n        \"segments\": segments,\n        \"outlet\": outlet,\n        \"outlet_type\": outlet_type,\n    }\n\n\ndef finalize_package_range(profile, start_station, end_station):\n    points = build_profile_points_between(profile, start_station, end_station)\n    if len(points) < 2:\n        return None\n    segments = split_group_by_sign(points)\n    segments = absorb_short_internal_opposites(segments)\n    return finalize_package_segments(segments, profile)\n\n\ndef merge_overlapping_primary_packages(packages, profile):\n    if not packages:\n        return []\n    ordered = sorted(\n        packages,\n        key=lambda package: package_station_range(package)[0] if package_station_range(package) is not None else 0.0\n    )\n    merged = []\n    for package in ordered:\n        curr_range = package_station_range(package)\n        if curr_range is None:\n            continue\n        if not merged:\n            merged.append(package)\n            continue\n        previous = merged[-1]\n        prev_range = package_station_range(previous)\n        if prev_range is None:\n            merged.append(package)\n            continue\n        same_primary = package_primary_type(previous) == package_primary_type(package)\n        overlaps = curr_range[0] <= prev_range[1] + 1e-6\n        if not (same_primary and overlaps):\n            merged.append(package)\n            continue\n        rebuilt = finalize_package_range(\n            profile,\n            min(prev_range[0], curr_range[0]),\n            max(prev_range[1], curr_range[1]),\n        )\n        if rebuilt is None:\n            merged.append(package)\n            continue\n        merged[-1] = rebuilt\n    return merged\n\n\ndef absorb_short_opposite_packages(packages, profile):\n    if len(packages) < 3:\n        return list(packages)\n    ordered = sorted(\n        packages,\n        key=lambda package: package_station_range(package)[0] if package_station_range(package) is not None else 0.0\n    )\n    changed = True\n    while changed and len(ordered) >= 3:\n        changed = False\n        index = 1\n        while index < len(ordered) - 1:\n            previous = ordered[index - 1]\n            current = ordered[index]\n            following = ordered[index + 1]\n            prev_type = package_primary_type(previous)\n            curr_type = package_primary_type(current)\n            next_type = package_primary_type(following)\n            prev_range = package_station_range(previous)\n            curr_range = package_station_range(current)\n            next_range = package_station_range(following)\n            if (\n                prev_type is None or curr_type is None or next_type is None or\n                prev_range is None or curr_range is None or next_range is None\n            ):\n                index += 1\n                continue\n            prev_gap = max(0.0, curr_range[0] - prev_range[1])\n            next_gap = max(0.0, next_range[0] - curr_range[1])\n            curr_span = max(0.0, curr_range[1] - curr_range[0])\n            if (\n                prev_type == next_type and\n                curr_type != prev_type and\n                curr_span <= MAX_OPPOSITE_TYPE_GAP and\n                prev_gap <= PACKAGE_JOIN_MAX_DISTANCE and\n                next_gap <= PACKAGE_JOIN_MAX_DISTANCE\n            ):\n                rebuilt = finalize_package_range(profile, prev_range[0], next_range[1])\n                if rebuilt is not None:\n                    ordered[index - 1:index + 2] = [rebuilt]\n                    changed = True\n                    break\n            index += 1\n    return ordered\n\n\ndef packages_by_connected_valeta(profile):\n    packages = []\n    for group in group_any_valeta(profile):\n        for part in split_at_internal_grade_break(group):\n            clean_points = [\n                item for item in part\n                if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n            ]\n            if len(clean_points) < 2:\n                continue\n            segments = split_group_by_sign(clean_points)\n            segments = [\n                segment for segment in segments\n                if len(segment[\"points\"]) >= 2\n            ]\n            segments = absorb_short_internal_opposites(segments)\n            segments = [\n                segment for segment in segments\n                if len(segment[\"points\"]) >= 2\n            ]\n            if not segments:\n                continue\n            package = finalize_package_segments(segments, profile)\n            if package is not None:\n                packages.append(package)\n    packages = merge_overlapping_primary_packages(packages, profile)\n    packages = resolve_group_package_overlaps(packages, \"CORTE\")\n    packages = merge_overlapping_primary_packages(packages, profile)\n    packages = absorb_short_opposite_packages(packages, profile)\n    packages = merge_overlapping_primary_packages(packages, profile)\n    return merge_nearby_packages(packages, profile)\n\n\ndef package_primary_type(package):\n    segments = package.get(\"segments\", [])\n    if not segments:\n        return None\n    return segments[0].get(\"type\")\n\n\ndef package_station_range(package):\n    stations = []\n    for segment in package.get(\"segments\", []):\n        for item in segment.get(\"points\", []):\n            if item.get(\"station\") is not None:\n                stations.append(item[\"station\"])\n    if not stations:\n        return None\n    return min(stations), max(stations)\n\n\ndef merge_station_ranges(ranges):\n    clean = [\n        (min(start, end), max(start, end))\n        for start, end in ranges\n        if start is not None and end is not None\n    ]\n    if not clean:\n        return []\n    clean.sort(key=lambda item: item[0])\n    merged = [clean[0]]\n    for start, end in clean[1:]:\n        prev_start, prev_end = merged[-1]\n        if start <= prev_end + 1e-6:\n            merged[-1] = (prev_start, max(prev_end, end))\n        else:\n            merged.append((start, end))\n    return merged\n\n\ndef build_points_between(points, start_station, end_station):\n    ordered = [\n        item for item in sorted(points, key=lambda point: point[\"station\"])\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(ordered) < 2 or end_station - start_station <= 1e-6:\n        return []\n    start_point = point_at_station(ordered, start_station)\n    end_point = point_at_station(ordered, end_station)\n    if start_point is None or end_point is None:\n        return []\n    result = [start_point]\n    for item in ordered:\n        if start_station < item[\"station\"] < end_station:\n            result.append(item)\n    if abs(result[-1][\"station\"] - end_point[\"station\"]) > 1e-6:\n        result.append(end_point)\n    return result\n\n\ndef trim_points_by_blocked_ranges(points, blocked_ranges):\n    ordered = [\n        item for item in sorted(points, key=lambda point: point[\"station\"])\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(ordered) < 2:\n        return []\n    start_station = ordered[0][\"station\"]\n    end_station = ordered[-1][\"station\"]\n    if end_station - start_station < MIN_LOCAL_SEGMENT_LENGTH:\n        return []\n    merged = merge_station_ranges(blocked_ranges)\n    if not merged:\n        return [ordered]\n    chunks = []\n    cursor = start_station\n    for block_start, block_end in merged:\n        if block_end <= cursor:\n            continue\n        if block_start > cursor:\n            chunk = build_points_between(ordered, cursor, min(block_start, end_station))\n            if len(chunk) >= 2 and chunk[-1][\"station\"] - chunk[0][\"station\"] >= MIN_LOCAL_SEGMENT_LENGTH:\n                chunks.append(chunk)\n        cursor = max(cursor, block_end)\n        if cursor >= end_station:\n            break\n    if cursor < end_station:\n        chunk = build_points_between(ordered, cursor, end_station)\n        if len(chunk) >= 2 and chunk[-1][\"station\"] - chunk[0][\"station\"] >= MIN_LOCAL_SEGMENT_LENGTH:\n            chunks.append(chunk)\n    return chunks\n\n\ndef resolve_group_package_overlaps(group_packages, base_type):\n    if not group_packages:\n        return []\n    dominant_ranges = merge_station_ranges([\n        package_station_range(package)\n        for package in group_packages\n        if package_primary_type(package) == base_type and package_station_range(package) is not None\n    ])\n    if not dominant_ranges:\n        return group_packages\n    resolved = []\n    for package in group_packages:\n        package_type = package_primary_type(package)\n        if package_type == base_type:\n            resolved.append(package)\n            continue\n        new_segments = []\n        for segment in package.get(\"segments\", []):\n            for chunk in trim_points_by_blocked_ranges(segment.get(\"points\", []), dominant_ranges):\n                if len(chunk) < 2 or chunk[-1][\"station\"] - chunk[0][\"station\"] < MIN_LOCAL_SEGMENT_LENGTH:\n                    continue\n                new_segments.append({\n                    \"type\": segment[\"type\"],\n                    \"points\": chunk,\n                })\n        for segment in new_segments:\n            outlet = downstream_end_by_ends(segment[\"points\"])\n            resolved.append({\n                \"segments\": [segment],\n                \"outlet\": outlet,\n                \"outlet_type\": segment[\"type\"],\n            })\n    resolved.sort(key=lambda package: package_station_range(package)[0] if package_station_range(package) is not None else 0.0)\n    return resolved\n\n\ndef dominant_downstream_endpoint(points):\n    first = points[0]\n    last = points[-1]\n    dz = last[\"z\"] - first[\"z\"]\n    if abs(dz) > VERTICAL_NOISE_TOL:\n        return last if dz < 0.0 else first\n    # Se inicio/fim ficam praticamente empatados, usa a menor cota global.\n    return min(points, key=lambda item: item[\"z\"])\n\n\ndef downstream_end_by_ends(points):\n    clean = [\n        item for item in points\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(clean) < 2:\n        return clean[0] if clean else None\n    first = clean[0]\n    last = clean[-1]\n    dz = last[\"z\"] - first[\"z\"]\n    # V45: o sentido do caimento NAO usa mais o VERTICAL_NOISE_TOL (IN[13]). Aquele\n    # parametro e de ruido/espigao (metros) e, com 4m, qualquer valeta com menos de 4m\n    # de desnivel entre as pontas caia no \"return last\" e ganhava saida na estaca final\n    # mesmo subindo -- era isso que invertia entrada/saida. Agora so e considerado\n    # empate quando o desnivel real e menor que FLOW_DIRECTION_TOL.\n    if abs(dz) > FLOW_DIRECTION_TOL:\n        return last if dz < 0.0 else first\n    # Empate real (terreno plano): sai pela ponta mais proxima do ponto mais baixo.\n    low = min(clean, key=lambda item: item[\"z\"])\n    if abs(low[\"station\"] - first[\"station\"]) < abs(low[\"station\"] - last[\"station\"]):\n        return first\n    return last\n\n\ndef ordered_flow_points(points, outlet=None):\n    clean = [\n        item for item in points\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(clean) < 2:\n        return clean\n    if outlet is None:\n        outlet = downstream_end_by_ends(clean)\n    if outlet is not None:\n        dist_first = (clean[0][\"x\"] - outlet[\"x\"]) ** 2 + (clean[0][\"y\"] - outlet[\"y\"]) ** 2\n        dist_last = (clean[-1][\"x\"] - outlet[\"x\"]) ** 2 + (clean[-1][\"y\"] - outlet[\"y\"]) ** 2\n        if dist_first < dist_last:\n            return list(reversed(clean))\n    return list(clean)\n\n\ndef interpolate_path_ratio(a, b, ratio):\n    ratio = max(0.0, min(1.0, ratio))\n    point = {}\n    for key in [\"station\", \"x\", \"y\", \"z\", \"height\", \"axis_x\", \"axis_y\", \"away_x\", \"away_y\"]:\n        if a.get(key) is not None and b.get(key) is not None:\n            point[key] = a[key] + (b[key] - a[key]) * ratio\n        elif a.get(key) is not None:\n            point[key] = a[key]\n        elif b.get(key) is not None:\n            point[key] = b[key]\n    point[\"decision\"] = a.get(\"decision\", b.get(\"decision\", \"INTERPOLADO\"))\n    return point\n\n\ndef path_length(points):\n    total = 0.0\n    for index in range(1, len(points)):\n        dx = points[index][\"x\"] - points[index - 1][\"x\"]\n        dy = points[index][\"y\"] - points[index - 1][\"y\"]\n        total += (dx * dx + dy * dy) ** 0.5\n    return total\n\n\ndef point_at_path_distance(points, target_distance):\n    if not points:\n        return None\n    if target_distance <= 0.0:\n        return points[0]\n    traveled = 0.0\n    for index in range(1, len(points)):\n        a = points[index - 1]\n        b = points[index]\n        dx = b[\"x\"] - a[\"x\"]\n        dy = b[\"y\"] - a[\"y\"]\n        length = (dx * dx + dy * dy) ** 0.5\n        if length < 1e-9:\n            continue\n        if traveled + length >= target_distance:\n            ratio = (target_distance - traveled) / length\n            return interpolate_path_ratio(a, b, ratio)\n        traveled += length\n    return points[-1]\n\n\ndef ensure_layer(db, tr, name, color_index):\n    layer_table = tr.GetObject(db.LayerTableId, OpenMode.ForRead)\n    if layer_table.Has(name):\n        record = tr.GetObject(layer_table[name], OpenMode.ForWrite)\n        record.Color = Color.FromColorIndex(ColorMethod.ByAci, color_index)\n        record.LineWeight = LineWeight.LineWeight050\n        return\n    layer_table.UpgradeOpen()\n    record = LayerTableRecord()\n    record.Name = name\n    record.Color = Color.FromColorIndex(ColorMethod.ByAci, color_index)\n    record.LineWeight = LineWeight.LineWeight050\n    layer_table.Add(record)\n    tr.AddNewlyCreatedDBObject(record, True)\n\n\ndef append_polyline(model_space, tr, points_data, layer):\n    points_data = [\n        item for item in points_data\n        if item.get(\"x\") is not None and item.get(\"y\") is not None\n    ]\n    if len(points_data) < 2:\n        return None\n    polyline = Polyline()\n    for index, item in enumerate(points_data):\n        polyline.AddVertexAt(index, Point2d(item[\"x\"], item[\"y\"]), 0.0, 0.0, 0.0)\n    polyline.Layer = layer\n    polyline.ConstantWidth = VALETA_WIDTH\n    polyline.LineWeight = LineWeight.LineWeight050\n    model_space.AppendEntity(polyline)\n    tr.AddNewlyCreatedDBObject(polyline, True)\n    return polyline\n\n\ndef append_closed_polyline(model_space, tr, points, layer, hatch=True):\n    polyline = Polyline()\n    for index, point in enumerate(points):\n        polyline.AddVertexAt(index, Point2d(point[0], point[1]), 0.0, 0.0, 0.0)\n    polyline.Closed = True\n    polyline.Layer = layer\n    polyline.LineWeight = LineWeight.LineWeight050\n    model_space.AppendEntity(polyline)\n    tr.AddNewlyCreatedDBObject(polyline, True)\n    if hatch:\n        try:\n            hatch_obj = Hatch()\n            hatch_obj.Layer = layer\n            hatch_obj.SetHatchPattern(HatchPatternType.PreDefined, \"SOLID\")\n            model_space.AppendEntity(hatch_obj)\n            tr.AddNewlyCreatedDBObject(hatch_obj, True)\n            ids = ObjectIdCollection()\n            ids.Add(polyline.ObjectId)\n            hatch_obj.AppendLoop(HatchLoopTypes.External, ids)\n            hatch_obj.EvaluateHatch(True)\n        except Exception:\n            pass\n    return polyline\n\n\ndef point_to_segment_distance(point, a, b):\n    px, py = point[\"x\"], point[\"y\"]\n    ax, ay = a[\"x\"], a[\"y\"]\n    bx, by = b[\"x\"], b[\"y\"]\n    dx = bx - ax\n    dy = by - ay\n    denominator = dx * dx + dy * dy\n    if denominator < 1e-12:\n        return ((px - ax) ** 2 + (py - ay) ** 2) ** 0.5\n    t = ((px - ax) * dx + (py - ay) * dy) / denominator\n    t = max(0.0, min(1.0, t))\n    cx = ax + dx * t\n    cy = ay + dy * t\n    return ((px - cx) ** 2 + (py - cy) ** 2) ** 0.5\n\n\ndef package_all_points(package):\n    result = []\n    for segment in package.get(\"segments\", []):\n        for point in segment.get(\"points\", []):\n            if point.get(\"x\") is None or point.get(\"y\") is None:\n                continue\n            if not result or point[\"station\"] != result[-1][\"station\"]:\n                result.append(point)\n    return result\n\n\ndef outlet_falls_on_another_valeta(outlet, side_packages, package_index, tolerance):\n    # Um dissipador so faz sentido quando a valeta realmente TERMINA. Se a saida deste\n    # pacote cai em cima do tracado de outro pacote do mesmo lado -- o que acontece\n    # quando a extensao do corte ate o aterro (extend_cut_until_first_fill) avanca por\n    # cima do proximo grupo, deixando os dois pacotes sobrepostos em estaca -- entao a\n    # agua continua correndo na valeta seguinte e nao ha nada para dissipar ali. Sem\n    # este teste, o dissipador aparecia pendurado no MEIO de uma valeta continua.\n    if outlet is None or outlet.get(\"x\") is None or outlet.get(\"y\") is None:\n        return False\n    outlet_station = float(outlet.get(\"station\", 0.0))\n    for other_index, other in enumerate(side_packages):\n        if other_index == package_index:\n            continue\n        other_range = package_station_range(other)\n        if other_range is None:\n            continue\n        # pre-filtro barato por estaca, para nao varrer todos os pontos de todos os pacotes\n        if outlet_station < other_range[0] - 25.0 or outlet_station > other_range[1] + 25.0:\n            continue\n        points = package_all_points(other)\n        for index in range(1, len(points)):\n            if point_to_segment_distance(outlet, points[index - 1], points[index]) <= tolerance:\n                return True\n    return False\n\n\ndef create_polylines(db, tr, packages_by_side):\n    ensure_layer(db, tr, \"VALETA_CORTE_LE\", 84)\n    ensure_layer(db, tr, \"VALETA_CORTE_LD\", 84)\n    ensure_layer(db, tr, \"VALETA_ATERRO_LE\", 211)\n    ensure_layer(db, tr, \"VALETA_ATERRO_LD\", 211)\n    ensure_layer(db, tr, \"DISSIPADOR_CORTE\", 84)\n    ensure_layer(db, tr, \"DISSIPADOR_ATERRO\", 211)\n    ensure_layer(db, tr, \"SETA_CAIMENTO_VALETA\", 7)\n    block_table = tr.GetObject(db.BlockTableId, OpenMode.ForRead)\n    model_space = tr.GetObject(block_table[BlockTableRecord.ModelSpace], OpenMode.ForWrite)\n    created = []\n    outlets = []\n    arrow_segments = []\n    plan_records = []\n    debug_rows = []\n    removed = 0\n    tool_layers = [\n        \"VALETA_CORTE_LE\", \"VALETA_CORTE_LD\",\n        \"VALETA_ATERRO_LE\", \"VALETA_ATERRO_LD\",\n        \"DISSIPADOR_CORTE\", \"DISSIPADOR_ATERRO\", \"SETA_CAIMENTO_VALETA\"\n    ]\n    for object_id in model_space:\n        try:\n            obj = tr.GetObject(object_id, OpenMode.ForRead)\n            if obj.Layer in tool_layers:\n                obj.UpgradeOpen()\n                obj.Erase()\n                removed += 1\n        except Exception:\n            pass\n    for side in [\"LE\", \"LD\"]:\n        side_packages = sorted(\n            packages_by_side[side],\n            key=lambda pkg: (\n                package_station_range(pkg)[0]\n                if package_station_range(pkg) is not None else 0.0\n            )\n        )\n        touches_next_package = [False] * len(side_packages)\n        bridge_next_package = [False] * len(side_packages)\n        bridge_target = [None] * len(side_packages)\n        bridge_backward = [False] * len(side_packages)\n        outlet_on_other = [False] * len(side_packages)\n        for idx in range(len(side_packages)):\n            # V45: a costura/supressao de dissipador precisa olhar para o lado onde a\n            # agua SAI. Antes so se olhava o vao ate o PROXIMO pacote, entao uma valeta\n            # que drena para tras (saida na estaca inicial) perdia o dissipador na saida\n            # real e era emendada no proximo pacote pela ponta de montante.\n            curr_range = package_station_range(side_packages[idx])\n            if curr_range is None:\n                continue\n            outlet = side_packages[idx].get(\"outlet\")\n            outlet_at_start = (\n                outlet is not None and outlet.get(\"station\") is not None and\n                abs(outlet[\"station\"] - curr_range[0]) < abs(outlet[\"station\"] - curr_range[1])\n            )\n            if outlet_at_start:\n                if idx == 0:\n                    continue\n                prev_range = package_station_range(side_packages[idx - 1])\n                if prev_range is None:\n                    continue\n                gap = curr_range[0] - prev_range[1]\n                if gap <= package_touch_tolerance():\n                    touches_next_package[idx] = True\n                    if gap > -1e-6:\n                        bridge_next_package[idx] = True\n                        bridge_backward[idx] = True\n                        bridge_target[idx] = package_last_point(side_packages[idx - 1])\n                continue\n            if idx + 1 >= len(side_packages):\n                continue\n            next_range = package_station_range(side_packages[idx + 1])\n            if next_range is None:\n                continue\n            gap = next_range[0] - curr_range[1]\n            # A saida de um pacote encosta no inicio do proximo (sem vazio real entre\n            # eles): a vazao acumula direto no proximo trecho, nao precisa dissipador\n            # aqui -- dissipador so faz sentido quando o trecho realmente termina sem\n            # continuacao.\n            if gap <= package_touch_tolerance():\n                # Vazio pequeno OU sobreposicao (gap negativo): nos dois casos a valeta\n                # continua, entao nao ha dissipador. A diferenca e que so faz sentido\n                # esticar ate o inicio do proximo pacote quando existe vazio de verdade;\n                # sobrepostos ja se encontram, e esticar desenharia um gancho para tras.\n                touches_next_package[idx] = True\n                if gap > -1e-6:\n                    bridge_next_package[idx] = True\n                    bridge_target[idx] = package_first_point(side_packages[idx + 1])\n        for package_index, package in enumerate(side_packages):\n            outlet_on_other[package_index] = outlet_falls_on_another_valeta(\n                side_packages[package_index].get(\"outlet\"),\n                side_packages, package_index, max(2.0, VALETA_WIDTH * 4.0)\n            )\n        for package_index, package in enumerate(side_packages):\n            package_arrow_points = []\n            if \"segments\" in package:\n                package_outlet = package.get(\"outlet\")\n                package_outlet_type = package.get(\"outlet_type\", item_type(package_outlet))\n                package_touches_next = (\n                    touches_next_package[package_index] or outlet_on_other[package_index]\n                )\n                next_package_start = (\n                    bridge_target[package_index]\n                    if bridge_next_package[package_index] else None\n                )\n                drawable_segments = []\n                for segment in package[\"segments\"]:\n                    segment_type = segment[\"type\"]\n                    segment_points = segment[\"points\"]\n                    has_support = segment_has_direct_support(segment_points, segment_type)\n                    touches_outlet = (\n                        package_outlet is not None and\n                        segment_type == package_outlet_type and\n                        segment_touches_outlet(segment_points, package_outlet)\n                    )\n                    if has_support or touches_outlet:\n                        drawable_segments.append({\n                            \"type\": segment_type,\n                            \"points\": segment_points,\n                            \"touches_outlet\": touches_outlet,\n                        })\n                for segment in drawable_segments:\n                    segment_type = segment[\"type\"]\n                    segment_points = segment[\"points\"]\n                    if segment.get(\"touches_outlet\") and package_touches_next:\n                        # Sem dissipador aqui. Havendo vazio real, fecha a costura ate o\n                        # inicio do proximo pacote; se os pacotes ja se sobrepoem, nao\n                        # desenha rabicho nenhum -- era ele que virava a haste solta\n                        # apontando para fora no meio da valeta.\n                        if next_package_start is not None and bridge_backward[package_index]:\n                            draw_points = [next_package_start] + list(segment_points)\n                        elif next_package_start is not None:\n                            draw_points = list(segment_points) + [next_package_start]\n                        else:\n                            draw_points = list(segment_points)\n                    elif segment.get(\"touches_outlet\"):\n                        draw_points = extend_segment_to_outlet(segment_points, package, side, segment_type)\n                    else:\n                        draw_points = list(segment_points)\n                    polyline = append_polyline(model_space, tr, draw_points, \"VALETA_\" + segment_type + \"_\" + side)\n                    if polyline is None:\n                        continue\n                    created.append([\n                        segment_type, side,\n                        fmt(segment_points[0][\"station\"]),\n                        fmt(segment_points[-1][\"station\"]),\n                        fmt(path_length(draw_points)),\n                        len(segment_points), polyline.Handle.ToString()\n                    ])\n                    segment_outlet = downstream_end_by_ends(segment_points)\n                    draws_dissipator = (\n                        not package_touches_next and\n                        package_outlet is not None and\n                        package_outlet_type == segment_type and\n                        segment_outlet is not None and\n                        (\n                            xy_distance(segment_outlet, package_outlet) <= max(0.75, VALETA_WIDTH * 2.0) or\n                            abs(float(segment_outlet.get(\"station\", 0.0)) - float(package_outlet.get(\"station\", 0.0))) <= 0.05\n                        )\n                    )\n                    plan_records.append({\n                        \"segment_type\": segment_type,\n                        \"side\": side,\n                        \"station_start\": float(segment_points[0][\"station\"]),\n                        \"station_end\": float(segment_points[-1][\"station\"]),\n                        \"start_point\": segment_points[0],\n                        \"end_point\": segment_points[-1],\n                        \"outlet_point\": segment_outlet,\n                        \"length_drawn\": path_length(draw_points),\n                        \"section_critica_m\": path_length(segment_points),\n                        \"slope_pct\": longitudinal_slope_pct(segment_points),\n                        \"handle\": polyline.Handle.ToString(),\n                        \"layer\": \"VALETA_\" + segment_type + \"_\" + side,\n                        \"segment_points\": list(segment_points),\n                        \"desenha_dissipador\": draws_dissipator,\n                    })\n                    for point in segment_points:\n                        if not package_arrow_points or point[\"station\"] != package_arrow_points[-1][\"station\"]:\n                            package_arrow_points.append(point)\n            else:\n                cut = package[\"cut\"]\n                cut_polyline = append_polyline(model_space, tr, cut, \"VALETA_CORTE_\" + side)\n                if cut_polyline is not None:\n                    created.append([\n                        \"CORTE\", side, fmt(cut[0][\"station\"]), fmt(cut[-1][\"station\"]),\n                        fmt(path_length(cut)),\n                        len(cut), cut_polyline.Handle.ToString()\n                    ])\n                    cut_outlet = downstream_end_by_ends(cut)\n                    cut_package_outlet = package.get(\"outlet\")\n                    cut_outlet_type = package.get(\"outlet_type\", item_type(cut_package_outlet))\n                    plan_records.append({\n                        \"segment_type\": \"CORTE\",\n                        \"side\": side,\n                        \"station_start\": float(cut[0][\"station\"]),\n                        \"station_end\": float(cut[-1][\"station\"]),\n                        \"start_point\": cut[0],\n                        \"end_point\": cut[-1],\n                        \"outlet_point\": cut_outlet,\n                        \"length_drawn\": path_length(cut),\n                        \"section_critica_m\": path_length(cut),\n                        \"slope_pct\": longitudinal_slope_pct(cut),\n                        \"handle\": cut_polyline.Handle.ToString(),\n                        \"layer\": \"VALETA_CORTE_\" + side,\n                        \"segment_points\": list(cut),\n                        \"desenha_dissipador\": (\n                            cut_package_outlet is not None and\n                            cut_outlet_type == \"CORTE\" and\n                            cut_outlet is not None and\n                            (\n                                xy_distance(cut_outlet, cut_package_outlet) <= max(0.75, VALETA_WIDTH * 2.0) or\n                                abs(float(cut_outlet.get(\"station\", 0.0)) - float(cut_package_outlet.get(\"station\", 0.0))) <= 0.05\n                            )\n                        ),\n                    })\n                    package_arrow_points.extend(cut)\n\n                extension = package[\"fill_extension\"]\n                fill_polyline = append_polyline(model_space, tr, extension, \"VALETA_ATERRO_\" + side)\n                if fill_polyline is not None:\n                    created.append([\n                        \"ATERRO\", side, fmt(extension[0][\"station\"]), fmt(extension[-1][\"station\"]),\n                        fmt(path_length(extension)),\n                        len(extension), fill_polyline.Handle.ToString()\n                    ])\n                    fill_outlet = downstream_end_by_ends(extension)\n                    fill_package_outlet = package.get(\"outlet\")\n                    fill_outlet_type = package.get(\"outlet_type\", item_type(fill_package_outlet))\n                    plan_records.append({\n                        \"segment_type\": \"ATERRO\",\n                        \"side\": side,\n                        \"station_start\": float(extension[0][\"station\"]),\n                        \"station_end\": float(extension[-1][\"station\"]),\n                        \"start_point\": extension[0],\n                        \"end_point\": extension[-1],\n                        \"outlet_point\": fill_outlet,\n                        \"length_drawn\": path_length(extension),\n                        \"section_critica_m\": path_length(extension),\n                        \"slope_pct\": longitudinal_slope_pct(extension),\n                        \"handle\": fill_polyline.Handle.ToString(),\n                        \"layer\": \"VALETA_ATERRO_\" + side,\n                        \"segment_points\": list(extension),\n                        \"desenha_dissipador\": (\n                            fill_package_outlet is not None and\n                            fill_outlet_type == \"ATERRO\" and\n                            fill_outlet is not None and\n                            (\n                                xy_distance(fill_outlet, fill_package_outlet) <= max(0.75, VALETA_WIDTH * 2.0) or\n                                abs(float(fill_outlet.get(\"station\", 0.0)) - float(fill_package_outlet.get(\"station\", 0.0))) <= 0.05\n                            )\n                        ),\n                    })\n                    package_arrow_points.extend(extension)\n\n            curr_range = package_station_range(package)\n            next_range = (\n                package_station_range(side_packages[package_index + 1])\n                if package_index + 1 < len(side_packages) else None\n            )\n            debug_rows.append([\n                side, package_index + 1,\n                fmt(curr_range[0]) if curr_range else \"\", fmt(curr_range[1]) if curr_range else \"\",\n                package_primary_type(package) or \"\",\n                fmt(package.get(\"outlet\", {}).get(\"station\")) if package.get(\"outlet\") else \"\",\n                fmt(next_range[0] - curr_range[1]) if (curr_range and next_range) else \"\",\n                \"SIM\" if touches_next_package[package_index] else \"-\",\n                \"SIM\" if outlet_on_other[package_index] else \"-\",\n                \"-\" if package_touches_next else \"SIM\",\n            ])\n            outlet = package[\"outlet\"]\n            if outlet is not None and not package_touches_next:\n                outlet_type = package.get(\"outlet_type\", item_type(outlet))\n                if outlet_type is None:\n                    outlet_type = \"ATERRO\"\n                key = side + \"|\" + fmt(outlet[\"station\"]) + \"|\" + outlet_type\n                if key not in outlets:\n                    create_dissipator(model_space, tr, package, side, outlet_type)\n                    outlets.append(key)\n            if package_arrow_points:\n                arrow_segments.append([package_arrow_points, package.get(\"outlet\")])\n    for arrow_data in arrow_segments:\n        create_flow_arrows(model_space, tr, arrow_data[0], \"SETA_CAIMENTO_VALETA\", arrow_data[1])\n    plan_rows = build_plan_rows(plan_records)\n    # V47: a nota nunca pode derrubar o desenho. Se der erro, registra e segue.\n    try:\n        nota_rows = build_nota_servico_rows(plan_records)\n    except Exception as nota_error:\n        nota_rows = []\n        NOTA_ERRORS.append(\"Erro ao montar nota de servico: \" + str(nota_error))\n    return created, outlets, removed, plan_rows, debug_rows, nota_rows\n\n\ndef create_flow_arrows(model_space, tr, points_data, layer, outlet=None):\n    points_data = ordered_flow_points(points_data, outlet)\n    if len(points_data) < 2:\n        return\n    total_length = path_length(points_data)\n    if total_length < 1e-6:\n        return\n    center_distance = min(FLOW_ARROW_SPACING / 2.0, total_length / 2.0)\n    while center_distance < total_length + 1e-6:\n        half_arrow = min(FLOW_ARROW_LENGTH / 2.0, total_length / 2.0)\n        a = point_at_path_distance(points_data, max(0.0, center_distance - half_arrow))\n        b = point_at_path_distance(points_data, min(total_length, center_distance + half_arrow))\n        if a is None or b is None:\n            center_distance += FLOW_ARROW_SPACING\n            continue\n        dx = b[\"x\"] - a[\"x\"]\n        dy = b[\"y\"] - a[\"y\"]\n        length = (dx * dx + dy * dy) ** 0.5\n        if length < 1e-6:\n            center_distance += FLOW_ARROW_SPACING\n            continue\n        ux = dx / length\n        uy = dy / length\n        px = -uy\n        py = ux\n        center_x = (a[\"x\"] + b[\"x\"]) / 2.0\n        center_y = (a[\"y\"] + b[\"y\"]) / 2.0\n        center_z = (a[\"z\"] + b[\"z\"]) / 2.0\n        arrow_len = min(FLOW_ARROW_LENGTH, max(1.2, length * 0.8))\n        half = arrow_len / 2.0\n        body_w = 0.42\n        head_w = 1.00\n        tail_x = center_x - ux * half\n        tail_y = center_y - uy * half\n        front_x = tail_x + ux * (arrow_len * 0.62)\n        front_y = tail_y + uy * (arrow_len * 0.62)\n        tip_x = center_x + ux * half\n        tip_y = center_y + uy * half\n        pts = [\n            (tail_x + px * body_w / 2.0, tail_y + py * body_w / 2.0),\n            (front_x + px * body_w / 2.0, front_y + py * body_w / 2.0),\n            (front_x + px * head_w / 2.0, front_y + py * head_w / 2.0),\n            (tip_x, tip_y),\n            (front_x - px * head_w / 2.0, front_y - py * head_w / 2.0),\n            (front_x - px * body_w / 2.0, front_y - py * body_w / 2.0),\n            (tail_x - px * body_w / 2.0, tail_y - py * body_w / 2.0),\n        ]\n        append_closed_polyline(model_space, tr, pts, layer, True)\n        center_distance += FLOW_ARROW_SPACING\n\n\ndef unit_xy(dx, dy):\n    length = (dx * dx + dy * dy) ** 0.5\n    if length < 1e-9:\n        return 1.0, 0.0\n    return dx / length, dy / length\n\n\ndef same_xy(a, b):\n    if a is None or b is None:\n        return False\n    if a.get(\"x\") is None or a.get(\"y\") is None or b.get(\"x\") is None or b.get(\"y\") is None:\n        return False\n    return ((a[\"x\"] - b[\"x\"]) ** 2 + (a[\"y\"] - b[\"y\"]) ** 2) <= 1e-6\n\n\ndef xy_distance(a, b):\n    if a is None or b is None:\n        return 1e12\n    if a.get(\"x\") is None or a.get(\"y\") is None or b.get(\"x\") is None or b.get(\"y\") is None:\n        return 1e12\n    dx = a[\"x\"] - b[\"x\"]\n    dy = a[\"y\"] - b[\"y\"]\n    return (dx * dx + dy * dy) ** 0.5\n\n\ndef outlet_extension_geometry(package, side):\n    outlet = package[\"outlet\"]\n    if outlet is None or outlet.get(\"x\") is None or outlet.get(\"y\") is None or outlet.get(\"z\") is None:\n        return None\n    segments = package.get(\"segments\", [])\n    all_points = []\n    for segment in segments:\n        for point in segment[\"points\"]:\n            if point.get(\"x\") is None or point.get(\"y\") is None or point.get(\"z\") is None:\n                continue\n            if not all_points or point[\"station\"] != all_points[-1][\"station\"]:\n                all_points.append(point)\n    all_points = ordered_flow_points(all_points, outlet)\n    if len(all_points) < 2:\n        return None\n    if (all_points[-1][\"x\"] - outlet[\"x\"]) ** 2 + (all_points[-1][\"y\"] - outlet[\"y\"]) ** 2 <= 1e-6:\n        adjacent = all_points[-2]\n    else:\n        adjacent = all_points[1]\n    flow_x, flow_y = unit_xy(outlet[\"x\"] - adjacent[\"x\"], outlet[\"y\"] - adjacent[\"y\"])\n    away_x = outlet.get(\"away_x\")\n    away_y = outlet.get(\"away_y\")\n    if away_x is None or away_y is None:\n        axis_x = outlet.get(\"axis_x\")\n        axis_y = outlet.get(\"axis_y\")\n        if axis_x is not None and axis_y is not None:\n            away_x, away_y = unit_xy(outlet[\"x\"] - axis_x, outlet[\"y\"] - axis_y)\n        elif side == \"LE\":\n            away_x, away_y = -flow_y, flow_x\n        else:\n            away_x, away_y = flow_y, -flow_x\n    out_x, out_y = unit_xy(flow_x + away_x, flow_y + away_y)\n    x = outlet[\"x\"]\n    y = outlet[\"y\"]\n    z = outlet[\"z\"]\n    return {\n        \"end\": {\n            \"station\": outlet.get(\"station\"),\n            \"x\": x + out_x * OUTLET_LENGTH,\n            \"y\": y + out_y * OUTLET_LENGTH,\n            \"z\": z,\n            \"height\": outlet.get(\"height\"),\n            \"decision\": outlet.get(\"decision\", \"SAIDA_VALETA\"),\n        },\n        \"out_x\": out_x,\n        \"out_y\": out_y,\n    }\n\n\ndef extend_segment_to_outlet(segment_points, package, side, segment_type):\n    outlet = package.get(\"outlet\")\n    geometry = outlet_extension_geometry(package, side)\n    if outlet is None or geometry is None or len(segment_points) < 2:\n        return list(segment_points)\n    outlet_type = package.get(\"outlet_type\", item_type(outlet))\n    if outlet_type != segment_type:\n        return list(segment_points)\n    ordered_points = [\n        item for item in segment_points\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(ordered_points) < 2:\n        return list(segment_points)\n    start_dist = xy_distance(ordered_points[0], outlet)\n    end_dist = xy_distance(ordered_points[-1], outlet)\n    flow_points = list(ordered_points if end_dist <= start_dist else reversed(ordered_points))\n    if xy_distance(flow_points[-1], outlet) > max(0.75, VALETA_WIDTH * 2.0):\n        return list(segment_points)\n    end = geometry[\"end\"]\n    if not same_xy(flow_points[-1], outlet):\n        flow_points.append(outlet)\n    if same_xy(flow_points[-1], end):\n        return flow_points\n    return flow_points + [end]\n\n\ndef side_to_bordo(side):\n    return \"BE\" if side == \"LE\" else \"BD\"\n\n\ndef plan_segment_order_key(record):\n    # V48: todas as VPAC e depois todas as VPCC; dentro de cada tipo, todo o LE (BE)\n    # e depois todo o LD (BD), em ordem de estaca.\n    return (\n        0 if record.get(\"segment_type\") == \"ATERRO\" else 1,\n        0 if record.get(\"side\") == \"LE\" else 1,\n        float(record.get(\"station_start\", 0.0)),\n    )\n\n\ndef longitudinal_slope_pct(points):\n    clean = [\n        item for item in points\n        if item.get(\"x\") is not None and item.get(\"y\") is not None and item.get(\"z\") is not None\n    ]\n    if len(clean) < 2:\n        return 0.0\n    length = path_length(clean)\n    if length < 1e-9:\n        return 0.0\n    return ((clean[-1][\"z\"] - clean[0][\"z\"]) / length) * 100.0\n\n\ndef endpoint_match_score(point, record):\n    if point is None:\n        return 1e12\n    scores = []\n    for endpoint in [record.get(\"start_point\"), record.get(\"end_point\")]:\n        if endpoint is None:\n            continue\n        scores.append(min(\n            xy_distance(point, endpoint),\n            abs(float(point.get(\"station\", 0.0)) - float(endpoint.get(\"station\", 0.0)))\n        ))\n    return min(scores) if scores else 1e12\n\n\ndef ordered_plan_records(records):\n    aterro = sorted(\n        [record for record in records if record.get(\"segment_type\") == \"ATERRO\"],\n        key=plan_segment_order_key,\n    )\n    corte = sorted(\n        [record for record in records if record.get(\"segment_type\") == \"CORTE\"],\n        key=plan_segment_order_key,\n    )\n    return aterro + corte\n\n\ndef assign_plan_numbers(records):\n    ordered = ordered_plan_records(records)\n    for index, record in enumerate(ordered):\n        record[\"number\"] = index + 1\n    return ordered\n\n\ndef resolve_plan_connections(records, tolerance=None):\n    if tolerance is None:\n        tolerance = max(0.75, VALETA_WIDTH * 2.0)\n    for record in records:\n        outlet_point = record.get(\"outlet_point\")\n        best = None\n        best_score = 1e12\n        for other in records:\n            if other is record or other.get(\"side\") != record.get(\"side\"):\n                continue\n            score = endpoint_match_score(outlet_point, other)\n            if score <= tolerance and score < best_score:\n                best = other\n                best_score = score\n        if best is not None:\n            record[\"link_to\"] = best\n            record[\"ligacao_tipo\"] = \"Ligar em VPAC\" if best.get(\"segment_type\") == \"ATERRO\" else \"Ligar em VPCC\"\n            record[\"ligacao_numero\"] = best.get(\"number\")\n            record[\"tem_dissipador\"] = False\n        else:\n            record[\"link_to\"] = None\n            record[\"ligacao_tipo\"] = \"Ligar em dissipador\" if record.get(\"desenha_dissipador\") else \"-\"\n            record[\"ligacao_numero\"] = None\n            record[\"tem_dissipador\"] = bool(record.get(\"desenha_dissipador\"))\n\n\ndef build_plan_rows(records, tolerance=None):\n    ordered = assign_plan_numbers(records)\n    resolve_plan_connections(ordered, tolerance)\n    output = []\n    for record in ordered:\n        outlet_station = record[\"outlet_point\"][\"station\"] if record.get(\"outlet_point\") is not None else None\n        output.append([\n            record.get(\"number\"),\n            \"VPAC\" if record.get(\"segment_type\") == \"ATERRO\" else \"VPCC\",\n            record.get(\"side\"),\n            side_to_bordo(record.get(\"side\")),\n            fmt(record.get(\"station_start\")),\n            fmt(record.get(\"station_end\")),\n            fmt(outlet_station),\n            fmt(record.get(\"slope_pct\"), 6),\n            fmt(record.get(\"length_drawn\")),\n            fmt(record.get(\"section_critica_m\")),\n            record.get(\"ligacao_tipo\", \"-\"),\n            record.get(\"ligacao_numero\") if record.get(\"ligacao_numero\") is not None else \"-\",\n            \"SIM\" if record.get(\"tem_dissipador\") else \"-\",\n            record.get(\"handle\", \"\"),\n        ])\n    return output\n\n\nESTACA_LENGTH = 20.0\nNOTA_ERRORS = []\n\nNOTA_SERVICO_HEADERS = [\n    \"Handle\", \"Layer\", \"Estaca_Ini_N\", \"Estaca_Ini_Simb\", \"Estaca_Ini_m\",\n    \"Estaca_Fim_N\", \"Estaca_Fim_Simb\", \"Estaca_Fim_m\", \"Bordo\",\n    \"Extensao_m\", \"Cota_Inicial\", \"Cota_Final\", \"Declividade_%\",\n    \"Dispositivo\", \"Numero\", \"Sentido_Escoamento\", \"Estaca_Saida\",\n    \"Liga_Em\", \"Dissipador\",\n    \"SC_Estaca\", \"SC_Comp_Proprio_m\", \"SC_Comp_Montante_m\", \"SC_Comp_Total_m\",\n    \"SC_Largura_Contrib_Media_m\", \"SC_Largura_Contrib_Max_m\",\n    \"SC_Area_Propria_m2\", \"SC_Area_Total_m2\", \"SC_Dispositivos_Montante\",\n]\n\n\ndef split_estaca(station):\n    # Estaca de 20m: 315,05 -> 15 + 15,050. Arredonda antes para nao gerar \"+20,000\".\n    value = round(float(station), 3)\n    number = int(value // ESTACA_LENGTH)\n    rest = round(value - number * ESTACA_LENGTH, 3)\n    if rest >= ESTACA_LENGTH - 1e-6:\n        number += 1\n        rest = 0.0\n    return number, \"+\", rest\n\n\ndef estaca_label(station):\n    if station is None:\n        return \"\"\n    number, simb, rest = split_estaca(station)\n    return str(number) + \" \" + simb + \" \" + fmt(rest)\n\n\ndef record_contrib_widths(record):\n    widths = [\n        float(point[\"contrib_width\"])\n        for point in record.get(\"segment_points\", [])\n        if point.get(\"contrib_width\") is not None\n    ]\n    if not widths:\n        return 0.0, 0.0\n    return sum(widths) / len(widths), max(widths)\n\n\ndef accumulate_critical_section(record, upstream_map, stack=None):\n    # Secao critica = saida do dispositivo. Acumula o comprimento/area dele mais tudo\n    # que desagua nele (dispositivos com link_to apontando para ele), recursivamente.\n    if \"sc_total\" in record:\n        return record[\"sc_total\"]\n    if stack is None:\n        stack = set()\n    key = id(record)\n    own_length = float(record.get(\"section_critica_m\") or 0.0)\n    width_avg, width_max = record_contrib_widths(record)\n    own_area = own_length * width_avg\n    if key in stack:\n        return (own_length, own_area, 0)\n    stack.add(key)\n    up_length = 0.0\n    up_area = 0.0\n    up_count = 0\n    for other in upstream_map.get(key, []):\n        o_length, o_area, o_count = accumulate_critical_section(other, upstream_map, stack)\n        up_length += o_length\n        up_area += o_area\n        up_count += 1 + o_count\n    stack.discard(key)\n    record[\"sc_own_length\"] = own_length\n    record[\"sc_up_length\"] = up_length\n    record[\"sc_width_avg\"] = width_avg\n    record[\"sc_width_max\"] = width_max\n    record[\"sc_own_area\"] = own_area\n    record[\"sc_total\"] = (own_length + up_length, own_area + up_area, up_count)\n    return record[\"sc_total\"]\n\n\ndef build_nota_servico_rows(records):\n    upstream_map = {}\n    for record in records:\n        target = record.get(\"link_to\")\n        if target is not None:\n            upstream_map.setdefault(id(target), []).append(record)\n    output = []\n    for record in sorted(records, key=plan_segment_order_key):\n        points = [\n            item for item in record.get(\"segment_points\", [])\n            if item.get(\"z\") is not None\n        ]\n        if len(points) < 2:\n            continue\n        start = points[0]\n        end = points[-1]\n        ini_n, ini_s, ini_m = split_estaca(start[\"station\"])\n        fim_n, fim_s, fim_m = split_estaca(end[\"station\"])\n        extension = float(record.get(\"length_drawn\") or 0.0)\n        slope = ((end[\"z\"] - start[\"z\"]) / extension * 100.0) if extension > 1e-9 else 0.0\n        outlet = record.get(\"outlet_point\")\n        if outlet is not None and outlet.get(\"station\") is not None:\n            to_start = abs(outlet[\"station\"] - start[\"station\"])\n            to_end = abs(outlet[\"station\"] - end[\"station\"])\n            sentido = \"CRESCENTE\" if to_end <= to_start else \"DECRESCENTE\"\n        else:\n            sentido = \"-\"\n        total_length, total_area, up_count = accumulate_critical_section(record, upstream_map)\n        liga = record.get(\"ligacao_tipo\", \"-\")\n        if record.get(\"ligacao_numero\") is not None:\n            liga = liga + \" \" + str(record.get(\"ligacao_numero\"))\n        output.append([\n            record.get(\"handle\", \"\"),\n            record.get(\"layer\", \"\"),\n            ini_n, ini_s, fmt(ini_m),\n            fim_n, fim_s, fmt(fim_m),\n            side_to_bordo(record.get(\"side\")),\n            fmt(extension),\n            fmt(start[\"z\"]), fmt(end[\"z\"]),\n            fmt(slope),\n            \"VPAC\" if record.get(\"segment_type\") == \"ATERRO\" else \"VPCC\",\n            record.get(\"number\", \"\"),\n            sentido,\n            estaca_label(outlet.get(\"station\") if outlet is not None else None),\n            liga,\n            \"SIM\" if record.get(\"tem_dissipador\") else \"-\",\n            estaca_label(outlet.get(\"station\") if outlet is not None else None),\n            fmt(record.get(\"sc_own_length\")),\n            fmt(record.get(\"sc_up_length\")),\n            fmt(total_length),\n            fmt(record.get(\"sc_width_avg\"), 2),\n            fmt(record.get(\"sc_width_max\"), 2),\n            fmt(record.get(\"sc_own_area\"), 2),\n            fmt(total_area, 2),\n            up_count,\n        ])\n    return output\n\n\nEXISTING_LINK_TOLERANCE = 2.0\nEXISTING_DISSIPATOR_RADIUS = OUTLET_LENGTH + DISS_LENGTH + 2.0\n\n\ndef is_valeta_layer(layer):\n    name = str(layer).upper()\n    if name.startswith(\"DISSIPADOR\") or name.startswith(\"SETA_\"):\n        return False\n    return name.startswith(\"VALETA_\") or \"VPAC\" in name or \"VPCC\" in name\n\n\ndef layer_valeta_type(layer):\n    name = str(layer).upper()\n    if \"VPAC\" in name or \"ATERRO\" in name:\n        return \"ATERRO\"\n    if \"VPCC\" in name or \"CORTE\" in name:\n        return \"CORTE\"\n    return None\n\n\ndef layer_side(layer):\n    name = str(layer).upper()\n    if name.endswith(\"_LE\") or name.endswith(\" LE\") or name.endswith(\"_BE\"):\n        return \"LE\"\n    if name.endswith(\"_LD\") or name.endswith(\" LD\") or name.endswith(\"_BD\"):\n        return \"LD\"\n    return None\n\n\ndef alignment_station_offset(alignment, x, y):\n    station = clr.Reference[float]()\n    offset = clr.Reference[float]()\n    alignment.StationOffset(float(x), float(y), station, offset)\n    return float(station.Value), float(offset.Value)\n\n\ndef nearest_profile_item(profile, station, key=None):\n    best = None\n    best_distance = 1e12\n    for item in profile:\n        if key is not None and item.get(key) is None:\n            continue\n        distance = abs(item[\"station\"] - station)\n        if distance < best_distance:\n            best_distance = distance\n            best = item\n    if best is None or best_distance > max(MAX_STATION_GAP, ESTACA_LENGTH):\n        return None\n    return best\n\n\ndef strip_outlet_tail(points):\n    # O rabicho de saida (7m para fora) muda muito o offset e quase nao muda a estaca.\n    # Ele entra na extensao desenhada, mas nao na estaca/cota/secao critica da valeta.\n    core = list(points)\n    for _ in range(2):\n        if len(core) < 3:\n            break\n        for index in [0, len(core) - 1]:\n            neighbor = core[1] if index == 0 else core[-2]\n            d_off = abs(core[index][\"offset\"] - neighbor[\"offset\"])\n            d_st = abs(core[index][\"station\"] - neighbor[\"station\"])\n            if d_off > 2.5 and d_off > d_st:\n                core.pop(index)\n                break\n    return core\n\n\ndef nota_from_existing(db, tr, alignment, surface, side_profiles):\n    block_table = tr.GetObject(db.BlockTableId, OpenMode.ForRead)\n    model_space = tr.GetObject(block_table[BlockTableRecord.ModelSpace], OpenMode.ForRead)\n    dissipators = []\n    polylines = []\n    for object_id in model_space:\n        try:\n            obj = tr.GetObject(object_id, OpenMode.ForRead)\n            layer = str(obj.Layer)\n        except Exception:\n            continue\n        if layer.upper().startswith(\"DISSIPADOR\"):\n            try:\n                ext = obj.GeometricExtents\n                dissipators.append({\n                    \"x\": (ext.MinPoint.X + ext.MaxPoint.X) / 2.0,\n                    \"y\": (ext.MinPoint.Y + ext.MaxPoint.Y) / 2.0,\n                })\n            except Exception:\n                pass\n            continue\n        if isinstance(obj, Polyline) and is_valeta_layer(layer):\n            polylines.append(obj)\n\n    records = []\n    for poly in polylines:\n        layer = str(poly.Layer)\n        raw = []\n        for index in range(poly.NumberOfVertices):\n            p2 = poly.GetPoint2dAt(index)\n            try:\n                station, offset = alignment_station_offset(alignment, p2.X, p2.Y)\n            except Exception:\n                continue\n            try:\n                z = elevation(surface, p2.X, p2.Y)\n            except Exception:\n                z = None\n            raw.append({\"station\": station, \"offset\": offset, \"x\": p2.X, \"y\": p2.Y, \"z\": z})\n        if len(raw) < 2:\n            NOTA_ERRORS.append(\"Polilinha \" + poly.Handle.ToString() + \" (\" + layer + \") fora do alinhamento, ignorada.\")\n            continue\n        raw_ends = [raw[0], raw[-1]]\n        core = [item for item in strip_outlet_tail(raw) if item.get(\"z\") is not None]\n        if len(core) < 2:\n            NOTA_ERRORS.append(\"Polilinha \" + poly.Handle.ToString() + \" sem cota na superficie, ignorada.\")\n            continue\n        core.sort(key=lambda item: item[\"station\"])\n\n        side = layer_side(layer)\n        if side is None:\n            offsets = sorted(item[\"offset\"] for item in core)\n            side = \"LE\" if offsets[len(offsets) // 2] < 0.0 else \"LD\"\n        segment_type = layer_valeta_type(layer)\n        if segment_type is None:\n            mid = core[len(core) // 2][\"station\"]\n            near = nearest_profile_item(side_profiles[side], mid)\n            segment_type = item_type(near) if near is not None else None\n            if segment_type is None:\n                segment_type = \"ATERRO\"\n        for item in core:\n            near = nearest_profile_item(side_profiles[side], item[\"station\"], \"contrib_width\")\n            if near is not None:\n                item[\"contrib_width\"] = near[\"contrib_width\"]\n            item[\"height\"] = 0.0\n\n        # Saida: a ponta que tem dissipador perto; senao a ponta mais baixa.\n        has_dissipator = False\n        outlet = None\n        for end in raw_ends:\n            for diss in dissipators:\n                if xy_distance(end, diss) <= EXISTING_DISSIPATOR_RADIUS:\n                    has_dissipator = True\n                    outlet = core[0] if xy_distance(end, core[0]) <= xy_distance(end, core[-1]) else core[-1]\n                    break\n            if outlet is not None:\n                break\n        if outlet is None:\n            outlet = downstream_end_by_ends(core)\n\n        records.append({\n            \"segment_type\": segment_type,\n            \"side\": side,\n            \"station_start\": float(core[0][\"station\"]),\n            \"station_end\": float(core[-1][\"station\"]),\n            \"start_point\": core[0],\n            \"end_point\": core[-1],\n            \"outlet_point\": outlet,\n            \"length_drawn\": float(poly.Length),\n            \"section_critica_m\": path_length(core),\n            \"slope_pct\": longitudinal_slope_pct(core),\n            \"handle\": poly.Handle.ToString(),\n            \"layer\": layer,\n            \"segment_points\": core,\n            \"desenha_dissipador\": has_dissipator,\n        })\n    plan_rows = build_plan_rows(records, EXISTING_LINK_TOLERANCE)\n    return plan_rows, build_nota_servico_rows(records), len(polylines)\n\n\ndef create_dissipator(model_space, tr, package, side, outlet_type):\n    outlet = package[\"outlet\"]\n    geometry = outlet_extension_geometry(package, side)\n    if outlet is None or geometry is None:\n        return\n    end = geometry[\"end\"]\n    out_x = geometry[\"out_x\"]\n    out_y = geometry[\"out_y\"]\n    layer = \"DISSIPADOR_\" + outlet_type\n    perp_x = -out_y\n    perp_y = out_x\n    cx = end[\"x\"] + out_x * (DISS_LENGTH / 2.0)\n    cy = end[\"y\"] + out_y * (DISS_LENGTH / 2.0)\n    pts = [\n        (cx - out_x * DISS_LENGTH / 2.0 + perp_x * DISS_WIDTH / 2.0,\n         cy - out_y * DISS_LENGTH / 2.0 + perp_y * DISS_WIDTH / 2.0),\n        (cx - out_x * DISS_LENGTH / 2.0 - perp_x * DISS_WIDTH / 2.0,\n         cy - out_y * DISS_LENGTH / 2.0 - perp_y * DISS_WIDTH / 2.0),\n        (cx + out_x * DISS_LENGTH / 2.0 - perp_x * DISS_WIDTH / 2.0,\n         cy + out_y * DISS_LENGTH / 2.0 - perp_y * DISS_WIDTH / 2.0),\n        (cx + out_x * DISS_LENGTH / 2.0 + perp_x * DISS_WIDTH / 2.0,\n         cy + out_y * DISS_LENGTH / 2.0 + perp_y * DISS_WIDTH / 2.0),\n    ]\n    append_closed_polyline(model_space, tr, pts, layer, True)\n\n\ndoc = Application.DocumentManager.MdiActiveDocument\ndb = doc.Database\ncivil_doc = CivilApplication.ActiveDocument\nerrors = []\nskipped_points = []\nrows = []\nside_profiles = {\"LE\": [], \"LD\": []}\ncreated_lines = []\ncreated_outlets = []\ncreated_plan_rows = []\nremoved_lines = 0\ndebug_package_rows = []\nnota_servico_rows = []\nalignment = None\nsurface = None\n\nheaders = [\n    \"estaca_m\", \"lado\", \"offset_encontro_m\", \"altura_corte_m\",\n    \"z_encontro\", \"z_d1\", \"z_d2\", \"z_d3\", \"z_d4\", \"z_d5\",\n    \"inclinacao_d1_pct\", \"inclinacao_d2_pct\", \"inclinacao_d3_pct\",\n    \"inclinacao_d4_pct\", \"inclinacao_d5_pct\",\n    \"waterdrop_d1\", \"waterdrop_d2\", \"waterdrop_d3\", \"waterdrop_d4\", \"waterdrop_d5\",\n    \"waterdrop_curto_hits\", \"waterdrop_total_hits\",\n    \"agua_para_pista\", \"decisao\"\n]\n\ntry:\n    if not os.path.isfile(CSV_INPUT):\n        raise Exception(\"CSV nao encontrado: \" + CSV_INPUT)\n\n    tr = db.TransactionManager.StartTransaction()\n    try:\n        available_alignments = []\n        for object_id in civil_doc.GetAlignmentIds():\n            obj = tr.GetObject(object_id, OpenMode.ForRead)\n            available_alignments.append(str(obj.Name))\n            if str(obj.Name).strip().upper() == ALIGNMENT_NAME.upper():\n                alignment = obj\n                break\n        available_surfaces = []\n        for object_id in civil_doc.GetSurfaceIds():\n            obj = tr.GetObject(object_id, OpenMode.ForRead)\n            available_surfaces.append(str(obj.Name))\n            if str(obj.Name).strip().upper() == SURFACE_NAME.upper():\n                surface = obj\n                break\n\n        if alignment is None:\n            raise Exception(\n                \"Alinhamento nao encontrado: '\" + ALIGNMENT_NAME +\n                \"' | Disponiveis no desenho: \" + \" | \".join(available_alignments)\n            )\n        if surface is None:\n            raise Exception(\n                \"Superficie nao encontrada: '\" + SURFACE_NAME +\n                \"' | Disponiveis no desenho: \" + \" | \".join(available_surfaces)\n            )\n\n        for source in read_latest_rows(CSV_INPUT):\n            station = parse_number(source.get(\"estaca_m\"))\n            for side, height_key, offset_key in [\n                (\"LE\", \"le\", \"offset_le\"),\n                (\"LD\", \"ld\", \"offset_ld\"),\n            ]:\n                cut_height = parse_number(source.get(height_key))\n                skirt_offset = parse_number(source.get(offset_key))\n                profile_item = {\n                    \"station\": station, \"x\": None, \"y\": None, \"z\": None,\n                    \"height\": cut_height, \"decision\": \"NAO\",\n                    \"side\": side, \"skirt_offset\": skirt_offset,\n                }\n                side_profiles[side].append(profile_item)\n                if abs(skirt_offset) > 0.0:\n                    try:\n                        outward_sign = offset_outward_sign(skirt_offset)\n                        profile_offset = skirt_offset + outward_sign * DITCH_EXTRA_OFFSET\n                        profile_point = point_with_axis_reference(alignment, surface, station, profile_offset)\n                        profile_item[\"x\"] = profile_point[\"x\"]\n                        profile_item[\"y\"] = profile_point[\"y\"]\n                        profile_item[\"z\"] = profile_point[\"z\"]\n                        profile_item[\"axis_x\"] = profile_point[\"axis_x\"]\n                        profile_item[\"axis_y\"] = profile_point[\"axis_y\"]\n                        profile_item[\"away_x\"] = profile_point[\"away_x\"]\n                        profile_item[\"away_y\"] = profile_point[\"away_y\"]\n                    except Exception:\n                        pass\n\n                # Aterro positivo e corte negativo. Ambos sao analisados.\n                if abs(cut_height) < MIN_CUT_HEIGHT or abs(skirt_offset) <= 0.0:\n                    continue\n                talude_type = \"ATERRO\" if cut_height > 0.0 else \"CORTE\"\n                outward_sign = offset_outward_sign(skirt_offset)\n\n                try:\n                    skirt_point = point_with_axis_reference(alignment, surface, station, skirt_offset)\n                    x0 = skirt_point[\"x\"]\n                    y0 = skirt_point[\"y\"]\n                    z0 = skirt_point[\"z\"]\n                except Exception as point_error:\n                    skipped_points.append([\n                        fmt(station), side, fmt(skirt_offset), str(point_error)\n                    ])\n                    continue\n                elevations = []\n                slopes = []\n\n                for distance in SAMPLE_DISTANCES:\n                    try:\n                        sample_point = point_with_axis_reference(\n                            alignment, surface, station,\n                            skirt_offset + outward_sign * distance\n                        )\n                        z = sample_point[\"z\"]\n                        elevations.append(z)\n                        slopes.append(((z - z0) / distance) * 100.0)\n                    except Exception:\n                        elevations.append(None)\n                        slopes.append(None)\n\n                valid_slopes = [value for value in slopes if value is not None]\n                # Declividade positiva = ponto mais afastado da pista esta mais alto que o\n                # encontro do talude, ou seja, o terreno desce em direcao a pista. Exige pelo\n                # menos 2 amostras validas e usa a media entre elas, para nao aprovar so por\n                # causa de uma amostra isolada com ruido de superficie.\n                slope_to_road = (\n                    len(valid_slopes) >= 2 and\n                    (sum(valid_slopes) / len(valid_slopes)) >= MIN_SLOPE_TO_ROAD_PCT\n                )\n\n                water_to_road, waterdrop_results, short_hits, short_valid, total_hits, total_valid = waterdrop_to_road(\n                    alignment, surface, station, skirt_offset, skirt_point\n                )\n                # V46: largura de contribuicao lateral = maior distancia de analise (medida\n                # a partir da saia) cuja gota chegou na saia, descontado o afastamento da\n                # valeta. E limitada pela maior distancia de analise (IN[3..7]).\n                contrib_hits = [\n                    result[\"distance\"] for result in waterdrop_results\n                    if result.get(\"positive\")\n                ]\n                if contrib_hits:\n                    profile_item[\"contrib_width\"] = max(0.0, max(contrib_hits) - DITCH_EXTRA_OFFSET)\n                elif water_to_road is None and slope_to_road:\n                    profile_item[\"contrib_width\"] = max(0.0, max(SAMPLE_DISTANCES) - DITCH_EXTRA_OFFSET)\n                # O water drop e o criterio principal (segue a agua de verdade pela superficie).\n                # A declividade so decide quando o water drop nao teve dado valido suficiente\n                # (menos de 3 das 5 distancias), servindo de resgate para nao perder trecho por\n                # buraco de superficie -- sem inflar o resultado em pontos onde o water drop ja\n                # respondeu \"nao vai para a pista\".\n                if water_to_road:\n                    decision = \"CRIAR_VALETA_\" + talude_type\n                elif water_to_road is None:\n                    decision = \"CRIAR_VALETA_\" + talude_type if slope_to_road else \"REVISAR_LIMITE_SUPERFICIE\"\n                else:\n                    decision = \"DISPENSAR_VALETA\"\n\n                if decision in [\"CRIAR_VALETA_CORTE\", \"CRIAR_VALETA_ATERRO\"]:\n                    draw_offset = skirt_offset + outward_sign * DITCH_EXTRA_OFFSET\n                    try:\n                        draw_point = point_with_axis_reference(alignment, surface, station, draw_offset)\n                        x_draw = draw_point[\"x\"]\n                        y_draw = draw_point[\"y\"]\n                        z_draw = draw_point[\"z\"]\n                        profile_item[\"x\"] = x_draw\n                        profile_item[\"y\"] = y_draw\n                        profile_item[\"z\"] = z_draw\n                        profile_item[\"axis_x\"] = draw_point[\"axis_x\"]\n                        profile_item[\"axis_y\"] = draw_point[\"axis_y\"]\n                        profile_item[\"away_x\"] = draw_point[\"away_x\"]\n                        profile_item[\"away_y\"] = draw_point[\"away_y\"]\n                        profile_item[\"decision\"] = decision\n                    except Exception as draw_error:\n                        skipped_points.append([\n                            fmt(station), side, fmt(draw_offset), str(draw_error)\n                        ])\n\n                rows.append([\n                    fmt(station), side, fmt(skirt_offset), fmt(cut_height), fmt(z0),\n                    fmt(elevations[0]), fmt(elevations[1]), fmt(elevations[2]),\n                    fmt(elevations[3]), fmt(elevations[4]),\n                    fmt(slopes[0]), fmt(slopes[1]), fmt(slopes[2]),\n                    fmt(slopes[3]), fmt(slopes[4]),\n                    waterdrop_results[0][\"label\"], waterdrop_results[1][\"label\"],\n                    waterdrop_results[2][\"label\"], waterdrop_results[3][\"label\"],\n                    waterdrop_results[4][\"label\"],\n                    str(short_hits) + \"/\" + str(short_valid),\n                    str(total_hits) + \"/\" + str(total_valid),\n                    (\n                        \"SIM\" if water_to_road\n                        else (\n                            (\"SIM_DECLIVIDADE\" if slope_to_road else \"REVISAR\")\n                            if water_to_road is None else \"NAO\"\n                        )\n                    ),\n                    decision,\n                ])\n\n        if NOTA_ONLY:\n            # V48: modo somente nota -- nao apaga nem desenha nada, le o que ja existe.\n            created_plan_rows, nota_servico_rows, existing_count = nota_from_existing(\n                db, tr, alignment, surface, side_profiles\n            )\n            if existing_count == 0:\n                NOTA_ERRORS.append(\n                    \"Modo somente nota: nenhuma polilinha encontrada em layer VALETA_* / *VPAC* / *VPCC*.\"\n                )\n        else:\n            groups_by_side = {}\n            for side in [\"LE\", \"LD\"]:\n                groups_by_side[side] = packages_by_connected_valeta(side_profiles[side])\n            created_lines, created_outlets, removed_lines, created_plan_rows, debug_package_rows, nota_servico_rows = create_polylines(\n                db, tr, groups_by_side\n            )\n        tr.Commit()\n    except Exception:\n        tr.Abort()\n        raise\n    finally:\n        tr.Dispose()\nexcept Exception as exc:\n    errors.append(str(exc))\n\nfolder = os.path.dirname(CSV_INPUT) if CSV_INPUT else \"\"\nbase = os.path.splitext(os.path.basename(CSV_INPUT))[0] if CSV_INPUT else \"taludes\"\ncsv_output = os.path.join(folder, base + \"_analise_valetas.csv\") if folder else \"\"\nstatus_output = os.path.join(folder, base + \"_analise_valetas_status.txt\") if folder else \"\"\nlines_output = os.path.join(folder, base + \"_valetas_criadas.csv\") if folder else \"\"\nplan_output = os.path.join(folder, base + \"_valetas_planilha_base.csv\") if folder else \"\"\ndebug_output = os.path.join(folder, base + \"_valetas_pacotes_debug.csv\") if folder else \"\"\nnota_output = os.path.join(folder, base + \"_nota_servico_valetas.csv\") if folder else \"\"\n\nerrors.extend(NOTA_ERRORS)\nnota_status = \"\"\nif nota_output:\n    # V47: grava sempre (mesmo so com cabecalho) para ficar claro se rodou.\n    try:\n        with open(nota_output, \"wb\") as stream:\n            # Excel Brasil: separador \";\" e decimal com virgula (fmt ja usa virgula).\n            writer = csv.writer(stream, delimiter=\";\")\n            writer.writerow(NOTA_SERVICO_HEADERS)\n            writer.writerows(nota_servico_rows)\n        nota_status = nota_output + \" (\" + str(len(nota_servico_rows)) + \" dispositivos)\"\n    except Exception as exc:\n        nota_status = \"ERRO: \" + str(exc)\n        errors.append(\"Erro ao gravar nota de servico: \" + str(exc))\n\nif rows and csv_output:\n    try:\n        with open(csv_output, \"wb\") as stream:\n            writer = csv.writer(stream, delimiter=\";\")\n            writer.writerow(headers)\n            writer.writerows(rows)\n    except Exception as exc:\n        errors.append(\"Erro ao gravar resultado: \" + str(exc))\n\nif created_lines and lines_output:\n    try:\n        with open(lines_output, \"wb\") as stream:\n            writer = csv.writer(stream, delimiter=\";\")\n            writer.writerow([\"tipo\", \"lado\", \"estaca_inicio\", \"estaca_fim\", \"extensao_m\", \"pontos\", \"handle\"])\n            writer.writerows(created_lines)\n    except Exception as exc:\n        errors.append(\"Erro ao gravar lista de valetas: \" + str(exc))\n\nif created_plan_rows and plan_output:\n    try:\n        with open(plan_output, \"wb\") as stream:\n            writer = csv.writer(stream, delimiter=\";\")\n            writer.writerow([\n                \"numero\", \"tipo_planilha\", \"lado\", \"bordo\",\n                \"estaca_inicio_m\", \"estaca_fim_m\", \"estaca_saida_m\",\n                \"declividade_pct\", \"comprimento_m\", \"secao_critica_m\",\n                \"ligacao\", \"numero_ligacao\", \"dissipador\", \"handle\"\n            ])\n            writer.writerows(created_plan_rows)\n    except Exception as exc:\n        errors.append(\"Erro ao gravar base da planilha: \" + str(exc))\n\nif debug_package_rows and debug_output:\n    try:\n        with open(debug_output, \"wb\") as stream:\n            writer = csv.writer(stream, delimiter=\";\")\n            writer.writerow([\n                \"lado\", \"pacote\", \"estaca_inicio_m\", \"estaca_fim_m\", \"tipo_principal\",\n                \"estaca_saida_m\", \"vao_ate_proximo_m\", \"encosta_no_proximo\",\n                \"saida_cai_em_outra_valeta\", \"desenhou_dissipador\"\n            ])\n            writer.writerows(debug_package_rows)\n    except Exception as exc:\n        errors.append(\"Erro ao gravar debug de pacotes: \" + str(exc))\n\ntry:\n    if status_output:\n        with open(status_output, \"w\") as stream:\n            stream.write(\"ANALISE DE VALETAS DE CORTE\\n\")\n            stream.write(\"Alinhamento: \" + ALIGNMENT_NAME + \"\\n\")\n            stream.write(\"Superficie: \" + SURFACE_NAME + \"\\n\")\n            stream.write(\"CSV entrada: \" + CSV_INPUT + \"\\n\")\n            stream.write(\"CSV resultado: \" + csv_output + \"\\n\")\n            stream.write(\"Modo: \" + (\"SOMENTE NOTA (valetas existentes, nada apagado)\" if NOTA_ONLY else \"DESENHO + NOTA\") + \"\\n\")\n            stream.write(\"Nota de servico: \" + (nota_status or \"nao gerada (caminho vazio)\") + \"\\n\")\n            stream.write(\"Offsets usados exatamente como vieram no CSV; valeta sempre a 3m para fora da saia.\\n\")\n            stream.write(\"Convencao de altura: positivo = ATERRO, negativo = CORTE.\\n\")\n            stream.write(\"Valeta de corte so recebe dissipador quando chega no primeiro trecho de aterro.\\n\")\n            stream.write(\"A existencia da valeta usa water drop real nas distancias de 2m, 5m, 10m, 40m e 70m.\\n\")\n            stream.write(\"O water drop aprova quando cruza a saia ou chega perto o bastante para ser capturado pela faixa da valeta.\\n\")\n            stream.write(\"A captura usa distancia real (2D) ate o ponto da saia, nao projecao numa reta fixa -- evita falso positivo quando a agua se afasta da rodovia mas cruzaria essa reta por causa de curva do tracado ou trecho quase plano.\\n\")\n            stream.write(\"Sao necessarios pelo menos 2 water drops positivos para aprovar a valeta, reduzindo ruido local.\\n\")\n            stream.write(\"O water drop e o criterio principal de existencia da valeta, decidindo sempre que tem dado valido suficiente.\\n\")\n            stream.write(\"A declividade so decide quando o water drop nao teve dado valido suficiente (menos de 3 das 5 distancias), servindo de resgate.\\n\")\n            stream.write(\"So cai em revisao manual quando o water drop nao tem dado valido suficiente E a declividade tambem nao aprova.\\n\")\n            stream.write(\"Se tem agua pelo water drop capturado, a valeta e desenhada; corte e estendido ate aterro quando houver saida.\\n\")\n            stream.write(\"Quando a extensao entra em aterro, o desenho faz break e continua como valeta de aterro.\\n\")\n            stream.write(\"Corte estende ate um aterro confirmado por agua (nao qualquer ponto so com altura positiva), sem limite de distancia -- corte so tem saida real ao chegar em aterro.\\n\")\n            stream.write(\"A extensao do corte para se o caminho comecar a subir de verdade (mais de 0,50m acima do ponto mais baixo ja alcancado) -- agua nao escoa ladeira acima.\\n\")\n            stream.write(\"Se nao houver nenhum aterro confirmado no sentido hidraulico descendente, o corte fica sem extensao forcada.\\n\")\n            stream.write(\"Pacotes sobrepostos do mesmo tipo passam a ser fundidos antes do desenho.\\n\")\n            stream.write(\"Trechos de aterro que caem dentro do corredor dominado por corte sao recortados para evitar desenho em cima do outro.\\n\")\n            stream.write(\"A uniao por proximidade vale entre pacotes do mesmo tipo; corte para aterro segue pela extensao hidraulica controlada.\\n\")\n            stream.write(\"Pacote curto do tipo oposto espremido entre dois corredores do mesmo tipo volta a ser absorvido.\\n\")\n            stream.write(\"So entram no desenho e na planilha os segmentos com suporte direto da regra de existencia, ou o rabicho final de saida.\\n\")\n            stream.write(\"A validacao de existencia continua exigindo suporte direto no segmento, sem recortar o miolo do corredor.\\n\")\n            stream.write(\"Setas e dissipador usam o mesmo final hidraulico da valeta conectada.\\n\")\n            stream.write(\"Quando a saida de um pacote encosta no inicio do proximo (ate \" + fmt(package_touch_tolerance(), 1) + \"m de vazio, agora acompanhando o IN[10] em vez do antigo fixo de 18m), nao desenha dissipador ali: a valeta e esticada ate o ponto real de inicio do proximo pacote, fechando a costura, e a vazao acumula direto no proximo trecho.\\n\")\n            stream.write(\"Intervalos entre valetas de ate 60m sao unidos quando o terreno permitir.\\n\")\n            stream.write(\"Extensoes mantem a mesma layer/cor da valeta inicial, sem trecho picado no meio.\\n\")\n            stream.write(\"A valeta nao e mais dividida por ponto alto ou ponto baixo interno do terreno.\\n\")\n            stream.write(\"A continuidade do trecho com water drop prevalece, e a decisao seguinte passa a ser unir ou dissipar.\\n\")\n            stream.write(\"Pacotes vizinhos do mesmo tipo sao religados quando a distancia entre pontas for ate 40m e a diferenca de cota for ate o ruido vertical configurado.\\n\")\n            stream.write(\"A haste de saida entra na mesma layer da valeta e segue unida ao tracado principal.\\n\")\n            stream.write(\"O join da saida e aplicado apenas ao segmento final correspondente ao mesmo tipo da valeta.\\n\")\n            stream.write(\"O join usa a ponta geometrica mais proxima da saida, sem depender de coincidencia exata entre vertices.\\n\")\n            stream.write(\"Pacotes tocando no mesmo ponto tambem sao reunidos quando pertencem ao mesmo tipo de valeta.\\n\")\n            stream.write(\"Setas de caimento com comprimento de 2,40m e espacamento de 30m.\\n\")\n            stream.write(\"Trecho de tipo contrario menor que 40m herda o tipo dominante da valeta.\\n\")\n            stream.write(\"Se houver agua para a pista, o trecho gera valeta mesmo quando for curto.\\n\")\n            stream.write(\"A uniao entre trechos e uma decisao separada: se der para juntar, junta; se nao der, fecha com dissipador.\\n\")\n            stream.write(\"Agua para pista: cria valeta quando pelo menos 2 water drops sao capturados pela saia/faixa da valeta.\\n\")\n            stream.write(\"Trechos curtos com water drop continuam validos, e pequenos vazios podem ser absorvidos na uniao.\\n\")\n            stream.write(\"Linhas analisadas: \" + str(len(rows)) + \"\\n\")\n            stream.write(\"Pontos criar valeta de corte: \" + str(len([r for r in rows if r[-1] == \"CRIAR_VALETA_CORTE\"])) + \"\\n\")\n            stream.write(\"Pontos criar valeta de aterro: \" + str(len([r for r in rows if r[-1] == \"CRIAR_VALETA_ATERRO\"])) + \"\\n\")\n            stream.write(\"Polilinhas 3D criadas: \" + str(len(created_lines)) + \"\\n\")\n            stream.write(\"Saidas/dissipadores no aterro: \" + str(len(created_outlets)) + \"\\n\")\n            stream.write(\"Polilinhas anteriores substituidas: \" + str(removed_lines) + \"\\n\")\n            stream.write(\"Pontos ignorados fora do dominio: \" + str(len(skipped_points)) + \"\\n\")\n            stream.write(\"Lista de valetas: \" + lines_output + \"\\n\")\n            stream.write(\"Base para planilha: \" + plan_output + \"\\n\")\n            stream.write(\"Debug dos pacotes: \" + debug_output + \"\\n\")\n            stream.write(\"Dissipador suprimido por cair sobre outra valeta: \" + str(len([r for r in debug_package_rows if r[8] == \"SIM\"])) + \"\\n\")\n            if errors:\n                stream.write(\"ERROS:\\n\" + \"\\n\".join(errors) + \"\\n\")\n            else:\n                stream.write(\"OK\\n\")\nexcept Exception:\n    pass\n\nOUT = [headers, rows, created_lines, created_outlets, removed_lines, skipped_points, errors, csv_output, status_output, lines_output, \"NOTA: \" + (nota_status or \"nao gerada\")]\n",
+      "VariableInputPorts": true,
+      "Id": "8ed666134a994f788b9200845012370c",
+      "Inputs": [
+        {
+          "Id": "697ce8bd8bf14885ab0396fb17e9eac7",
+          "Name": "IN[0]",
+          "Description": "1. Nome exato do alinhamento",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "40316a98c77e4839b999ba4c54bf426a",
+          "Name": "IN[1]",
+          "Description": "2. Nome exato da superficie",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "03bf612581f441628d0c1222c4b9cebe",
+          "Name": "IN[2]",
+          "Description": "3. Caminho completo do CSV de taludes",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7f3b355ec0a14799aad9ab3cc3f2a225",
+          "Name": "IN[3]",
+          "Description": "4. Distancia de analise 1 (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4d30f388921f45a9b64ecf4de60532c4",
+          "Name": "IN[4]",
+          "Description": "5. Distancia de analise 2 (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bf1ff6892f154a1b85722c3e092a57a6",
+          "Name": "IN[5]",
+          "Description": "6. Distancia de analise 3 (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2f4f9e7d370e4637819a4f241abadb3f",
+          "Name": "IN[6]",
+          "Description": "7. Distancia de analise 4 (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "db05214906df4bbaba159d37305fb801",
+          "Name": "IN[7]",
+          "Description": "8. Distancia de analise 5 (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d053eacf24884df5b6e9cc3c336fca0a",
+          "Name": "IN[8]",
+          "Description": "9. Declividade minima para agua indo a pista (%)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a9559cd1385b43bdadbe54e06251defa",
+          "Name": "IN[9]",
+          "Description": "10. Tolerancia minima do sinal de corte (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f1f9ae680cee419e8b2a5e3c1461d116",
+          "Name": "IN[10]",
+          "Description": "11. Intervalo maximo para unir pontos (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f256c4779d5c46d29ac0706d935e815f",
+          "Name": "IN[11]",
+          "Description": "12. Comprimento minimo da valeta (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "27ca579a8f384203a15829db8f203165",
+          "Name": "IN[12]",
+          "Description": "13. Distancia da saia ate a valeta (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "125f9bcda8724add8e96ee9acd5a795b",
+          "Name": "IN[13]",
+          "Description": "14. Ruido vertical ignorado no caimento (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "30c4ee08593c4b9896da95b78401a99a",
+          "Name": "IN[14]",
+          "Description": "15. Comprimento maximo de ruido pontual (m)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a8349821b4134668a22774eee8549e9e",
+          "Name": "IN[15]",
+          "Description": "16. Somente nota de servico (True = nao apaga/desenha)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8b12e7b11e8f4f339a7f6ee2d4b7bd9c",
+          "Name": "OUT",
+          "Description": "Resultado da analise",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "Q:\\QA-210_2025 (GO-188_AP Registro)\\5.6.P.DRE\\Auxiliares\\taludes_NS-TER_GO-188.csv",
+      "InputValue": "Q:\\QA-210_2025 (GO-188_AP Registro)\\5.6.P.DRE\\Auxiliares\\taludes_NS-TER_GO-188.csv",
+      "NodeType": "ExtensionNode",
+      "Id": "1d94fcecbc404b9ea255ba1da3f08be2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7af47deea095471baf454d9e0246cb1b",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a file on the system to get its filename"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "e6f8c33159784ce295e7136d65f11b63",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "585aaf290a284d50b7cfe1b9618215ba",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "e3e5bf93e1f14c05aef9c8a9934379b4",
+      "End": "697ce8bd8bf14885ab0396fb17e9eac7",
+      "Id": "1d66e55375284ec3b5ab2b6b9b081dfc"
+    },
+    {
+      "Start": "31123ab9c7204d75a99649d3bf5e4d7a",
+      "End": "40316a98c77e4839b999ba4c54bf426a",
+      "Id": "1b211e941bd14f8e8d698259e4c7ff75"
+    },
+    {
+      "Start": "3621a28f63f148baaf85be2b518d3813",
+      "End": "7f3b355ec0a14799aad9ab3cc3f2a225",
+      "Id": "1e70dc4d57964d5e8991ec71737bad7d"
+    },
+    {
+      "Start": "c32de318a10f4c9e88775282252c8910",
+      "End": "4d30f388921f45a9b64ecf4de60532c4",
+      "Id": "781d9003bbc24ccfb3c8c88e7accf9ac"
+    },
+    {
+      "Start": "b0d74b837b0340b182ea5bdd30b4ccc3",
+      "End": "bf1ff6892f154a1b85722c3e092a57a6",
+      "Id": "19c32cfe72894f43a1e7957b55570048"
+    },
+    {
+      "Start": "888218fa266741c4843c7a77ac5d9dc9",
+      "End": "2f4f9e7d370e4637819a4f241abadb3f",
+      "Id": "82c3a9f20e934ec2a7434f952e4173e3"
+    },
+    {
+      "Start": "e4b31e504c8e4db69ff973fd4a707ea2",
+      "End": "db05214906df4bbaba159d37305fb801",
+      "Id": "2df13be0334c47c08ef6f40ed3dda468"
+    },
+    {
+      "Start": "a782564581e0474b8f90c7b7f31b82bf",
+      "End": "d053eacf24884df5b6e9cc3c336fca0a",
+      "Id": "5aebab90eaa547f58ec15166432985ee"
+    },
+    {
+      "Start": "914bac70f7c849ed804f9788f170645b",
+      "End": "a9559cd1385b43bdadbe54e06251defa",
+      "Id": "b4cc69e336a34bd38d9079e1245a08f5"
+    },
+    {
+      "Start": "551364dd8c77416dbe43ff31867e0850",
+      "End": "f1f9ae680cee419e8b2a5e3c1461d116",
+      "Id": "06e8dc6f41b843b3a28597e287655726"
+    },
+    {
+      "Start": "677cb498af404e098b70c54f8fc7b23f",
+      "End": "f256c4779d5c46d29ac0706d935e815f",
+      "Id": "9e5ba58f967a48ef9d6d4d37eef3261b"
+    },
+    {
+      "Start": "51555ebdaeb843b5bd24dd804bf16a3b",
+      "End": "27ca579a8f384203a15829db8f203165",
+      "Id": "da878a5ce28a43f296806615a81263a2"
+    },
+    {
+      "Start": "60b55afe5aa348b2a95f489e1a78a852",
+      "End": "125f9bcda8724add8e96ee9acd5a795b",
+      "Id": "0010d1bbbc7a4f389a46926434c76216"
+    },
+    {
+      "Start": "6f027d9124a3448c9208c15a383df707",
+      "End": "30c4ee08593c4b9896da95b78401a99a",
+      "Id": "be870f62227d46e4aebfd9a9dfabcd9e"
+    },
+    {
+      "Start": "7af47deea095471baf454d9e0246cb1b",
+      "End": "03bf612581f441628d0c1222c4b9cebe",
+      "Id": "6f27bc38cc3b4c07b5625acc7b89bce8"
+    },
+    {
+      "Start": "585aaf290a284d50b7cfe1b9618215ba",
+      "End": "a8349821b4134668a22774eee8549e9e",
+      "Id": "8e557c68fc9d42bc828d8a1ca377417f"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.5.1.7586",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "1. Nome exato do alinhamento",
+        "Id": "59c4b0d248c74e60b61c767e4ae7d202",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 40.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "2. Nome exato da superficie",
+        "Id": "9cefec7db16b4a83930557cc7da9bfd7",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 135.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "4. Distancia de analise 1 (m)",
+        "Id": "fd129c99ad7c4a2fa18ecab883d608ad",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 325.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "5. Distancia de analise 2 (m)",
+        "Id": "74e83314b6244d4b81ad8b641cedd877",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 420.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "6. Distancia de analise 3 (m)",
+        "Id": "626f08a9f1b64a9eaa623efd8ed0ef07",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 515.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "7. Distancia de analise 4 (m)",
+        "Id": "4faf9ac5aad74f639a2d97746d302e86",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 610.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "8. Distancia de analise 5 (m)",
+        "Id": "8c49f7cf3c5549f3ab12a5bc857ad3af",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 705.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "9. Declividade minima para agua indo a pista (%)",
+        "Id": "8e2adb9556464670b59f5a697b936f4a",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 38.83062920429575,
+        "Y": 802.3387415914085
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "10. Tolerancia minima do sinal de corte (m)",
+        "Id": "f987fe97fbbf4a6eb8335b55e223c4de",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 895.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "11. Intervalo maximo para unir pontos (m)",
+        "Id": "24c7610d31214efd91fac538c4550a33",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 990.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "12. Comprimento minimo da valeta (m)",
+        "Id": "1281b31f90784a80b62a98b6f0289575",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 1085.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "13. Distancia da saia ate a valeta (m)",
+        "Id": "10f3dfc100cd4022856737f200c03abc",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 1180.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "14. Ruido vertical ignorado no caimento (m)",
+        "Id": "cc04339c5f3a4bbb9775c0e0e908d2c1",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 1275.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "15. Comprimento maximo de ruido pontual (m)",
+        "Id": "1c53d116e7204c57aebe984c09686ca4",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 1370.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Executar analise de valetas",
+        "Id": "8ed666134a994f788b9200845012370c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 650.0,
+        "Y": 250.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "File Path",
+        "Id": "1d94fcecbc404b9ea255ba1da3f08be2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -121.02365848684565,
+        "Y": 212.44830316358733
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "16. Somente nota de servico (True = nao apaga/desenha)",
+        "Id": "e6f8c33159784ce295e7136d65f11b63",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 40.0,
+        "Y": 1460.0
+      }
+    ],
+    "Annotations": [],
+    "X": 552.9423954116326,
+    "Y": -155.5591361136764,
+    "Zoom": 0.7190245345032376
+  }
+}
