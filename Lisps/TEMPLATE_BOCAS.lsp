@@ -1,5 +1,6 @@
-;;; Cadastro v3: 18 templates do DWG BocasBueiro_Cadastro_Conferencia atualizado.
-;;; Comando recomendado: BOCASCADASTRO. BSTC/BDTC/BTTC; diametros 1.00 a 3.00 m.
+;;; DNIT V4 (secao no fim do arquivo): 23 bocas BNAA em planta pelas tabelas
+;;; do DNIT - tubulares BNAA 01-11 e celulares quadrados (BNAA 12-41).
+;;; Comandos: BOCASCADDIN (bloco dinamico BOCA_DNIT_PLANTA_V4) e BOCASCADASTRO.
 ;;; ==========================================================================
 ;;; BocasBueiroDNIT.lsp
 ;;; Blocos dinamicos de bocas de bueiros tubulares de concreto
@@ -996,8 +997,7 @@
   (list "BDTC 2,00 - EXTRAPOLADO" "BEAA15_BDTC200_PL"
    '(("P" "BOCA-CONCRETO" (-295.573 -79.199) (294.607 78.94) (311.431 16.155) (-278.75 -141.984))
    ("P" "BOCA-CONCRETO" (-278.75 -141.984) (-522.702 -564.521) (-488.551 -555.37) (-244.599 -132.833))
-   ("P" "BOCA-CONCRETO" (311.431 16.155) (490.016 -293.164) (465.016 -299.863) (286.431 9.456))
-   ("P" "BOCA-SOLEIRA" (-305.233 -81.787) (304.267 81.528) (321.09 18.743) (490.016 -293.164) (492.604 -302.823) (-520.114 -574.18) (-522.702 -564.521) (-288.409 -144.572))   ("L" "BOCA-OCULTO" (-236.652 -63.411) (-236.652 -130.704))
+   ("P" "BOCA-CONCRETO" (311.431 16.155) (490.016 -293.164) (465.016 -299.863) (286.431 9.456))   ("P" "BOCA-SOLEIRA" (-305.233 -81.787) (304.267 81.528) (321.09 18.743) (490.016 -293.164) (492.604 -302.823) (-520.114 -574.18) (-522.702 -564.521) (-288.409 -144.572))   ("L" "BOCA-OCULTO" (-236.652 -63.411) (-236.652 -130.704))
    ("L" "BOCA-OCULTO" (-36.652 -9.821) (-36.652 -77.114))
    ("L" "BOCA-OCULTO" (36.652 9.821) (36.652 -57.472))
    ("L" "BOCA-OCULTO" (236.652 63.411) (236.652 -3.882))
@@ -1996,8 +1996,7 @@
    ("P" "BOCA-CONCRETO" (382 0) (382 142) (337.788 35) (337.788 0))
    ("L" "BOCA-CONCRETO" (317.083 0) (317.083 35))
    ("P" "BOCA-SOLEIRA" (-671.844 0) (392 0) (392 -65) (-671.844 -65))
-   ("L" "BOCA-OCULTO" (-671.844 -25) (392 -25))   ("P" "BOCA-SOLEIRA" (-671.844 -65) (392 -65) (392 -70) (-671.844 -70))))
-  (list "BTTC 1,20 - BEAA 32" "BEAA45_BTTC120_FR"
+   ("L" "BOCA-OCULTO" (-671.844 -25) (392 -25))   ("P" "BOCA-SOLEIRA" (-671.844 -65) (392 -65) (392 -70) (-671.844 -70))))  (list "BTTC 1,20 - BEAA 32" "BEAA45_BTTC120_FR"
    '(("P" "BOCA-CONCRETO" (-371.5 0) (443.5 0) (443.5 163) (-371.5 163))
    ("E" "BOCA-CONCRETO" (-251.647 60) 84.853 60)
    ("E" "BOCA-CONCRETO" (0 60) 84.853 60)
@@ -2329,13 +2328,16 @@
       (cons 40 (* k 0.375)) (cons 49 (* k 0.25)) '(74 . 0)
       (cons 49 (* k -0.125)) '(74 . 0))))
       (bc:falha "Nao foi possivel criar o tipo de linha do cadastro.")))
-  (bc:camada "Bocas OAC" 154 "Continuous") nm)
+  (bc:camada *bc:layer* *bc:cor* "Continuous") nm)
+;;; Layer e cor de toda a geometria dos blocos de cadastro (5 = blue)
+(setq *bc:layer* "OBRAS PROJETADAS"
+      *bc:cor*   5)
 (defun bc:ent (en e / lt)
   (if (= (car en) "C")
     (progn (setq lt (bc:cad-estilo))
       (if (not (entmake (append
-        (list '(0 . "LWPOLYLINE") '(100 . "AcDbEntity") '(8 . "Bocas OAC")
-          (cons 62 (nth 2 en)) (cons 6 (if (= (nth 2 en) 7) lt "Continuous"))
+        (list '(0 . "LWPOLYLINE") '(100 . "AcDbEntity") (cons 8 *bc:layer*)
+          (cons 62 *bc:cor*) (cons 6 (if (= (nth 2 en) 7) lt "Continuous"))
           '(48 . 0.5) '(100 . "AcDbPolyline")
           (cons 90 (length (cdddr en))) (cons 70 (cadr en)))
         (mapcar '(lambda (p) (list 10 (* e (car p)) (* e (cadr p)))) (cdddr en)))))
@@ -2357,7 +2359,7 @@
   (setq normal (trans '(0.0 0.0 1.0) 1 0 T)
         vec (trans (list (cos an) (sin an) 0.0) 1 normal T))
   (setq ref (entmakex (list '(0 . "INSERT") '(100 . "AcDbEntity")
-    '(8 . "Bocas OAC") '(100 . "AcDbBlockReference") (cons 2 nome)
+    (cons 8 *bc:layer*) '(100 . "AcDbBlockReference") (cons 2 nome)
     (cons 10 (trans pt 1 normal)) '(41 . 1.0) '(42 . 1.0) '(43 . 1.0)
     (cons 50 (atan (cadr vec) (car vec))) (cons 210 normal))))
   (if (null ref) (bc:falha "Falha ao inserir a boca.")) ref)
@@ -2489,4 +2491,151 @@
 (defun c:BOCASADDIN () (c:BOCASCADDIN))
 (defun c:BOCASTESTE () (c:BOCASCADDIN))
 (princ "\nCadastro v3: BOCASCADDIN cria BOCA_CADASTRO_PLANTA_V3 com validacao.")
+(princ)
+
+;;; ==========================================================================
+;;; DNIT V4 - Bocas BNAA em planta conforme as tabelas do album DNIT
+;;;   Tubulares : BNAA 01 a 11 (BSTC 0.60-1.50, BDTC/BTTC 1.00-1.50)
+;;;   Celulares : so os quadrados das BNAA 12 a 41 (BSCC/BDCC/BTCC
+;;;               1.50X1.50, 2.00X2.00, 2.50X2.50 e 3.00X3.00)
+;;; A geometria e calculada pelas cotas da tabela (cm). Origem = centro da
+;;; face da testa onde o bueiro chega; bueiro ao longo de +Y, alas p/ -Y.
+;;; Alas a 30 graus do eixo. Substitui o cadastro: BOCASCADDIN cria o bloco
+;;; dinamico BOCA_DNIT_PLANTA_V4 e BOCASCADASTRO insere uma variante.
+;;; ==========================================================================
+(setq *bc:c30* (cos (/ pi 6.0))
+      *bc:t30* (/ (sin (/ pi 6.0)) (cos (/ pi 6.0))))
+
+(defun bc:pl (fech cor pts) (append (list "C" fech cor) pts))
+(defun bc:espelho (pts) (mapcar '(lambda (p) (list (- (car p)) (cadr p))) pts))
+
+;;; Tubular. n = no de linhas, a = largura da testa, b = espessura da testa,
+;;; c = comprimento das alas (em Y), d = d1 = d2 (testa ate o tubo),
+;;; f = espessura da ala, k = borda da soleira, m = trecho vertical final
+;;; da soleira, q = espaco entre tubos.
+(defun bc:geo-tc (n a b c d f k m q / h mm tw po1 po2 pi1 pi2 yv xb ala w i x1 res)
+  (setq n  (float n) a (float a) b (float b) c (float c) d (float d)
+        f  (float f) k (float k) m (float m) q (float q)
+        h  (/ a 2.0)
+        mm (+ b c k)                     ; M
+        tw (/ f *bc:c30*)                ; largura da ala medida em X
+        po1 (list (- h) (- b))           ; face externa da ala, no pe da testa
+        pi1 (list (+ (- h) tw) (- b))    ; face interna da ala, no pe da testa
+        pi2 (list (- (car pi1) (* c *bc:t30*)) (- (+ b c)))
+        po2 (list (- (car pi2) (* f *bc:c30*)) (+ (cadr pi2) (* f 0.5)))
+        ;; borda da soleira: paralela a ala, afastada k
+        yv (- (+ (- b) (* 0.5 k)) (* *bc:c30* (/ (* k (- 1.0 *bc:c30*)) 0.5)))
+        xb (+ h (* k *bc:c30*) (* 0.5 (/ (+ (- b) (* 0.5 k) mm (- m)) *bc:c30*)))
+        ala (list po1 po2 pi2 pi1))
+  (setq res (list
+    (bc:pl 1 256 (list (list (- (+ h k)) 0.0) (list (+ h k) 0.0) (list (+ h k) yv)
+                       (list xb (- m mm)) (list xb (- mm)) (list (- xb) (- mm))
+                       (list (- xb) (- m mm)) (list (- (+ h k)) yv)))
+    (bc:pl 1 256 (list (list (- h) 0.0) (list h 0.0) (list h (- b)) (list (- h) (- b))))
+    (bc:pl 1 256 ala)
+    (bc:pl 1 256 (bc:espelho ala))
+    ;; faces externas dos tubos extremos (referencia de x / y da tabela)
+    (bc:pl 0 7 (list (list (- d h) (- b)) (list (- d h) (- (+ b c)))))
+    (bc:pl 0 7 (list (list (- h d) (- b)) (list (- h d) (- (+ b c)))))))
+  ;; tubos atravessando a testa (tracejado)
+  (setq w (/ (- a (* 2.0 d) (* (- n 1.0) q)) n) i 0)
+  (repeat (fix n)
+    (setq x1  (+ (- h) d (* i (+ w q)))
+          res (append res (list (bc:pl 0 7 (list (list x1 0.0) (list x1 (- b))))
+                                (bc:pl 0 7 (list (list (+ x1 w) 0.0) (list (+ x1 w) (- b))))))
+          i   (1+ i)))
+  res)
+
+;;; Celular. a = largura da testa, b = espessura da testa, c = comprimento
+;;; das alas ate a soleira, d = largura total no topo, e = espessura da ala.
+;;; Soleira final com 20 de espessura e 32 de aba para cada lado.
+(defun bc:geo-cc (a b c d e / h hc mm tw xo xl xi ala)
+  (setq a  (float a) b (float b) c (float c) d (float d) e (float e)
+        h  (/ a 2.0)
+        hc (+ b c)
+        mm (+ hc 20.0)                   ; M
+        tw (/ e *bc:c30*)
+        xo (+ (/ d 2.0) (* hc *bc:t30*)) ; borda externa no topo da soleira
+        xl (+ xo 32.0)
+        xi (+ (- h) tw)                  ; face interna da ala no pe da testa
+        ala (list (list (- h) (- b)) (list xi (- b))
+                  (list (- xi (* (+ c 20.0) *bc:t30*)) (- mm))
+                  (list (- (- h) (* (+ c 20.0) *bc:t30*)) (- mm))))
+  (list
+    (bc:pl 1 256 (list (list (- (/ d 2.0)) 0.0) (list (/ d 2.0) 0.0) (list xo (- hc))
+                       (list xl (- hc)) (list xl (- mm)) (list (- xl) (- mm))
+                       (list (- xl) (- hc)) (list (- xo) (- hc))))
+    (bc:pl 1 256 (list (list (- h) 0.0) (list h 0.0) (list h (- b)) (list (- h) (- b))))
+    (bc:pl 1 256 ala)
+    (bc:pl 1 256 (bc:espelho ala))
+    (bc:pl 0 7 (list (list xi (- b)) (list xi (- hc))))
+    (bc:pl 0 7 (list (list (- xi) (- b)) (list (- xi) (- hc))))
+    (bc:pl 0 7 (list (list (- xi (* c *bc:t30*)) (- hc)) (list (- (* c *bc:t30*) xi) (- hc))))))
+
+;;; (estado bloco-base n a b c d f k m q)
+(setq *bc:dnit-tc* '(
+  ("BSTC 0.60 - BNAA 01" "DNIT_BSTC060_PL" 1 110 20 125 25 15 10 20 0)
+  ("BSTC 0.80 - BNAA 02" "DNIT_BSTC080_PL" 1 140 25 145 30 15 10 20 0)
+  ("BSTC 1.00 - BNAA 03" "DNIT_BSTC100_PL" 1 170 30 165 35 20 10 25 0)
+  ("BSTC 1.20 - BNAA 04" "DNIT_BSTC120_PL" 1 200 40 180 40 20 10 25 0)
+  ("BSTC 1.50 - BNAA 05" "DNIT_BSTC150_PL" 1 245 50 260 47 20 10 25 0)
+  ("BDTC 1.00 - BNAA 06" "DNIT_BDTC100_PL" 2 315 30 165 31 20 10 25 30)
+  ("BDTC 1.20 - BNAA 07" "DNIT_BDTC120_PL" 2 370 40 180 36 20 10 25 30)
+  ("BDTC 1.50 - BNAA 08" "DNIT_BDTC150_PL" 2 440 50 260 39 20 10 25 30)
+  ("BTTC 1.00 - BNAA 09" "DNIT_BTTC100_PL" 3 470 30 165 32 20 10 25 30)
+  ("BTTC 1.20 - BNAA 10" "DNIT_BTTC120_PL" 3 540 40 180 32 20 10 25 30)
+  ("BTTC 1.50 - BNAA 11" "DNIT_BTTC150_PL" 3 650 50 260 38 20 10 25 30)))
+
+;;; (estado bloco-base a b c d e)
+(setq *bc:dnit-cc* '(
+;;; So as secoes quadradas (largura = altura).
+  ("BSCC 1.50X1.50 - BNAA 12" "DNIT_BSCC150X150_PL"  185 15 285  237 15)
+  ("BSCC 2.00X2.00 - BNAA 14" "DNIT_BSCC200X200_PL"  246 20 355  292 20)
+  ("BSCC 2.50X2.50 - BNAA 17" "DNIT_BSCC250X250_PL"  308 25 425  348 25)
+  ("BSCC 3.00X3.00 - BNAA 21" "DNIT_BSCC300X300_PL"  369 30 495  404 30)
+  ("BDCC 1.50X1.50 - BNAA 22" "DNIT_BDCC150X150_PL"  385 15 285  437 15)
+  ("BDCC 2.00X2.00 - BNAA 24" "DNIT_BDCC200X200_PL"  506 20 355  552 20)
+  ("BDCC 2.50X2.50 - BNAA 27" "DNIT_BDCC250X250_PL"  628 25 425  668 25)
+  ("BDCC 3.00X3.00 - BNAA 31" "DNIT_BDCC300X300_PL"  749 30 495  784 30)
+  ("BTCC 1.50X1.50 - BNAA 32" "DNIT_BTCC150X150_PL"  585 15 285  637 15)
+  ("BTCC 2.00X2.00 - BNAA 34" "DNIT_BTCC200X200_PL"  766 20 355  812 20)
+  ("BTCC 2.50X2.50 - BNAA 37" "DNIT_BTCC250X250_PL"  948 25 425  988 25)
+  ("BTCC 3.00X3.00 - BNAA 41" "DNIT_BTCC300X300_PL" 1129 30 495 1164 30)))
+
+;;; Cadastro passa a ser o DNIT V4: (estado bloco-base entidades)
+(setq *bc:cadastro* (append
+  (mapcar '(lambda (r) (list (car r) (cadr r) (apply 'bc:geo-tc (cddr r)))) *bc:dnit-tc*)
+  (mapcar '(lambda (r) (list (car r) (cadr r) (apply 'bc:geo-cc (cddr r)))) *bc:dnit-cc*)))
+
+(defun c:BOCASCADASTRO (/ tp lst i op st pt an)
+  (initget "BSTC BDTC BTTC BSCC BDCC BTCC")
+  (setq tp (getkword "\nTipo [BSTC/BDTC/BTTC/BSCC/BDCC/BTCC] <BSTC>: "))
+  (if (null tp) (setq tp "BSTC"))
+  (setq lst (vl-remove-if-not '(lambda (s) (wcmatch (car s) (strcat tp " *"))) *bc:cadastro*)
+        i   0)
+  (foreach s lst (setq i (1+ i)) (prompt (strcat "\n  " (itoa i) " = " (car s))))
+  (initget 6)
+  (setq op (getint (strcat "\nOpcao [1-" (itoa (length lst)) "] <1>: ")))
+  (if (null op) (setq op 1))
+  (if (> op (length lst))
+    (prompt "\nOpcao invalida.")
+    (progn
+      (bc:cad-base)
+      (setq st (nth (1- op) lst)
+            pt (getpoint "\nCentro da face de chegada da boca: "))
+      (if pt
+        (progn
+          (setq an (getangle pt "\nRotacao <0>: "))
+          (if (null an) (setq an 0.0))
+          (bc:cad-inserir (cadr st) pt an)))))
+  (princ))
+
+(defun c:BOCASCADDIN ()
+  (bc:cad-base)
+  (bc:bloco-dinamico "BOCA_DNIT_PLANTA_V4" *bc:cadastro* (bc:cad-unidades)) (princ))
+(defun c:BOCASADDIN () (c:BOCASCADDIN))
+(defun c:BOCASTESTE () (c:BOCASCADDIN))
+(princ (strcat "\nDNIT V4: " (itoa (length *bc:cadastro*))
+               " variantes BNAA (tubular + celular). BOCASCADDIN cria BOCA_DNIT_PLANTA_V4;"
+               " BOCASCADASTRO insere uma variante."))
 (princ)
