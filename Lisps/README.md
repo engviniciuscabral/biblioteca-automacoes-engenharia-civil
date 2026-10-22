@@ -18,8 +18,8 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
 | [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
-| [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | Criação e cadastro de blocos-modelo de bocas de bueiros. | [Ver detalhes](#template_bocaslsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
-| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASBUEIRO` / `BBU` / `BBDIAG` | Inserção automática de bocas a montante/jusante e, quando aplicável, dissipador. | [Ver detalhes](#bocas_bueeirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
+| [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | Nova versão DNIT V4: blocos de bocas tubulares e celulares; bloco dinâmico `BOCA_DNIT_PLANTA_V4`. | [Ver detalhes](#template_bocaslsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
+| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASBUEIRO` / `BBU` / `BBCALIB` / `BBCALIBLIMPA` / `BBDIAG` | Versão v11: inserção automática de bocas e dissipadores, calibração de encaixe e diagnóstico. | [Ver detalhes](#bocas_bueeirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
 
 ## Documentação das rotinas
 
@@ -246,31 +246,22 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 ### TEMPLATE_BOCAS.lsp
 
-**Guia complementar:** [Bocas de bueiros — instalação, configuração e uso passo a passo](./GUIA_BOCAS_BUEIROS.md).
-
 **Arquivo:** [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp)  
-**Comandos principais:** `BOCASCADASTRO`, `BOCASCADBASE`, `BOCASCADDIN`, `BOCASADDIN`.  
-**Objetivo:** disponibilizar modelos de bocas de bueiros tubulares de concreto e facilitar sua inserção e organização como blocos no AutoCAD/Civil 3D.
+**Comandos recomendados:** `BOCASCADASTRO`, `BOCASCADBASE`, `BOCASCADDIN` e `BOCASADDIN`.  
+**Guia completo:** [Bocas de bueiros — instalação, configuração e uso passo a passo](./GUIA_BOCAS_BUEIROS.md).
 
-**Funcionamento:** contém 18 templates em planta para bueiros simples, duplos e triplos (`BSTC`, `BDTC` e `BTTC`), com diâmetros de 1,00, 1,20, 1,50, 2,00, 2,50 e 3,00 m. As geometrias são definidas por coordenadas em centímetros e convertidas conforme `INSUNITS`. A rotina cria camadas, tipos de linha e blocos; o comando de inserção solicita tipo, diâmetro, ponto e rotação. Também contém uma família de blocos com referência a modelos DNIT (BNAR, BNAA e BEAA 15°/30°/45°).
+**Objetivo:** criar e cadastrar blocos-modelo de bocas de bueiros para utilização no AutoCAD/Civil 3D, incluindo o bloco dinâmico consumido pela rotina de inserção automática.
+
+**Versão atual:** cabeçalho DNIT V4; o arquivo descreve modelos tubulares BNAA 01–11 e celulares quadrados BNAA 12–41. O bloco dinâmico esperado pela rotina automática é `BOCA_DNIT_PLANTA_V4`.
 
 **Como utilizar:**
-1. Abra preferencialmente um DWG novo e vazio para criar a biblioteca de blocos; confira as unidades do desenho.
-2. Carregue a LISP com `APPLOAD`.
-3. Execute `BOCASCADASTRO` para escolher BSTC/BDTC/BTTC, diâmetro, ponto de inserção e rotação.
-4. Use `BOCASCADBASE` para criar os 18 blocos estáticos de cadastro; `BOCASCADDIN` (ou `BOCASADDIN`) tenta criar e validar um bloco dinâmico com 18 estados de visibilidade.
-5. Confira os blocos e suas dimensões antes de aplicá-los em desenhos de projeto.
+1. Abra um DWG novo e vazio para montar a biblioteca e confira `INSUNITS`.
+2. Carregue o arquivo com `APPLOAD`.
+3. Execute `BOCASCADASTRO` para inserir/cadastrar uma variante conforme os prompts.
+4. Execute `BOCASCADBASE` para gerar blocos estáticos e `BOCASCADDIN` para gerar o bloco dinâmico.
+5. Confira estados de visibilidade, geometria e dimensões antes de copiar o bloco para desenhos de projeto.
 
-**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP e suporte aos comandos e à API ActiveX de edição de blocos. O código reconhece `INSUNITS` 6 (metros), 5 (centímetros), 4 (milímetros) e 0 (assume metros). A criação dinâmica depende da disponibilidade e do comportamento dos comandos do Editor de Blocos na versão utilizada.
-
-**Status:** arquivo incluído na biblioteca em 19/10/2026; não houve validação de execução no AutoCAD/Civil 3D.
-
-**Limitações e cuidados:**
-- O cabeçalho cita DNIT IPR-736, Emenda 3, como referência para modelos BNAR/BNAA/BEAA; os diâmetros 2,00, 2,50 e 3,00 m desses modelos são **extrapolados** e não possuem respaldo declarado no álbum DNIT.
-- Os 18 templates de cadastro são descritos no código como extraídos de um DWG de conferência. Verifique dimensões e adequação às especificações do projeto.
-- O código redefine alguns comandos ao longo do arquivo; na versão final, `BOCASTESTE` chama `BOCASCADDIN` (não é apenas um teste simples, apesar da descrição inicial).
-- A criação de blocos e layers **modifica o DWG**; execute inicialmente em um desenho de teste e faça backup.
-- A criação de blocos dinâmicos pode depender de prompts específicos da versão e do idioma do AutoCAD; confira o resultado.
+**Requisitos e limitações:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP e suporte a edição de blocos. O cabeçalho cita o DNIT IPR-736, Emenda 3; o próprio código informa que os diâmetros 2,00, 2,50 e 3,00 m são extrapolados e não têm respaldo direto declarado no álbum. Valide as dimensões com as referências aplicáveis. A atualização do arquivo foi publicada no GitHub, mas não houve execução de teste no AutoCAD/Civil 3D nesta revisão.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
@@ -279,29 +270,22 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 ### BOCAS_BUEIRO.lsp
 
-**Arquivo:** [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp)  
-**Comandos:** `BOCASBUEIRO` (atalho `BBU`) e `BBDIAG` (diagnóstico).
+**Arquivo:** [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) — versão recebida como `BOCAS_BUEIRO_4.lsp), publicada com o nome padronizado do catálogo.  
+**Comandos:** `BOCASBUEIRO` (atalho `BBU`), `BBCALIB`, `BBCALIBLIMPA` e `BBDIAG`.  
+**Guia completo:** [Bocas de bueiros — instalação, configuração e uso passo a passo](./GUIA_BOCAS_BUEIROS.md).
 
-**Objetivo:** Automatizar a inserção de bocas de bueiros no Civil 3D, a montante e a jusante de tubos selecionados de uma ou mais redes de tubulação.
+**Objetivo:** automatizar a inserção de bocas a montante e jusante em bueiros representados por tubos de Pipe Network no Civil 3D e, quando aplicável, inserir dissipadores de energia.
 
-**Funcionamento:** A rotina agrupa tubos paralelos e próximos para identificar bueiros simples, duplos ou triplos. Lê as propriedades de dimensão, forma e extremidades dos tubos; usa as cotas Z para determinar o sentido do fluxo, considerando a extremidade de menor cota como jusante. Em seguida, insere os blocos de boca orientados conforme o eixo do bueiro e define o estado de visibilidade correspondente ao tipo e à dimensão. Para bueiros tubulares com diâmetro dentro do limite configurado (por padrão, até 1,50 m), também pode inserir um dissipador de energia a jusante.
+**Funcionamento:** agrupa tubos paralelos e próximos para identificar bueiros simples, duplos ou triplos; lê as dimensões e as cotas das extremidades; considera a extremidade de menor cota como jusante; insere e orienta o bloco dinâmico `BOCA_DNIT_PLANTA_V4`. Para tubos tubulares dentro do limite configurado, pode inserir um dissipador. A versão atual inclui calibração do encaixe (`BBCALIB`), limpeza da calibração (`BBCALIBLIMPA`) e diagnóstico de leitura de um tubo (`BBDIAG`).
 
 **Como utilizar:**
-1. Verifique se o desenho contém as redes de tubulação e os blocos dinâmicos ou blocos de boca esperados pela rotina.
-2. Se necessário, ajuste as variáveis de configuração no início do arquivo, como nomes dos blocos, ângulos de orientação, limite de diâmetro do dissipador, camadas e tolerâncias de agrupamento.
-3. Carregue `BOCAS_BUEIRO.lsp` com `APPLOAD`.
-4. Execute `BOCASBUEIRO` (ou `BBU`) e selecione os tubos dos bueiros a processar.
-5. Confira as bocas, o sentido do fluxo e os dissipadores inseridos. Use `BBDIAG` para diagnóstico quando necessário.
+1. Garanta que o bloco dinâmico de boca esteja no desenho. Se necessário, crie-o com `TEMPLATE_BOCAS.lsp`.
+2. Carregue o arquivo com `APPLOAD`.
+3. Execute `BOCASBUEIRO` ou `BBU` e selecione os tubos a processar.
+4. Confira a posição, orientação, estado de visibilidade e sentido de montante/jusante.
+5. Use `BBCALIB` para calibrar o encaixe do dissipador, `BBCALIBLIMPA` para limpar a calibração e `BBDIAG` para investigar as propriedades de um tubo.
 
-**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP, Visual LISP/ActiveX e redes de tubulação (Pipe Networks) com propriedades de diâmetro/largura, altura e pontos inicial/final acessíveis. A rotina depende de blocos de boca compatíveis com os estados de visibilidade esperados; o dissipador é opcional e pode ser escolhido ou informado conforme os prompts.
-
-**Status:** Arquivo incluído na biblioteca; não foi executado em ambiente AutoCAD/Civil 3D nesta atualização.
-
-**Limitações e cuidados:**
-- A direção do fluxo é inferida pela diferença de cota Z entre as extremidades. Se as cotas estiverem ausentes, iguais ou não representarem o sentido hidráulico real, confira manualmente a montante e a jusante.
-- O agrupamento depende das tolerâncias de paralelismo e distância configuradas; tubos próximos de bueiros diferentes podem exigir seleção separada ou ajuste das tolerâncias.
-- O dissipador é condicionado à forma tubular e ao limite de diâmetro configurado. O bloco e a orientação precisam ser verificados no desenho.
-- A rotina insere entidades e pode criar ou alterar propriedades de blocos/camadas no DWG. Faça cópia de segurança e valide primeiro em um desenho de teste.
+**Requisitos e limitações:** AutoCAD Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX e Pipe Networks com propriedades de dimensões e extremidades acessíveis. O sentido do fluxo é inferido pelas cotas Z, portanto deve ser conferido manualmente. O agrupamento depende das tolerâncias configuradas. A rotina altera o DWG e deve ser testada em cópia. A versão foi publicada no repositório, mas não foi executada em ambiente AutoCAD/Civil 3D nesta revisão.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
