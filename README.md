@@ -43,8 +43,8 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
 | [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
-| [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | Criação/cadastro de blocos de bocas de bueiros; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
-| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Inserção automática de bocas a montante/jusante no Civil 3D e dissipador configurável; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | DNIT V4: criação/cadastro de blocos de bocas tubulares e celulares, incluindo `BOCA_DNIT_PLANTA_V4`; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v11: inserção automática de bocas e dissipadores, calibração e diagnóstico; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
 
 ### [Python](./Python/README.md)
 
