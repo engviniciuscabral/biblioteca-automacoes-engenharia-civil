@@ -18,8 +18,8 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
 | [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
-| [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | Inserção e criação de blocos de bocas de bueiros tubulares, com 18 modelos BSTC/BDTC/BTTC. | [Ver detalhes](#template_bocaslsp) |
-| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASBUEIRO` / `BBU` / `BBDIAG` | Inserção de bocas de montante e jusante em bueiros selecionados e, quando aplicável, dissipador de energia. | [Ver detalhes](#bocas_bueeirolsp) |
+| [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | Criação e cadastro de blocos-modelo de bocas de bueiros. | [Ver detalhes](#template_bocaslsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
+| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASBUEIRO` / `BBU` / `BBDIAG` | Inserção automática de bocas a montante/jusante e, quando aplicável, dissipador. | [Ver detalhes](#bocas_bueeirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
 
 ## Documentação das rotinas
 
@@ -245,6 +245,8 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 ---
 
 ### TEMPLATE_BOCAS.lsp
+
+**Guia complementar:** [Bocas de bueiros — instalação, configuração e uso passo a passo](./GUIA_BOCAS_BUEIROS.md).
 
 **Arquivo:** [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp)  
 **Comandos principais:** `BOCASCADASTRO`, `BOCASCADBASE`, `BOCASCADDIN`, `BOCASADDIN`.  
