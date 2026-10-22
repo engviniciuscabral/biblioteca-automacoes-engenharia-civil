@@ -43,8 +43,8 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 | [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
 | [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
-| [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | Geração e inserção de 18 modelos de bocas de bueiros tubulares BSTC/BDTC/BTTC, com comandos para blocos estáticos e dinâmicos. |
-| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Inserção de bocas a montante e jusante de bueiros selecionados no Civil 3D, com orientação pelo fluxo e dissipador configurável. |
+| [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | Criação/cadastro de blocos de bocas de bueiros; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Inserção automática de bocas a montante/jusante no Civil 3D e dissipador configurável; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
 
 ### [Python](./Python/README.md)
 
