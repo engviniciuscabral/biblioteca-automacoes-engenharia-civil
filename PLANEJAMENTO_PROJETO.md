@@ -2,26 +2,22 @@
 
 Planejamento de melhorias para as rotinas AutoLISP, Dynamo, Python, QGIS e VBA. Baseado nos arquivos e READMEs do repositório em 22/10/2026. **Este documento é o template e backlog; não é um quadro nativo do GitHub Projects.** A criação do quadro na aba Projects deve ser feita pela interface do GitHub.
 
-## Template recomendado: Team planning / Kanban
+## Template recomendado: Roadmap em tabela (Table)
 
-Criar um **GitHub Project** com visualização principal **Board (Kanban)** e visualização secundária **Table**.
+Use o template **Table** do GitHub Projects, com uma visão de portfólio de melhorias, em vez de Kanban. Cada linha representa uma Issue, permitindo ordenar por prioridade e agrupar por ciclo de execução.
 
-**Colunas do Board (campo Status):**
-1. **Backlog** — ideias registradas e ainda não priorizadas para execução
-2. **Pronto para desenvolver** — escopo e critérios de aceite definidos
-3. **Em desenvolvimento** — trabalho em branch ou análise ativa
-4. **Em validação** — revisão de código, testes e conferência de resultados no software
-5. **Concluído** — PR integrada, documentação e evidências de teste disponíveis
+**Campos sugeridos para o Project:**
+- **Status** (Single select): `Não iniciado`, `Em análise`, `Em execução`, `Em validação`, `Concluído`.
+- **Prioridade** (Single select): `P0 - Crítica`, `P1 - Alta`, `P2 - Planejada`.
+- **Área** (Single select): `AutoLISP`, `Dynamo`, `Python`, `QGIS`, `VBA`, `Infraestrutura`.
+- **Tipo** (Single select): `Correção`, `Melhoria`, `Nova funcionalidade`, `Validação técnica`.
+- **Ciclo** (Single select): `1 - Confiabilidade`, `2 - Robustez`, `3 - Expansão`.
+- **Esforço** (Single select): `P`, `M`, `G`.
+- **Responsável** (Assignees).
 
-**Campos sugeridos:**
-- **Priority** (Single select): `P0 - Crítica`, `P1 - Alta`, `P2 - Planejada`
-- **Área** (Single select): `AutoLISP`, `Dynamo`, `Python`, `QGIS`, `VBA`, `Infraestrutura`
-- **Tipo** (Single select): `Correção`, `Melhoria`, `Nova funcionalidade`, `Validação técnica`, `Documentação`
-- **Versão alvo** (Text): versão/arquivo a alterar
-- **Responsável** (Assignees, quando houver)
-- **Esforço** (Single select): `P`, `M`, `G`
+**Visões recomendadas:** `Roadmap geral` (Table, agrupada por Ciclo, ordenada por Prioridade); `Prioridades críticas` (Table, filtro P0); `Por tecnologia` (Table, agrupada por Área). Se desejar prazos, crie um campo Date e uma visualização Roadmap adicional, sem inventar datas antecipadamente.
 
-**Visualizações sugeridas:** Board agrupado por Status, ordenado por Priority; Table com todas as Issues; filtro por Área para revisar uma linguagem por vez. Limitar a duas Issues simultaneamente em `Em desenvolvimento`.
+**Importante:** este arquivo registra o modelo e os links das Issues; não cria automaticamente um Project nativo na aba Projects.
 
 ## Backlog inicial
 
@@ -56,13 +52,13 @@ Criar um **GitHub Project** com visualização principal **Board (Kanban)** e vi
 - [ ] README da pasta e README principal atualizados, quando necessário.
 - [ ] Nenhum dado confidencial ou DWG real de cliente incluído nos testes.
 
-## Como montar o quadro nativo na aba Projects
+## Como montar o projeto nativo em tabela
 
-1. Abra a aba **Projects** do repositório e escolha **New project**, quando disponível. Dependendo das permissões e do contexto da conta, talvez seja necessário criar o Project no perfil do usuário e depois vinculá-lo ao repositório.
-2. Escolha o modelo **Team planning** ou um quadro **Board** em branco.
-3. Crie ou adapte os campos e Status descritos acima.
-4. Use **Add item** para localizar e adicionar as Issues #4 a #14 deste repositório.
-5. Deixe todas inicialmente em **Backlog**; mova #5, #6 e #7 para **Pronto para desenvolver** quando decidir iniciar o primeiro ciclo.
-6. Configure a visualização **Table** e salve filtros por Área/Prioridade.
+1. Abra a aba **Projects** do repositório (ou o Projects do perfil pessoal, se a interface exigir) e escolha **New project**.
+2. Selecione **Table** (tabela) em vez de Board/Kanban; dê o nome `Evolução da Biblioteca de Automações`.
+3. Configure os campos **Status, Prioridade, Área, Tipo, Ciclo e Esforço** conforme as definições acima.
+4. Adicione as Issues **#4 a #14** pelo comando **Add item**, mantendo a Issue #4 existente.
+5. Crie as visualizações **Roadmap geral**, **Prioridades críticas** e **Por tecnologia**. Agrupe o roadmap por Ciclo e ordene por Prioridade.
+6. Inicialmente marque todas como `Não iniciado`. Ao começar o trabalho, mova o Status conforme o progresso.
 
-> Observação: sugestões de melhorias e novos recursos são propostas de trabalho, não defeitos comprovados nem funcionalidades já implementadas. O código e a documentação podem evoluir; revise o escopo de cada Issue antes de desenvolver.
+> As Issues são sugestões de trabalho; não significam defeitos confirmados ou funcionalidades já implementadas. Valide resultados técnicos no software de engenharia correspondente.
