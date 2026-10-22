@@ -2,6 +2,10 @@
 
 Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho, geoprocessamento e planilhas. Este repositório reúne códigos reutilizáveis, com histórico de versões e documentação de consulta rápida.
 
+## Planejamento de melhorias
+
+O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um template de GitHub Projects em formato Kanban, backlog priorizado e Issues para correções, validações e novas funcionalidades.
+
 ## Como utilizar
 
 1. Escolha uma categoria abaixo e abra o respectivo catálogo.
