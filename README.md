@@ -47,8 +47,8 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
 | [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
-| [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | DNIT V4: criação/cadastro de blocos de bocas tubulares e celulares, incluindo `BOCA_DNIT_PLANTA_V4`; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
-| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v11: inserção automática de bocas e dissipadores, calibração e diagnóstico; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | DNIT V4: 32 variantes de bocas (incluindo 9 tubulares extrapoladas), com `BOCA_DNIT_PLANTA_V4`; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v13: bocas em planta e perfil (`BBU`/`BBP`), modo combinado (`BBT`) e dissipadores DEB por tabela; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
 
 ### [Python](./Python/README.md)
 
@@ -85,3 +85,4 @@ Cada pasta contém um `README.md` com índice de arquivos e seções individuais
 ## Observações
 
 As duas variantes de `CONT_AREA` definem o **mesmo comando**; consulte as diferenças no catálogo de Lisps. As rotinas VBA são armazenadas em módulos `.bas` para facilitar a importação no editor VBA e o reconhecimento da linguagem pelo GitHub.
+
