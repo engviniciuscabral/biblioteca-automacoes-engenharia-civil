@@ -1,7 +1,10 @@
 ;;; =====================================================================
 ;;;  BOCAS_BUEIRO.LSP  -  Insercao automatica de bocas de bueiro (Civil 3D)
 ;;; ---------------------------------------------------------------------
-;;;  Comando : BOCASBUEIRO   (atalho: BBU)
+;;;  Comando : BOCASTUDO     (atalho: BBT)  - planta + perfil de todos
+;;;            BOCASBUEIRO   (atalho: BBU)  - bocas em planta
+;;;            BOCASPERFIL   (atalho: BBP)  - bocas em corte no Profile View
+;;;                                           (clique na pipe dentro do perfil)
 ;;;
 ;;;  O que faz:
 ;;;   1. Voce seleciona os canos (Pipes de Pipe Network) de um ou varios
@@ -831,9 +834,124 @@
 )
 
 
+;;; ================= DISSIPADOR DNIT (DEB) - planta e corte =============
+;;; T = usa o dissipador DNIT (DEB) gerado pela tabela; nil = bloco antigo
+;;; "DISSIPADOR" escalado (*BB:BLK-DISSIP*, BBCALIB).
+(setq *BB:DISSIP-DNIT* T)
+(setq *BB:COR-DISSIP*  7)       ; cor do dissipador (7 = white | nil = ByLayer)
+(setq *BB:DISSIP-HATCH* "GRAVEL") ; hatch da pedra de mao em planta (nil = desenhar pedras)
+(setq *BB:DISSIP-HATCH-ESC* 0.05) ; escala do hatch
+
+;;; (codigo D comprimento largura) em cm - DEB "Comprimento" x "Largura"
+;;; Largura = largura total da boca (L); comprimento = 3 x D.
+(setq *bb:deb* '(
+  ("BSTC" 0.60 180 263) ("BSTC" 0.80 240 316) ("BSTC" 1.00 300 366)
+  ("BSTC" 1.20 360 414) ("BSTC" 1.50 450 551)
+  ("BDTC" 1.00 300 511) ("BDTC" 1.20 360 584) ("BDTC" 1.50 450 746)
+  ("BTTC" 1.00 300 666) ("BTTC" 1.20 360 754) ("BTTC" 1.50 450 956)))
+
+;;; (nome comprimento largura) em metros, ou nil se nao houver DEB
+(defun bb:deb-param (code d / best)
+  (foreach r *bb:deb*
+    (if (and (= (car r) code) (<= (abs (- (cadr r) d)) 0.05)) (setq best r)))
+  (if best
+    (list (strcat "DEB_" code (itoa (fix (+ 0.5 (* 100.0 (cadr best))))))
+          (* 0.01 (caddr best))
+          (* 0.01 (cadddr best)))))
+
+;;; Comprimento total da boca tubular (m) = onde o dissipador encaixa
+(defun bb:boca-comp (code d / prm)
+  (if (setq prm (bb:corte-param "TC" code d nil)) (nth 7 prm)))
+
+;;; Numero pseudo-aleatorio 0..1 (repetivel: mesma semente = mesmas pedras)
+(defun bb:rnd ()
+  (setq *bb:seed* (rem (* *bb:seed* 16807.0) 2147483647.0))
+  (/ *bb:seed* 2147483647.0))
+
+;;; Pedra de mao irregular (poligono) de raio ~r em (cx cy)
+(defun bb:pedra (spc cx cy r / n i a rr pts)
+  (setq n (+ 7 (fix (* 3.0 (bb:rnd)))) i 0)
+  (repeat n
+    (setq a   (+ (* i (/ (* 2.0 pi) n)) (* 0.3 (- (bb:rnd) 0.5)))
+          rr  (* r (+ 0.75 (* 0.35 (bb:rnd))))
+          pts (cons (list (+ cx (* rr (cos a))) (+ cy (* rr (sin a)))) pts)
+          i   (1+ i)))
+  (bb:addpl-c spc (reverse pts) T *BB:COR-DISSIP*))
+
+(defun bb:novo-bloco (nome)
+  (vla-Add (vla-get-Blocks (vla-get-ActiveDocument (vlax-get-acad-object)))
+           (vlax-3d-point '(0.0 0.0 0.0)) nome))
+
+;;; Hatch (sem associatividade) dentro da polilinha fechada BND
+(defun bb:hatch (spc bnd pat esc cor / h arr)
+  (setq h (vl-catch-all-apply 'vla-AddHatch (list spc acHatchPatternTypePreDefined pat :vlax-false)))
+  (if (not (vl-catch-all-error-p h))
+    (progn
+      (setq arr (vlax-make-safearray vlax-vbObject '(0 . 0)))
+      (vlax-safearray-put-element arr 0 bnd)
+      (if (vl-catch-all-error-p
+            (vl-catch-all-apply 'vla-AppendOuterLoop (list h (vlax-make-variant arr))))
+        (progn (vla-Delete h) (setq h nil))
+        (progn
+          (vla-put-PatternScale h esc)
+          (if cor (vla-put-Color h cor))
+          (vl-catch-all-apply 'vla-Evaluate (list h))
+          h)))))
+
+;;; DEB em PLANTA (m). Origem = ponto de encaixe (face externa da boca) no
+;;; eixo; +X = sentido do fluxo. Pedra de mao de 0 a C (hatch); paredes
+;;; laterais de 10 cm avancando 30 cm para tras; parede final de 10 cm.
+(defun bb:deb-planta (deb / nome c h blk s tt bnd)
+  (setq nome (strcat (car deb) "_PL2"))
+  (if (not (tblsearch "BLOCK" nome))
+    (progn
+      (setq c (nth 1 deb) h (/ (nth 2 deb) 2.0) blk (bb:novo-bloco nome) *bb:seed* 12345.0)
+      (bb:addpl-c blk (list (list -0.30 (+ h 0.10)) (list (+ c 0.10) (+ h 0.10))
+                            (list (+ c 0.10) (- (+ h 0.10))) (list -0.30 (- (+ h 0.10)))
+                            (list -0.30 (- h)) (list c (- h)) (list c h) (list -0.30 h))
+                  T *BB:COR-DISSIP*)
+      ;; area da pedra de mao
+      (setq bnd (bb:addpl-c blk (list (list 0.0 (- h)) (list c (- h)) (list c h) (list 0.0 h))
+                            T *BB:COR-DISSIP*))
+      (if (not (and *BB:DISSIP-HATCH*
+                    (bb:hatch blk bnd *BB:DISSIP-HATCH* *BB:DISSIP-HATCH-ESC* *BB:COR-DISSIP*)))
+        ;; sem hatch: desenha as pedras
+        (progn
+          (setq s 0.16)
+          (while (< s (- c 0.12))
+            (setq tt (+ (- h) 0.16))
+            (while (< tt (- h 0.12))
+              (bb:pedra blk (+ s (* 0.08 (- (bb:rnd) 0.5))) (+ tt (* 0.08 (- (bb:rnd) 0.5)))
+                        (+ 0.06 (* 0.05 (bb:rnd))))
+              (setq tt (+ tt 0.32)))
+            (setq s (+ s 0.32)))))))
+  nome)
+
+;;; DEB em CORTE (m). Origem = ponto de encaixe na cota do fundo da boca
+;;; (topo do concreto de fixacao); +X = fluxo. Laje 10 + concreto 10 abaixo,
+;;; pedras de mao por cima, paredes 15 cm acima do fundo.
+(defun bb:deb-corte (deb / nome c blk s)
+  (setq nome (strcat (car deb) "_CT2"))
+  (if (not (tblsearch "BLOCK" nome))
+    (progn
+      (setq c (nth 1 deb) blk (bb:novo-bloco nome) *bb:seed* 54321.0)
+      (bb:addpl-c blk (list (list 0.0 0.0) (list 0.0 -0.20) (list (+ c 0.10) -0.20)
+                            (list (+ c 0.10) 0.15) (list c 0.15) (list c 0.0))
+                  T *BB:COR-DISSIP*)
+      (bb:addpl-c blk (list (list 0.0 -0.10) (list c -0.10)) nil *BB:COR-DISSIP*)
+      (bb:addpl-c blk (list (list -0.30 0.0) (list -0.30 0.15) (list c 0.15)) nil *BB:COR-DISSIP*)
+      (setq s 0.16)
+      (while (< s (- c 0.12))
+        (bb:pedra blk (+ s (* 0.06 (- (bb:rnd) 0.5))) (+ 0.03 (* 0.02 (bb:rnd)))
+                  (+ 0.075 (* 0.045 (bb:rnd))))
+        (setq s (+ s 0.30)))))
+  nome)
+
+
 ;;; ======================= PROCESSA UM BUEIRO ==========================
 (defun bb:processar (g idx blk / n txt res canos dz pk PM PJ D HC shp dir code
-                                 refM refJ stM refD blkD dist ptD dis extB offB extD offD escD cal)
+                                 refM refJ stM refD blkD dist ptD dis extB offB extD offD escD cal
+                                 deb mB)
   (setq n   (length g)
         txt (strcat "\nBueiro " (itoa idx) ": "))
   (if (> n 3)
@@ -907,8 +1025,10 @@
               (bb:pintar-ref refM *BB:COR-BOCA*)
               (bb:pintar-ref refJ *BB:COR-BOCA*)
               (if (> (cadr stM) *BB:TOL-DIAM*)
-                (princ (strcat txt "AVISO - diametro " (rtos D 2 2)
-                               " m nao padronizado; usado o estado mais proximo."))
+                (princ (strcat txt "AVISO - o bloco \"" blk "\" nao tem estado para "
+                               code " " (rtos D 2 2) " m; usado \"" (car stM) "\"."
+                               "\n   Se o bloco for antigo, carregue o TEMPLATE_BOCAS e rode"
+                               " BOCASCADDIN para recriar com todos os tamanhos."))
               )
               ;; ---------- dissipador (tubular e D <= / < limite) ----------
               (setq dis "nao")
@@ -916,8 +1036,20 @@
                        (if *BB:DISSIP-ATE-LIMITE*
                          (<= D (+ *BB:DIAM-LIMITE* 1e-6))
                          (<  D (- *BB:DIAM-LIMITE* 1e-6))))
-                (if (setq blkD (bb:get-dissip))
-                  (progn
+                (cond
+                  ;; ---- DNIT: DEB gerado pela tabela, encaixado na ponta da boca ----
+                  ((and *BB:DISSIP-DNIT*
+                        (setq deb (bb:deb-param code D))
+                        (setq mB (bb:boca-comp code D)))
+                   (setq *bb:etapa* "dissipador")
+                   (setq refD (bb:inserir (bb:deb-planta deb)
+                                          (bb:v+ PJ (bb:vs dir mB))
+                                          (angle '(0.0 0.0) dir)
+                                          *BB:LAYER-DISSIP*))
+                   (setq dis (strcat "sim (" (car deb) ")")))
+                  (*BB:DISSIP-DNIT*
+                   (setq dis (strcat "nao (sem DEB DNIT para " code " " (rtos D 2 2) ")")))
+                  ((setq blkD (bb:get-dissip))
                     (setq *bb:etapa* "dissipador")
                     (setq refD (bb:inserir blkD PJ 0.0 *BB:LAYER-DISSIP*))
                     (bb:set-vis refD code D HC)  ; se o dissipador tambem for dinamico
@@ -943,7 +1075,7 @@
                     )
                     (setq dis (strcat "sim (escala " (rtos (vla-get-XScaleFactor refD) 2 2) ")"))
                   )
-                  (setq dis "nao (bloco indisponivel)")
+                  (T (setq dis "nao (bloco indisponivel)"))
                 )
               )
               (princ (strcat txt (itoa n) " x D=" (rtos D 2 2) " m "
@@ -997,7 +1129,8 @@
     )
     (setq i (1+ i))
   )
-  (if (> falhas 0)    (princ (strcat "\n" (itoa falhas) " cano(s) sem propriedades legiveis foram ignorados."))
+  (if (> falhas 0)
+    (princ (strcat "\n" (itoa falhas) " cano(s) sem propriedades legiveis foram ignorados."))
   )
   (if (not canos) (exit))
   (setq *bb:etapa* "agrupamento")
@@ -1017,6 +1150,734 @@
 )
 
 (defun c:BBU () (c:BOCASBUEIRO))
+
+
+;;; ===================== BOCAS NO PERFIL (BOCASPERFIL) =================
+;;; Voce seleciona um ou mais Profile Views. Para cada um, o programa le
+;;; todos os canos do desenho, agrupa em bueiros, ve quais estao sobre o
+;;; alinhamento do perfil e insere a boca em CORTE na montante e na
+;;; jusante, na geratriz inferior e na escala vertical do perfil.
+;;;
+;;; Onde a boca fica em relacao a ponta do cano no perfil:
+;;;  "TESTA"   = face EXTERNA da testa na ponta do cano (o cano atravessa
+;;;              a testa; alas, soleira e dente ficam para fora do cano)
+;;;  "INTERNA" = face interna da testa na ponta do cano
+;;;  "PONTA"   = extremidade externa da boca (dente) na ponta do cano
+(setq *BB:PERFIL-REF*     "INTERNA")
+(setq *BB:PERFIL-DZ*      0.0)    ; correcao vertical manual da boca no perfil (m)
+(setq *BB:PERFIL-TOL-OFF* 5.0)    ; afastamento max. (m) do bueiro ao alinhamento
+(setq *BB:PERFIL-UM*      T)      ; T = so 1 bueiro por perfil (o mais proximo do alinhamento)
+(setq *BB:CORTE-DENTE*    20.0)   ; largura do dente no fim da soleira (cm)
+
+;;; Corte das bocas (cm), tabelas DNIT BNAA:
+;;;  b = testa, c = ala, h = altura da testa acima da geratriz inferior,
+;;;  e = soleira, n = dente abaixo da soleira, p = altura da ponta da ala,
+;;;  M = comprimento total
+;;; Tubular: (codigo D b c h e n p M)
+(setq *bb:corte-tc* '(
+  ("BSTC" 0.60 20 125  88 15 30 20 155)
+  ("BSTC" 0.80 25 145 120 20 30 20 180)
+  ("BSTC" 1.00 30 165 142 25 40 25 205)
+  ("BSTC" 1.20 40 180 163 30 40 25 230)
+  ("BSTC" 1.50 50 260 194 35 40 30 320)
+  ("BDTC" 1.00 30 165 142 30 40 25 205)
+  ("BDTC" 1.20 40 180 163 35 40 25 230)
+  ("BDTC" 1.50 50 260 194 35 40 30 320)
+  ("BTTC" 1.00 30 165 142 35 40 25 205)
+  ("BTTC" 1.20 40 180 163 40 40 25 230)
+  ("BTTC" 1.50 50 260 194 40 40 30 320)
+  ;; 2.00 / 2.50 / 3.00 = EXTRAPOLADO (fora das tabelas DNIT)
+  ("BSTC" 2.00  65 345 244 35 45 45 420)
+  ("BSTC" 2.50  85 435 294 40 50 60 530)
+  ("BSTC" 3.00 100 520 344 40 55 70 630)
+  ("BDTC" 2.00  65 345 244 35 45 45 420)
+  ("BDTC" 2.50  85 435 294 40 50 60 530)
+  ("BDTC" 3.00 100 520 344 40 55 70 630)
+  ("BTTC" 2.00  65 345 244 35 45 45 420)
+  ("BTTC" 2.50  85 435 294 40 50 60 530)
+  ("BTTC" 3.00 100 520 344 40 55 70 630)))
+;;; Celular (por altura H; o corte nao depende da largura nem do n. de celulas)
+;;; (H b c h e n p M) - n e p NAO constam da tabela DNIT (valores adotados)
+(setq *bb:corte-cc* '(
+  (1.50 15 285 200 20 40 30 320)
+  (2.00 20 355 250 20 40 30 395)
+  (2.50 25 425 300 20 40 30 470)
+  (3.00 30 495 350 25 40 30 545)))
+
+;;; Parametros do corte em metros: (bloco b xa h e n p M)
+;;; xa = onde termina a ala (tubular: b+c; celular: ate o fim da soleira)
+(defun bb:corte-param (shp code d h / best bd dif v)
+  (if (= shp "TC")
+    (foreach r *bb:corte-tc*
+      (if (= (car r) code)
+        (progn
+          (setq dif (abs (- (cadr r) d)))
+          (if (or (null bd) (< dif bd)) (setq best r bd dif)))))
+    (foreach r *bb:corte-cc*
+      (setq dif (abs (- (car r) (if h h d))))
+      (if (or (null bd) (< dif bd)) (setq best (cons "CC" r) bd dif))))
+  (if best
+    (progn
+      (setq v (mapcar '(lambda (x) (* 0.01 x)) (cddr best)))   ; b c h e n p M
+      (list (strcat "BB_CORTE_" (car best) (itoa (fix (+ 0.5 (* 100.0 (cadr best))))))
+            (nth 0 v)
+            (if (= shp "TC") (+ (nth 0 v) (nth 1 v)) (nth 6 v))
+            (nth 2 v) (nth 3 v) (nth 4 v) (nth 5 v) (nth 6 v)))))
+
+(defun bb:addpl-c (spc pts fech cor / arr i o)
+  (setq arr (vlax-make-safearray vlax-vbDouble (cons 0 (1- (* 2 (length pts)))))
+        i   0)
+  (foreach p pts
+    (vlax-safearray-put-element arr i (float (car p)))
+    (vlax-safearray-put-element arr (1+ i) (float (cadr p)))
+    (setq i (+ i 2)))
+  (setq o (vla-AddLightWeightPolyline spc (vlax-make-variant arr)))
+  (if fech (vla-put-Closed o :vlax-true))
+  (if cor (vla-put-Color o cor))
+  o)
+
+(defun bb:addpl (spc pts fech) (bb:addpl-c spc pts fech *BB:COR-BOCA*))
+
+;;; Bloco do corte (m). Origem = geratriz inferior na face interna da
+;;; testa; +X = para fora do bueiro. Cria so se ainda nao existir.
+(defun bb:corte-bloco (prm / blk b xa h e n p mm wd)
+  (if (not (tblsearch "BLOCK" (car prm)))
+    (progn
+      (setq b (nth 1 prm) xa (nth 2 prm) h (nth 3 prm) e (nth 4 prm)
+            n (nth 5 prm) p (nth 6 prm) mm (nth 7 prm) wd (* 0.01 *BB:CORTE-DENTE*)
+            blk (vla-Add (vla-get-Blocks (vla-get-ActiveDocument (vlax-get-acad-object)))
+                         (vlax-3d-point '(0.0 0.0 0.0)) (car prm)))
+      (bb:addpl blk (list (list 0.0 0.0) (list b 0.0) (list b h) (list 0.0 h)) T)       ; testa
+      (bb:addpl blk (list (list b h) (list xa p) (list xa 0.0)) nil)                     ; ala
+      (bb:addpl blk (list (list 0.0 0.0) (list mm 0.0) (list mm (- e)) (list 0.0 (- e))) T) ; soleira
+      (bb:addpl blk (list (list (- mm wd) (- e)) (list mm (- e))                         ; dente
+                          (list mm (- (+ e n))) (list (- mm wd) (- (+ e n)))) T)))
+  (car prm))
+
+;;; Ponto (x y) do Profile View para estaca e cota (nil se falhar)
+(defun bb:pv-xy (pv sta el / x y r)
+  (setq r (vl-catch-all-apply 'vlax-invoke-method
+            (list pv 'FindXYAtStationAndElevation sta el 'x 'y)))
+  (if (and (not (vl-catch-all-error-p r))
+           (numberp (setq x (bb:var->lisp x)))
+           (numberp (setq y (bb:var->lisp y))))
+    (list x y)))
+
+;;; (estaca afastamento) de um ponto no alinhamento (nil se falhar).
+;;; Para ponto fora do alcance do alinhamento o Civil 3D pode devolver
+;;; estaca/afastamento 0 sem erro; por isso o resultado e conferido
+;;; voltando ao ponto (PointLocation) e pelas estacas inicial/final.
+(defun bb:al-sta (al pt / sta off r e n s0 s1)
+  (setq r (vl-catch-all-apply 'vlax-invoke-method
+            (list al 'StationOffset (car pt) (cadr pt) 'sta 'off)))
+  (if (and (not (vl-catch-all-error-p r))
+           (numberp (setq sta (bb:var->lisp sta)))
+           (numberp (setq off (bb:var->lisp off))))
+    (progn
+      (setq r (vl-catch-all-apply 'vlax-invoke-method
+                (list al 'PointLocation sta off 'e 'n))
+            s0 (bb:try al 'StartingStation)
+            s1 (bb:try al 'EndingStation))
+      (cond
+        ;; fora das estacas do alinhamento
+        ((and (numberp s0) (numberp s1)
+              (or (< sta (- s0 0.01)) (> sta (+ s1 0.01))))
+         nil)
+        ;; conferencia pelo ponto de volta
+        ((and (not (vl-catch-all-error-p r))
+              (numberp (setq e (bb:var->lisp e)))
+              (numberp (setq n (bb:var->lisp n))))
+         (if (< (bb:d2 (list e n) pt) 0.10) (list sta off)))
+        ;; sem PointLocation: estacas do alinhamento conhecidas
+        ((and (numberp s0) (numberp s1)) (list sta off))
+        ;; sem nenhuma conferencia: recusa a resposta "vazia" 0 / 0
+        ((not (and (equal sta 0.0 1e-9) (equal off 0.0 1e-9))) (list sta off))
+      ))))
+
+(defun bb:nome (obj en / s)
+  (setq s (bb:try obj 'Name))
+  (if (/= (type s) 'STR) (setq s (bb:gpv en "Name")))
+  (if (= (type s) 'STR) s ""))
+
+;;; Alinhamentos do desenho: ((nome-maiusculo . objeto) ...), lido 1 vez
+(defun bb:alinhamentos (/ ss i en lst)
+  (if (setq ss (ssget "_X" '((0 . "AECC_ALIGNMENT"))))
+    (progn
+      (setq i 0)
+      (repeat (sslength ss)
+        (setq en  (ssname ss i)
+              lst (cons (cons (strcase (bb:nome (vlax-ename->vla-object en) en))
+                              (vlax-ename->vla-object en))
+                        lst)
+              i   (1+ i)))))
+  lst)
+
+;;; Alinhamento do Profile View, sem perguntar nada (nil se nao achar).
+;;; 1) propriedade do perfil; 2) pelo nome: o perfil "PERFIL BUEIRO BC 07"
+;;; e do alinhamento "BUEIRO BC 07" (o nome mais longo contido no do perfil)
+(defun bb:pv-al-auto (pv en / a e nm best)
+  (foreach k '(Alignment ParentAlignment)
+    (if (and (not a) (= (type (setq e (bb:try pv k))) 'VLA-OBJECT)) (setq a e)))
+  (if (and (not a) (= (type (setq e (bb:gpv en "AlignmentId"))) 'ENAME))
+    (setq a (vlax-ename->vla-object e)))
+  (if (not a)
+    (progn
+      (if (not *bb:als*) (setq *bb:als* (bb:alinhamentos)))
+      (setq nm (strcase (bb:nome pv en)))
+      (foreach x *bb:als*
+        (if (and (/= (car x) "")
+                 (vl-string-search (car x) nm)
+                 (or (not best) (> (strlen (car x)) (strlen (car best)))))
+          (setq best x)))
+      (if best (setq a (cdr best)))))
+  a)
+
+(defun bb:pv-alinhamento (pv en / a e)
+  (setq a (bb:pv-al-auto pv en))
+  (if (not a)
+    (progn
+      (princ "\nAlinhamento deste perfil nao identificado automaticamente.")
+      (if (setq e (entsel "\nSelecione o ALINHAMENTO do perfil: "))
+        (setq a (vlax-ename->vla-object (car e))))))
+  a)
+
+;;; Insere a boca em corte. sta/zinv = ponta do cano; sg = +1/-1 = sentido
+;;; das estacas que aponta para fora do bueiro.
+;;; Estaca da origem da boca (face interna da testa) a partir da ponta do cano
+(defun bb:perfil-s0 (prm sta sg)
+  (cond ((= (strcase *BB:PERFIL-REF*) "PONTA")   (- sta (* sg (nth 7 prm))))
+        ((= (strcase *BB:PERFIL-REF*) "INTERNA") sta)
+        (T                                        (- sta (* sg (nth 1 prm))))))
+
+;;; Insere o bloco BLK (desenhado em m, +X = para fora) no perfil na estaca
+;;; s0 e cota z, com a escala horizontal/vertical do perfil.
+(defun bb:perfil-ins (pv blk s0 z sg lay / p0 p1 p2 ref sx sy)
+  (setq p0 (bb:pv-xy pv s0 z)
+        p1 (bb:pv-xy pv (+ s0 1.0) z)
+        p2 (bb:pv-xy pv s0 (+ z 1.0)))
+  (if (and p0 p1 p2)
+    (progn
+      (setq sx (* sg (- (car p1) (car p0)))     ; escala horizontal (com espelho)
+            sy (- (cadr p2) (cadr p0)))         ; escala vertical (exagero)
+      (if (and (> (abs sx) 1e-9) (> (abs sy) 1e-9))
+        (progn
+          (setq ref (bb:inserir blk (list (car p0) (cadr p0) 0.0) 0.0 lay))
+          (vla-put-XScaleFactor ref sx)
+          (vla-put-YScaleFactor ref sy)
+          (vla-Update ref)
+          ref)))))
+
+(defun bb:perfil-boca (pv prm sta zinv sg)
+  (bb:perfil-ins pv (car prm) (bb:perfil-s0 prm sta sg) zinv sg *BB:LAYER-BOCA*))
+
+;;; Dissipador DEB em corte, encaixado na ponta externa da boca de jusante
+(defun bb:perfil-dissip (pv prm deb sta zinv sg)
+  (bb:perfil-ins pv (bb:deb-corte deb)
+                 (+ (bb:perfil-s0 prm sta sg) (* sg (nth 7 prm)))
+                 zinv sg *BB:LAYER-DISSIP*))
+
+;;; Profile View que contem o ponto (o menor, se houver mais de um)
+(defun bb:pv-no-ponto (pt / ss i o a b mn mx best ba ar e)
+  (if (setq ss (ssget "_X" '((0 . "AECC_PROFILE_VIEW"))))
+    (progn
+      (setq i 0)
+      (repeat (sslength ss)
+        (setq o (vlax-ename->vla-object (ssname ss i)) i (1+ i))
+        (if (and (bb:visivel o)
+                 (not (vl-catch-all-error-p (vl-catch-all-apply 'vla-GetBoundingBox (list o 'a 'b)))))
+          (progn
+            (setq mn (vlax-safearray->list a) mx (vlax-safearray->list b))
+            (if (and (<= (car mn) (car pt) (car mx)) (<= (cadr mn) (cadr pt) (cadr mx)))
+              (progn
+                (setq ar (* (- (car mx) (car mn)) (- (cadr mx) (cadr mn))))
+                (if (or (not ba) (< ar ba)) (setq best o ba ar)))))))))
+  (if (and (not best)
+           (setq e (entsel "\nProfile View nao identificado. Selecione o PROFILE VIEW: "))
+           (= (cdr (assoc 0 (entget (car e)))) "AECC_PROFILE_VIEW"))
+    (setq best (vlax-ename->vla-object (car e))))
+  best)
+
+;;; A pipe mostrada no perfil e outro objeto (parte do Profile View);
+;;; tenta achar a pipe "de verdade" que ela representa.
+(defun bb:pipe-de-parte (en / r e o)
+  (foreach nm '("ModelPartId" "PartId" "NetworkPartId" "ModelPart")
+    (if (and (not r)
+             (= (type (setq e (bb:gpv en nm))) 'ENAME)
+             (= (cdr (assoc 0 (entget e))) "AECC_PIPE"))
+      (setq r e)))
+  (setq o (vlax-ename->vla-object en))
+  (foreach nm '(ModelPart Part NetworkPart PipeNetworkPart)
+    (if (and (not r)
+             (= (type (setq e (bb:try o nm))) 'VLA-OBJECT)
+             (= (cdr (assoc 0 (entget (setq e (vlax-vla-object->ename e))))) "AECC_PIPE"))
+      (setq r e)))
+  r)
+
+;;; (estaca cota) de um ponto x,y do Profile View (nil se falhar)
+(defun bb:pv-se (pv x y / sta el r)
+  (setq r (vl-catch-all-apply 'vlax-invoke-method
+            (list pv 'FindStationAndElevationAtXY x y 'sta 'el)))
+  (if (and (not (vl-catch-all-error-p r))
+           (numberp (setq sta (bb:var->lisp sta)))
+           (numberp (setq el (bb:var->lisp el))))
+    (list sta el)))
+
+;;; Pipe desenhada no perfil (AECC_GRAPH_PROFILE_NETWORK_PART): pela caixa
+;;; envolvente -> (estaca-ini estaca-fim cota-min cota-max), as cotas sendo
+;;; as do desenho (fundo externo mais baixo / topo externo mais alto).
+(defun bb:ge-caixa (pv ge / o a b mn mx q1 q2 q3)
+  (setq o (vlax-ename->vla-object ge))
+  (if (not (vl-catch-all-error-p (vl-catch-all-apply 'vla-GetBoundingBox (list o 'a 'b))))
+    (progn
+      (setq mn (vlax-safearray->list a) mx (vlax-safearray->list b)
+            q1 (bb:pv-se pv (car mn) (cadr mn))
+            q2 (bb:pv-se pv (car mx) (cadr mn))
+            q3 (bb:pv-se pv (car mn) (cadr mx)))
+      (if (and q1 q2 q3)
+        (list (min (car q1) (car q2)) (max (car q1) (car q2)) (cadr q1) (cadr q3))))))
+
+;;; Bueiro cujas pontas (em planta) caem nas estacas s0..s1 do alinhamento
+(defun bb:grupo-por-estaca (al grupos s0 s1 / best be sA sB er)
+  (foreach g grupos
+    (setq sA (bb:al-sta al (bb:media (mapcar 'cadr g)))
+          sB (bb:al-sta al (bb:media (mapcar 'caddr g))))
+    (if (and sA sB)
+      (progn
+        (setq er (+ (abs (- (min (car sA) (car sB)) s0)) (abs (- (max (car sA) (car sB)) s1))))
+        (if (and (< er (max 2.0 (* 0.2 (- s1 s0)))) (or (not be) (< er be)))
+          (setq best g be er)))))
+  best)
+
+(defun bb:dist-seg (p a b / v w t2 l2)
+  (setq v (bb:v- b a) w (bb:v- p a) l2 (bb:dot2 v v))
+  (setq t2 (if (> l2 1e-12) (max 0.0 (min 1.0 (/ (bb:dot2 w v) l2))) 0.0))
+  (bb:d2 p (bb:v+ a (bb:vs v t2))))
+
+;;; Grupo (bueiro) cuja linha no perfil passa mais perto do ponto clicado
+(defun bb:grupo-perto (pv al pt grupos / best bd A B sA sB pA pB pH dd tol)
+  (foreach g grupos
+    (setq A  (bb:media (mapcar 'cadr g))
+          B  (bb:media (mapcar 'caddr g))
+          sA (bb:al-sta al A)
+          sB (bb:al-sta al B))
+    (if (and sA sB
+             (setq pA (bb:pv-xy pv (car sA) (caddr A)))
+             (setq pB (bb:pv-xy pv (car sB) (caddr B)))
+             (setq pH (bb:pv-xy pv (car sA) (+ (caddr A) (apply 'max (mapcar 'cadddr g))))))
+      (progn
+        (setq dd  (bb:dist-seg pt pA pB)
+              tol (max 2.0 (* 1.5 (abs (- (cadr pH) (cadr pA))))))   ; ~altura do cano no perfil
+        (if (and (< dd tol) (or (not bd) (< dd bd))) (setq best g bd dd)))))
+  best)
+
+;;; Cota do EIXO do cano c na ponta p. Base = cota lida em bb:ler-cano.
+;;; StartPoint/EndPoint da API .NET so e usado se for coerente com ela
+;;; (em alguns Civil 3D vem valor sem sentido).
+(defun bb:z-eixo (c p / en a b q)
+  (setq en (vlax-vla-object->ename (car c))
+        a  (bb:pt (bb:gpv en "StartPoint"))
+        b  (bb:pt (bb:gpv en "EndPoint")))
+  (if (and a b)
+    (setq q (if (< (bb:d2 a p) (bb:d2 b p)) a b)))
+  (if (and q
+           (< (bb:d2 q p) 0.05)
+           (< (abs (- (caddr q) (caddr p))) (* 0.5 (nth 3 c))))
+    (caddr q)
+    (caddr p)))
+
+;;; Cota da geratriz inferior (fundo interno) do bueiro na ponta k
+;;; (1 = montante, 2 = jusante): media dos canos.
+(defun bb:z-geratriz (canos k / zs)
+  (foreach c canos
+    (setq zs (cons (- (bb:z-eixo c (nth k c))
+                      (/ (if (and (= (nth 4 c) "CC") (numberp (nth 5 c))) (nth 5 c) (nth 3 c)) 2.0))
+                   zs)))
+  (+ (/ (apply '+ zs) (float (length zs))) *BB:PERFIL-DZ*))
+
+;;; Insere as bocas de um bueiro (grupo de canos) no perfil. T se inseriu.
+(defun bb:perfil-grupo (pv al g / n res canos dz PM PJ D HC shp code mS jS)
+  (setq n (length g) res (bb:orientar g) canos (car res) dz (cadr res))
+  (cond
+    ((> dz *BB:TOL-Z*))
+    ((< dz (- *BB:TOL-Z*)) (setq canos (mapcar 'bb:inverter canos)))
+    (T (setq canos nil)))
+  (cond
+    ((> n 3) (princ "\n  Mais de 3 canos paralelos (maximo = triplo).") nil)
+    ((not canos) (princ "\n  Cotas iguais nas pontas: nao da para saber montante/jusante.") nil)
+    (T
+     (setq PM   (bb:media (mapcar 'cadr canos))
+           PJ   (bb:media (mapcar 'caddr canos))
+           D    (apply 'max (mapcar 'cadddr canos))
+           shp  (if (member "CC" (mapcar '(lambda (c) (nth 4 c)) canos)) "CC" "TC")
+           HC   (if (= shp "CC")
+                  (apply 'max (cons 0.0 (vl-remove-if-not 'numberp
+                                          (mapcar '(lambda (c) (nth 5 c)) canos)))))
+           code (strcat "B" (nth (1- n) '("S" "D" "T")) shp)
+           mS   (bb:al-sta al PM)
+           jS   (bb:al-sta al PJ))
+     (if (and HC (<= HC 0.0)) (setq HC nil))
+     (if (not (and mS jS))
+       (progn (princ "\n  Nao achei a estaca das pontas do cano no alinhamento deste perfil.") nil)
+       (bb:perfil-inserir pv code shp D HC (car mS) (car jS)
+                          (bb:z-geratriz canos 1) (bb:z-geratriz canos 2))))))
+
+;;; Insere boca de montante, boca de jusante e dissipador no perfil, dadas
+;;; as estacas e as cotas da geratriz inferior nas duas pontas.
+(defun bb:perfil-inserir (pv code shp D HC sM sJ zM zJ / prm sg deb e0 e1)
+  (cond
+    ((not (setq prm (bb:corte-param shp code D HC)))
+     (princ (strcat "\n  Sem dados de corte para " code ".")) nil)
+    (T
+     (bb:corte-bloco prm)
+     (setq sg (if (< sM sJ) -1.0 1.0))
+     (bb:perfil-boca pv prm sM zM sg)
+     (bb:perfil-boca pv prm sJ zJ (- sg))
+     ;; dissipador DEB na jusante (tubular ate o limite de diametro)
+     (if (and *BB:DISSIP-DNIT* (= shp "TC")
+              (<= D (+ *BB:DIAM-LIMITE* 1e-6))
+              (setq deb (bb:deb-param code D)))
+       (if (bb:perfil-dissip pv prm deb sJ zJ (- sg))
+         (princ (strcat "\n  dissipador " (car deb) " na jusante"))))
+     (princ (strcat "\n  " code " D=" (rtos D 2 2) " -> " (car prm)
+                    "\n  montante: est. " (rtos sM 2 2) "  geratriz inf. " (rtos zM 2 3)
+                    "\n  jusante : est. " (rtos sJ 2 2) "  geratriz inf. " (rtos zJ 2 3)))
+     (setq e0 (bb:try pv 'ElevationMin) e1 (bb:try pv 'ElevationMax))
+     (if (and (numberp e0) (numberp e1)
+              (or (< (min zM zJ) (- e0 1.0)) (> (max zM zJ) (+ e1 1.0))))
+       (princ (strcat "\n  AVISO: cota fora do perfil (" (rtos e0 2 2) " a " (rtos e1 2 2)
+                      "). Me envie estas linhas; ajuste *BB:PERFIL-DZ* se preciso.")))
+     T)))
+
+;;; Mesmo que bb:perfil-grupo, mas estacas e cotas tiradas da PIPE DESENHADA
+;;; no perfil (objeto GE). Da pipe 3D usa so diametro, desnivel entre as
+;;; pontas e qual ponta e a jusante.
+(defun bb:perfil-grupo-pv (pv al g ge / n res canos dz cx D HC shp code hh zdif wall
+                                     zM zJ sM sJ jS pk q zmod)
+  (setq n (length g) res (bb:orientar g) canos (car res) dz (cadr res))
+  (cond
+    ((> dz *BB:TOL-Z*))
+    ((< dz (- *BB:TOL-Z*)) (setq canos (mapcar 'bb:inverter canos)))
+    (T (setq canos nil)))
+  (cond
+    ((> n 3) (princ "\n  Mais de 3 canos paralelos (maximo = triplo).") nil)
+    ((not canos) (princ "\n  Cotas iguais nas pontas: nao da para saber montante/jusante.") nil)
+    ((not (setq cx (bb:ge-caixa pv ge)))
+     (princ "\n  Nao consegui ler a pipe desenhada no perfil.") nil)
+    (T
+     (setq D    (apply 'max (mapcar 'cadddr canos))
+           shp  (if (member "CC" (mapcar '(lambda (c) (nth 4 c)) canos)) "CC" "TC")
+           HC   (if (= shp "CC")
+                  (apply 'max (cons 0.0 (vl-remove-if-not 'numberp
+                                          (mapcar '(lambda (c) (nth 5 c)) canos)))))
+           code (strcat "B" (nth (1- n) '("S" "D" "T")) shp))
+     (if (and HC (<= HC 0.0)) (setq HC nil))
+     (setq hh   (if (and (= shp "CC") HC) HC D)
+           zdif (/ (abs dz) (float n))                      ; desnivel entre as pontas
+           ;; altura desenhada = diam. externo + desnivel -> parede
+           wall (max 0.0 (/ (- (nth 3 cx) (nth 2 cx) zdif hh) 2.0))
+           zJ   (+ (nth 2 cx) wall *BB:PERFIL-DZ*)          ; jusante = ponta mais baixa
+           zM   (+ zJ zdif))
+     ;; qual estaca e a jusante: pela posicao da jusante no alinhamento,
+     ;; ou perguntando
+     (setq jS (bb:al-sta al (bb:media (mapcar 'caddr canos))))
+     (if (not jS)
+       (if (and (setq pk (getpoint "\n  Clique perto da JUSANTE no perfil: "))
+                (setq q (bb:pv-se pv (car (trans pk 1 0)) (cadr (trans pk 1 0)))))
+         (setq jS q)))
+     (if (not jS)
+       (progn (princ "\n  Jusante nao definida.") nil)
+       (progn
+         (if (< (abs (- (car jS) (nth 0 cx))) (abs (- (car jS) (nth 1 cx))))
+           (setq sJ (nth 0 cx) sM (nth 1 cx))
+           (setq sJ (nth 1 cx) sM (nth 0 cx)))
+         (setq zmod (bb:z-geratriz canos 2))
+         (princ (strcat "\n  (pela pipe desenhada; cota da pipe 3D na jusante = " (rtos zmod 2 3)
+                        ", diferenca " (rtos (- zJ zmod) 2 3) " m)"))
+         (bb:perfil-inserir pv code shp D HC sM sJ zM zJ))))))
+
+;;; Voce clica na pipe DENTRO do perfil; o programa acha o Profile View
+;;; pelo ponto clicado, junta os canos paralelos (duplo/triplo) e insere
+;;; as bocas no inicio e no fim do bueiro. Repete ate ENTER.
+(defun c:BOCASPERFIL (/ *error* doc ssp i c canos grupos dbg en pu pt dd ss j tp pe ge cx pv al g ok)
+  (defun *error* (msg)
+    (setq *BB:DEBUG* dbg)
+    (if doc (vl-catch-all-apply 'vla-EndUndoMark (list doc)))
+    (if (not (wcmatch (strcase msg) "*BREAK*,*CANCEL*,*EXIT*"))
+      (princ (strcat "\nErro: " msg)))
+    (princ))
+  (setq *bb:als* nil
+        doc (vla-get-ActiveDocument (vlax-get-acad-object))
+        dbg *BB:DEBUG*
+        ok  0)
+  (if (not (setq ssp (ssget "_X" '((0 . "AECC_PIPE")))))
+    (progn (princ "\nNenhum cano (pipe) no desenho.") (exit)))
+  ;; le e agrupa os canos do desenho (para achar os paralelos da pipe clicada)
+  (setq *BB:DEBUG* nil i 0)
+  (repeat (sslength ssp)
+    (if (setq c (bb:ler-cano (ssname ssp i))) (setq canos (cons c canos)))
+    (setq i (1+ i)))
+  (setq *BB:DEBUG* dbg
+        grupos (bb:agrupar (reverse canos)))
+  (vla-StartUndoMark doc)
+  (while (setq pu (getpoint "\nClique sobre a PIPE no perfil <ENTER = terminar>: "))
+    ;; objetos em volta do clique (tamanho do pickbox); procura a pipe
+    (setq pt (trans pu 1 0)
+          dd (* (getvar "PICKBOX") (/ (getvar "VIEWSIZE") (cadr (getvar "SCREENSIZE"))))
+          ss (ssget "_C" (list (- (car pu) dd) (- (cadr pu) dd))
+                         (list (+ (car pu) dd) (+ (cadr pu) dd)))
+          pe nil
+          ge nil
+          tp "nenhum"
+          j  0)
+    (if ss
+      (repeat (sslength ss)
+        (setq en (ssname ss j) j (1+ j))
+        (if (and (not ge) (= (cdr (assoc 0 (entget en))) "AECC_GRAPH_PROFILE_NETWORK_PART"))
+          (setq ge en))
+        (if (not pe)
+          (progn
+            (setq tp (cdr (assoc 0 (entget en))))
+            (setq pe (cond ((= tp "AECC_PIPE") en) ((bb:pipe-de-parte en))))))))
+    (cond
+      ((not (setq pv (bb:pv-no-ponto pt)))
+       (princ "\nNenhum Profile View nesse ponto."))
+      ((not (setq al (bb:pv-alinhamento pv (vlax-vla-object->ename pv))))
+       (princ "\nPerfil sem alinhamento."))
+      ((not (princ (strcat "\n  perfil \"" (bb:nome pv (vlax-vla-object->ename pv))
+                           "\" | alinhamento \"" (bb:nome al (vlax-vla-object->ename al))
+                           "\" | pipe clicada: " (if pe "sim" (strcat "nao (" tp ")")))))
+       nil)                               ; so mostra; nunca para aqui
+      ;; 0) pipe desenhada no perfil: estacas e cotas do proprio desenho
+      ((and ge
+            (setq cx (bb:ge-caixa pv ge))
+            (setq g (or (and pe
+                             (vl-some '(lambda (gr)
+                                         (if (vl-some '(lambda (c) (equal (vlax-vla-object->ename (car c)) pe)) gr)
+                                           gr))
+                                      grupos))
+                        (bb:grupo-por-estaca al grupos (nth 0 cx) (nth 1 cx)))))
+       (if (bb:perfil-grupo-pv pv al g ge) (setq ok (1+ ok))))
+      ;; 1) pipe identificada pelo objeto clicado
+      ((and pe
+            (setq g (vl-some '(lambda (gr)
+                                (if (vl-some '(lambda (c) (equal (vlax-vla-object->ename (car c)) pe)) gr)
+                                  gr))
+                             grupos)))
+       (if (bb:perfil-grupo pv al g) (setq ok (1+ ok))))
+      ;; 2) pela posicao: o cano cuja linha no perfil passa mais perto do clique
+      ((setq g (bb:grupo-perto pv al pt grupos))
+       (if (bb:perfil-grupo pv al g) (setq ok (1+ ok))))
+      (T
+       (princ (strcat "\nNenhuma pipe encontrada nesse ponto (objeto clicado: " tp
+                      "). Clique sobre a linha do cano.")))))
+  (vla-EndUndoMark doc)
+  (princ (strcat "\nConcluido: " (itoa ok) " bueiro(s) com bocas no perfil. (U desfaz)"))
+  (princ))
+
+;;; Modo automatico (antigo): acha os bueiros sobre o alinhamento de cada
+;;; Profile View selecionado.
+(defun c:BOCASPERFILAUTO (/ *error* doc ssv ssp i c canos grupos dbg pv en al st0 st1
+                        n res dz PM PJ D HC shp code prm hh mS jS tol sg tot ok cand)
+  (defun *error* (msg)
+    (setq *BB:DEBUG* dbg)
+    (if doc (vl-catch-all-apply 'vla-EndUndoMark (list doc)))
+    (if (not (wcmatch (strcase msg) "*BREAK*,*CANCEL*,*EXIT*"))
+      (princ (strcat "\nErro: " msg)))
+    (princ))
+  (setq doc (vla-get-ActiveDocument (vlax-get-acad-object))
+        dbg *BB:DEBUG*
+        tot 0)
+  (princ "\nSelecione o(s) PROFILE VIEW(s): ")
+  (if (not (setq ssv (ssget '((0 . "AECC_PROFILE_VIEW")))))
+    (progn (princ "\nNenhum perfil selecionado.") (exit)))
+  (if (not (setq ssp (ssget "_X" '((0 . "AECC_PIPE")))))
+    (progn (princ "\nNenhum cano (pipe) no desenho.") (exit)))
+  ;; le e agrupa todos os canos do desenho
+  (setq *BB:DEBUG* nil i 0)
+  (repeat (sslength ssp)
+    (if (setq c (bb:ler-cano (ssname ssp i))) (setq canos (cons c canos)))
+    (setq i (1+ i)))
+  (setq *BB:DEBUG* dbg
+        grupos (bb:agrupar (reverse canos)))
+  (vla-StartUndoMark doc)
+  (setq i 0)
+  (repeat (sslength ssv)
+    (setq en  (ssname ssv i)
+          pv  (vlax-ename->vla-object en)
+          al  (bb:pv-alinhamento pv en)
+          st0 (bb:try pv 'StationStart)
+          st1 (bb:try pv 'StationEnd)
+          cand nil
+          ok  0
+          i   (1+ i))
+    (if al
+      (foreach g grupos
+        (setq n (length g) res (bb:orientar g) canos (car res) dz (cadr res))
+        (cond
+          ((> n 3) (setq canos nil))
+          ((> dz *BB:TOL-Z*))
+          ((< dz (- *BB:TOL-Z*)) (setq canos (mapcar 'bb:inverter canos)))
+          (T (setq canos nil)))
+        (if canos
+          (progn
+            (setq PM  (bb:media (mapcar 'cadr canos))
+                  PJ  (bb:media (mapcar 'caddr canos))
+                  D   (apply 'max (mapcar 'cadddr canos))
+                  shp (if (member "CC" (mapcar '(lambda (c) (nth 4 c)) canos)) "CC" "TC")
+                  HC  (if (= shp "CC")
+                        (apply 'max (cons 0.0 (vl-remove-if-not 'numberp
+                                                (mapcar '(lambda (c) (nth 5 c)) canos)))))
+                  code (strcat "B" (nth (1- n) '("S" "D" "T")) shp)
+                  tol (+ *BB:PERFIL-TOL-OFF* (* n D))
+                  mS  (bb:al-sta al PM)
+                  jS  (bb:al-sta al PJ))
+            (if (and HC (<= HC 0.0)) (setq HC nil))
+            ;; candidato: (afastamento-max code D HC mS jS PM PJ prm shp)
+            (if (and mS jS
+                     (<= (abs (cadr mS)) tol) (<= (abs (cadr jS)) tol)
+                     (or (not (and (numberp st0) (numberp st1)))
+                         (and (>= (min (car mS) (car jS)) (- st0 1.0))
+                              (<= (max (car mS) (car jS)) (+ st1 1.0))))
+                     (setq prm (bb:corte-param shp code D HC)))
+              (setq cand (cons (list (max (abs (cadr mS)) (abs (cadr jS)))
+                                     code D HC mS jS PM PJ prm shp)
+                               cand))))))
+      (princ (strcat "\n  Perfil " (itoa i) ": sem alinhamento, ignorado.")))
+    ;; o mais proximo do alinhamento primeiro; com *BB:PERFIL-UM* so ele
+    (setq cand (vl-sort cand '(lambda (a b) (< (car a) (car b)))))
+    (if (and *BB:PERFIL-UM* cand) (setq cand (list (car cand))))
+    (foreach k cand
+      (setq code (nth 1 k) D (nth 2 k) HC (nth 3 k) mS (nth 4 k) jS (nth 5 k)
+            PM (nth 6 k) PJ (nth 7 k) prm (nth 8 k) shp (nth 9 k))
+      (bb:corte-bloco prm)
+      (setq hh (if (and (= shp "CC") HC) HC D)
+            sg (if (< (car mS) (car jS)) -1.0 1.0))
+      (bb:perfil-boca pv prm (car mS) (- (caddr PM) (/ hh 2.0)) sg)
+      (bb:perfil-boca pv prm (car jS) (- (caddr PJ) (/ hh 2.0)) (- sg))
+      (setq ok (1+ ok))
+      (princ (strcat "\n  Perfil " (itoa i) ": " code " D=" (rtos D 2 2)
+                     " | montante est. " (rtos (car mS) 2 2)
+                     " | jusante est. " (rtos (car jS) 2 2)
+                     " -> " (car prm))))
+    (if (and al (= ok 0))
+      (princ (strcat "\n  Perfil " (itoa i) ": nenhum bueiro sobre o alinhamento.")))
+    (setq tot (+ tot ok)))
+  (vla-EndUndoMark doc)
+  (princ (strcat "\nConcluido: " (itoa tot) " bueiro(s) com bocas no perfil. (U desfaz)"))
+  (princ))
+
+(defun c:BBP () (c:BOCASPERFIL))
+
+
+;;; ===================== PLANTA + PERFIL (BOCASTUDO) ===================
+;;; O bueiro g esta ao longo deste alinhamento? As duas pontas perto do
+;;; eixo, dentro das estacas do perfil, e a diferenca de estacas ~ o
+;;; comprimento do bueiro (descarta alinhamentos que so cruzam o bueiro,
+;;; como o eixo da rodovia).
+(defun bb:perfil-combina (al st0 st1 g / n D A B L tol sA sB)
+  (setq n   (length g)
+        D   (apply 'max (mapcar 'cadddr g))
+        A   (bb:media (mapcar 'cadr g))
+        B   (bb:media (mapcar 'caddr g))
+        L   (bb:d2 A B)
+        tol (+ *BB:PERFIL-TOL-OFF* (* n D))
+        sA  (bb:al-sta al A)
+        sB  (bb:al-sta al B))
+  (and sA sB
+       (<= (abs (cadr sA)) tol)
+       (<= (abs (cadr sB)) tol)
+       (>= (abs (- (car sB) (car sA))) (* 0.8 L))
+       (or (not (and (numberp st0) (numberp st1)))
+           (and (>= (min (car sA) (car sB)) (- st0 1.0))
+                (<= (max (car sA) (car sB)) (+ st1 1.0))))))
+
+;;; Profile View visivel? (layer ligada e descongelada, objeto visivel)
+(defun bb:visivel (obj / d)
+  (setq d (tblsearch "LAYER" (vla-get-Layer obj)))
+  (and d
+       (zerop (logand 1 (cdr (assoc 70 d))))      ; nao congelada
+       (>= (cdr (assoc 62 d)) 0)                  ; ligada
+       (not (member (bb:prop obj 'Visible) (list 0 :vlax-false)))))
+
+;;; Bocas em planta (como BBU) e em corte nos Profile Views de cada bueiro
+;;; (como BBP), tudo de uma vez.
+(defun c:BOCASTUDO (/ *error* doc blk ss ssv i c canos grupos pvs pv al idx np ok okp dbg nv inv sem)
+  (defun *error* (msg)
+    (setq *BB:DEBUG* dbg)
+    (if doc (vl-catch-all-apply 'vla-EndUndoMark (list doc)))
+    (if (not (wcmatch (strcase msg) "*BREAK*,*CANCEL*,*EXIT*"))
+      (princ (strcat "\nErro: " msg "  (etapa: " (vl-princ-to-string *bb:etapa*) ")")))
+    (princ))
+  (princ "\n[BOCAS_BUEIRO - planta + perfil]")
+  (setq doc                    (vla-get-ActiveDocument (vlax-get-acad-object))
+        dbg                    *BB:DEBUG*
+        *bb:dissip-perguntado* nil
+        *bb:dissip-nome*       nil
+        *bb:rot-dissip-sessao* nil
+        *bb:pintados*          nil
+        ok                     0
+        okp                    0)
+  (if (not (setq blk (bb:achar-boca doc)))
+    (progn (princ "\nBloco das bocas nao definido. Comando cancelado.") (exit)))
+  (princ "\nSelecione os canos dos bueiros <ENTER = todos do desenho>: ")
+  (if (not (setq ss (ssget '((0 . "AECC_PIPE")))))
+    (setq ss (ssget "_X" '((0 . "AECC_PIPE")))))
+  (if (not ss) (progn (princ "\nNenhum cano (pipe) no desenho.") (exit)))
+  ;; canos -> bueiros
+  (setq *bb:etapa* "leitura dos canos" *BB:DEBUG* nil i 0)
+  (repeat (sslength ss)
+    (if (setq c (bb:ler-cano (ssname ss i))) (setq canos (cons c canos)))
+    (setq i (1+ i)))
+  (setq *BB:DEBUG* dbg)
+  (if (not canos) (progn (princ "\nNenhum cano legivel.") (exit)))
+  (setq grupos (bb:agrupar (reverse canos)))
+  ;; Profile Views do desenho: (pv alinhamento estaca-ini estaca-fim)
+  (setq *bb:als* nil nv 0 inv 0 sem nil)
+  (if (setq ssv (ssget "_X" '((0 . "AECC_PROFILE_VIEW"))))
+    (progn
+      (setq i 0 nv (sslength ssv))
+      (repeat nv
+        (setq pv (vlax-ename->vla-object (ssname ssv i)))
+        (cond
+          ((not (bb:visivel pv))
+           (setq inv (1+ inv)))                   ; layer desligada/congelada: ignora
+          ((setq al (bb:pv-al-auto pv (ssname ssv i)))
+           (setq pvs (cons (list pv al (bb:try pv 'StationStart) (bb:try pv 'StationEnd)
+                                 (bb:nome pv (ssname ssv i)))
+                           pvs)))
+          (T (setq sem (cons (bb:nome pv (ssname ssv i)) sem))))
+        (setq i (1+ i)))))
+  (princ (strcat "\n" (itoa (length canos)) " cano(s) -> " (itoa (length grupos))
+                 " bueiro(s); " (itoa nv) " Profile View(s) (" (itoa inv)
+                 " invisivel(is) ignorado(s)), " (itoa (length pvs))
+                 " com alinhamento identificado; " (itoa (length *bb:als*))
+                 " alinhamento(s) no desenho."))
+  (if sem
+    (princ (strcat "\nPerfis sem alinhamento identificado: "
+                   (apply 'strcat (mapcar '(lambda (s) (strcat "\"" s "\" ")) sem)))))
+  (vla-StartUndoMark doc)
+  (setq idx 0)
+  (foreach g grupos
+    (setq idx (1+ idx))
+    ;; planta
+    (setq *bb:etapa* "planta")
+    (if (bb:processar g idx blk) (setq ok (1+ ok)))
+    ;; perfil
+    (setq *bb:etapa* "perfil" np 0)
+    (foreach v pvs
+      (if (bb:perfil-combina (nth 1 v) (nth 2 v) (nth 3 v) g)
+        (progn
+          (princ (strcat "\n  perfil \"" (nth 4 v) "\":"))
+          (if (bb:perfil-grupo (nth 0 v) (nth 1 v) g) (setq np (1+ np))))))
+    (if (> np 0)
+      (setq okp (1+ okp))
+      (princ (strcat "\nBueiro " (itoa idx) ": nenhum Profile View encontrado (use BBP nele)."))))
+  (vla-EndUndoMark doc)
+  (princ (strcat "\nConcluido: " (itoa ok) " de " (itoa (length grupos))
+                 " bueiro(s) em planta e " (itoa okp) " no perfil. (U desfaz tudo)"))
+  (princ))
+
+(defun c:BBT () (c:BOCASTUDO))
 
 
 ;;; ======================= CALIBRACAO (BBCALIB) ========================
@@ -1135,5 +1996,5 @@
   (princ)
 )
 
-(princ "\nBOCAS_BUEIRO v11 carregado. Comandos: BOCASBUEIRO (ou BBU), BBCALIB, BBCALIBLIMPA e BBDIAG.")
+(princ "\nBOCAS_BUEIRO v13 carregado. Comandos: BOCASTUDO (BBT = planta + perfil), BOCASBUEIRO (BBU), BOCASPERFIL (BBP), BBCALIB, BBCALIBLIMPA e BBDIAG.")
 (princ)
