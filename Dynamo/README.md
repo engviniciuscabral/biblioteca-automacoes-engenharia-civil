@@ -108,7 +108,7 @@ Grafos Dynamo associados a fluxos de trabalho do AutoCAD Civil 3D.
 
 **Como utilizar:** [guia passo a passo](./Faixa%20de%20Dominio/GUIA_QAFAIXA.md), com instalação e uso de cada comando.
 
-**Requisitos e dependências:** Civil 3D e a **`QAMemorial.dll`**, que não está no repositório. Ela deve ser carregada antes ou ficar na mesma pasta do `QAFAIXA.dll`.
+**Requisitos e dependências:** Civil 3D e a [`QAMemorial.dll`](./Faixa%20de%20Dominio/QAMemorial.dll), incluída na mesma pasta. Ela deve ser carregada com `NETLOAD` antes do QAFAIXA ou ficar na mesma pasta que ele.
 
 **Status:** documentação elaborada a partir dos nomes de comandos e das mensagens contidas na DLL; sem código-fonte no repositório.
 

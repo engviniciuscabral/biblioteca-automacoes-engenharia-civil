@@ -33,7 +33,7 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | [`Fluxo Dynamo Desap.dyn`](./Dynamo/Fluxo%20Dynamo%20Desap.dyn) | Automação de pontos ao longo de alinhamentos para fluxo de desapropriação. |
 | [`Criar_Valetas_Eixo_Saia_3m_V48.dyn`](./Dynamo/Criar_Valetas_Eixo_Saia_3m_V48.dyn) | Análise de drenagem lateral e criação de valetas de corte/aterro no Civil 3D, com saídas, dissipadores e relatórios CSV. |
 | [`DUP_FAIXA.dyn`](./Dynamo/Faixa%20de%20Dominio/DUP_FAIXA.dyn) | COGO Points `Ponto N` nos vértices dos alinhamentos da faixa de domínio; [guia passo a passo](./Dynamo/Faixa%20de%20Dominio/GUIA_DUP_FAIXA.md). |
-| [`QAFAIXA.dll`](./Dynamo/Faixa%20de%20Dominio/QAFAIXA.dll) | Plugin .NET (`NETLOAD` → `QAFAIXA`): memorial descritivo do perímetro da faixa de domínio; requer `QAMemorial.dll`; [guia passo a passo](./Dynamo/Faixa%20de%20Dominio/GUIA_QAFAIXA.md). |
+| [`QAFAIXA.dll`](./Dynamo/Faixa%20de%20Dominio/QAFAIXA.dll) | Plugin .NET (`NETLOAD` → `QAFAIXA`): memorial descritivo do perímetro da faixa de domínio; requer [`QAMemorial.dll`](./Dynamo/Faixa%20de%20Dominio/QAMemorial.dll), incluída na mesma pasta; [guia passo a passo](./Dynamo/Faixa%20de%20Dominio/GUIA_QAFAIXA.md). |
 
 ### [Lisps](./Lisps/README.md)
 

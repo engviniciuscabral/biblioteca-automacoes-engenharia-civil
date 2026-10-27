@@ -8,25 +8,35 @@ distâncias e coordenadas N/E de cada vértice) em um arquivo `.doc`.
 
 Nome interno do assembly: `QAMemorial_faixa_poligonal_generico_v17.dll`.
 
-> **Importante:** o QAFAIXA é uma extensão da **QAMemorial.dll**. Ele chama as rotinas
-> internas dela para ler segmentos e escrever o RTF. Sem a QAMemorial, os comandos
-> mostram `Nao encontrei os metodos internos da DLL original QAMemorial.`
+> **Importante:** o QAFAIXA é uma extensão da **QAMemorial.dll**, que está nesta mesma
+> pasta. Ele chama as rotinas internas dela para ler segmentos e escrever o RTF. Sem a
+> QAMemorial, os comandos mostram `Nao encontrei os metodos internos da DLL original QAMemorial.`
 
 ---
 
 ## 1. Instalação
 
-### 1.1 Separe os arquivos
+### 1.1 Baixe os arquivos
 
-Copie para **a mesma pasta**, de preferência local, por exemplo `C:\QA\Plugins\`:
+Baixe as **duas DLLs** desta pasta do repositório. Abra cada arquivo no GitHub e use o
+botão **Download raw file** (ícone ⬇):
 
-- `QAFAIXA.dll` (deste repositório)
-- `QAMemorial.dll` (pasta interna `QAMemorial_Distribuicao`)
-- `QAMemorial_faixa_poligonal.dll` (mesma pasta, se existir)
+| Arquivo | Função |
+|---|---|
+| `QAMemorial.dll` | DLL base: leitura dos alinhamentos e escrita do memorial em RTF |
+| `QAFAIXA.dll` | Extensão: comandos `QAFAIXA*` para o perímetro da faixa de domínio |
 
-O QAFAIXA procura a DLL original primeiro entre as que já estão carregadas no
-Civil 3D e depois **na mesma pasta onde ele está**, com os nomes `QAMemorial.dll`
-ou `QAMemorial_faixa_poligonal.dll`.
+Salve as duas **na mesma pasta**, de preferência local, por exemplo `C:\QA\Plugins\`.
+Não deixe no drive de rede: a pasta local carrega mais rápido e evita o aviso de
+segurança.
+
+O QAFAIXA procura a QAMemorial primeiro entre as DLLs já carregadas no Civil 3D e
+depois **na mesma pasta onde ele está**. Por isso, mantendo as duas juntas, basta
+dar NETLOAD na `QAMemorial.dll` e depois na `QAFAIXA.dll` (passo 1.4).
+
+> A `QAMemorial.dll` publicada aqui é a da pasta interna `QAMemorial_Distribuicao`
+> (versão de 04/05/2026). Não misture com a da pasta `QAMemorial_Distribuicao atualizado`,
+> que é outra versão e não foi testada com este QAFAIXA.
 
 ### 1.2 Desbloqueie as DLLs (só na primeira vez)
 
@@ -173,7 +183,7 @@ tenta usar os COGO Points `Ponto N` para acertar as coordenadas.
 | Mensagem | Causa | Solução |
 |---|---|---|
 | `Nao encontrei os metodos internos da DLL original QAMemorial.` | QAMemorial não carregada nem na mesma pasta | `NETLOAD` da `QAMemorial.dll` antes do QAFAIXA ([1.4](#14-carregar-com-netload)) |
-| `Metodo RtfWriter.WrapFaixaDominio nao encontrado.` | Versão da QAMemorial incompatível | Use a QAMemorial da pasta `QAMemorial_Distribuicao` |
+| `Metodo RtfWriter.WrapFaixaDominio nao encontrado.` | Versão da QAMemorial incompatível | Use a `QAMemorial.dll` desta pasta do repositório. Se outra versão já foi carregada na sessão, feche e reabra o Civil 3D |
 | `Metodos internos de segmento da DLL original nao encontrados.` | Mesma causa acima (usado pelo `QAFAIXA`) | Idem |
 | `A entidade selecionada nao parece ser um Alignment do Civil 3D.` | Clicou em polilinha, texto etc. | Clique no alinhamento |
 | `Selecione pelo menos 2 alinhamentos…` | Só um foi escolhido | Selecione mais alinhamentos |
