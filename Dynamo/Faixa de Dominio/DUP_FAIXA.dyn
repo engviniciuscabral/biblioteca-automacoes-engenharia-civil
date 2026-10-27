@@ -1,0 +1,928 @@
+{
+  "Uuid": "0af77a1b-1f01-4d0b-827d-ca316d3b43e8",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "DUP_FAIXA",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "4bba582810c24d6ab69dfadb8a3ccd51",
+      "Name": "SAIDA - Civil 3D COGO Points",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Create Cogo point from Dynamo point.\n\nCogoPoint.ByGeometry (geometry: Point, layer: string, document: Document, name: string = \"\", rawDescription: string = \"\"): CogoPoint"
+    },
+    {
+      "Id": "904e0f9122075b7c917a5110453d1cf6",
+      "Name": "Watch - Pontos de Geometria",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "Id": "1d8ff67b25a15641b8b346bb7165a82a",
+      "Name": "Ajustar Labels Perpendiculares",
+      "Type": "string",
+      "InitialValue": "Labels ajustadas em 96 de 96 COGO Points. Rotacao extra: 90.0 graus anti-horario; leitura espelhada: True. ",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "AL",
+      "Id": "cef228dc4462400ebde0ac0007c14b37",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2488d07a36f94f56b88d19f8a8eeb2ff",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.AutoCAD.DynamoNodes.Document.Current",
+      "Id": "5504bef44f7a476093e958b01eb8725b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "05b1ad5372fb4594803033e3c6542de3",
+          "Name": "Document",
+          "Description": "Document",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the current AutoCAD document.\n\nDocument.Current: Document"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "2b302e8ecd484383a38855c35f9791af",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "702acdc54335429fbf1e277b2fcf551b",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 1000000.0,
+      "Id": "fdef62ffa76944b98ddbab6d0a97eab3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "586783c9ada84036b0123f8e55c4672d",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nimport math\n\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import Point, Vector, CoordinateSystem\n\n# Civil 3D / AutoCAD API. Esta rotina evita os nos AlignmentByName e\n# Alignment.Stations do Dynamo, que podem falhar em alinhamentos copiados.\ntry:\n    clr.AddReference('AcMgd')\n    clr.AddReference('AcDbMgd')\n    clr.AddReference('AeccDbMgd')\nexcept:\n    pass\n\nfrom Autodesk.AutoCAD.ApplicationServices import Application\nfrom Autodesk.AutoCAD.DatabaseServices import OpenMode\nfrom Autodesk.Civil.ApplicationServices import CivilApplication\n\nprefixo = IN[0]\ninicio = int(IN[1])\nfim = int(IN[2])\nmodo = IN[3]\n\nif prefixo is None:\n    prefixo = 'AL'\nprefixo = str(prefixo).strip()\n\nif modo is None:\n    modo = 'TODOS'\nmodo = str(modo).strip().upper()\nif modo in ['IMPAR', 'IMPARES', '?MPAR', '?MPARES']:\n    filtro = 'IMPARES'\nelif modo in ['PAR', 'PARES']:\n    filtro = 'PARES'\nelse:\n    filtro = 'TODOS'\n\nnumero_inicial = 2\ntol = 0.01\n\npts=[]\nnomes=[]\ndescricoes=[]\nstations_filtradas_total=[]\ncoordinate_systems=[]\nangulos_perp_rad=[]\nangulos_perp_graus=[]\ncoords_ne=[]\norigem_alinhamento=[]\navisos=[]\nindices_ultimo_alinhamento=[]\n\n\ndef normalizar_nome(s):\n    return str(s).strip().upper()\n\n\ndef nomes_desejados():\n    wanted=[]\n    step = 1 if inicio <= fim else -1\n    n = inicio\n    while (step > 0 and n <= fim) or (step < 0 and n >= fim):\n        incluir = False\n        if filtro == 'TODOS':\n            incluir = True\n        elif filtro == 'PARES' and n % 2 == 0:\n            incluir = True\n        elif filtro == 'IMPARES' and abs(n % 2) == 1:\n            incluir = True\n        if incluir:\n            wanted.append('{} {}'.format(prefixo, n))\n        n += step\n    return wanted\n\n\ndef get_numeric(obj, names):\n    for name in names:\n        try:\n            v = getattr(obj, name)\n            if callable(v):\n                v = v()\n            if v is not None:\n                return float(v)\n        except:\n            pass\n    return None\n\n\ndef add_unique(vals, v):\n    if v is None:\n        return\n    try:\n        v = float(v)\n    except:\n        return\n    for e in vals:\n        if abs(e - v) <= tol:\n            return\n    vals.append(v)\n\n\ndef alignment_stations(al):\n    vals=[]\n    add_unique(vals, get_numeric(al, ['StartingStation','StartStation','StationStart','BeginStation']))\n    add_unique(vals, get_numeric(al, ['EndingStation','EndStation','StationEnd','FinishStation']))\n\n    # Tenta pegar inicios/fins das entidades internas do alinhamento.\n    try:\n        ents = al.Entities\n        for ent in ents:\n            add_unique(vals, get_numeric(ent, ['StartingStation','StartStation','StationStart','BeginStation']))\n            add_unique(vals, get_numeric(ent, ['EndingStation','EndStation','StationEnd','FinishStation']))\n    except Exception as e:\n        pass\n\n    vals.sort()\n    return vals\n\n\ndef point_location(al, sta, off):\n    # Civil 3D .NET usa out/ref para easting/northing. Testa assinaturas comuns.\n    try:\n        e = clr.Reference[float](0.0)\n        n = clr.Reference[float](0.0)\n        al.PointLocation(float(sta), float(off), e, n)\n        return float(e.Value), float(n.Value)\n    except:\n        pass\n    try:\n        e = clr.Reference[float](0.0)\n        n = clr.Reference[float](0.0)\n        bearing = clr.Reference[float](0.0)\n        al.PointLocation(float(sta), float(off), e, n, bearing)\n        return float(e.Value), float(n.Value)\n    except Exception as ex:\n        avisos.append('PointLocation falhou na estaca {}: {}'.format(sta, ex))\n        return None\n\n\ndef tangent_angle(al, sta):\n    # Aproxima tangente por diferenca pequena ao longo da estaca.\n    delta = 0.10\n    p0 = point_location(al, sta, 0.0)\n    p1 = point_location(al, sta + delta, 0.0)\n    if p1 is None:\n        p1 = point_location(al, sta - delta, 0.0)\n        if p1 is not None and p0 is not None:\n            return math.atan2(p0[1]-p1[1], p0[0]-p1[0])\n    if p0 is not None and p1 is not None:\n        return math.atan2(p1[1]-p0[1], p1[0]-p0[0])\n    return 0.0\n\n\ndef adicionar_ponto(al, sta, indice_alinhamento, ultimo_indice):\n    loc = point_location(al, sta, 0.0)\n    if loc is None:\n        return False\n    x, y = loc\n    ang = tangent_angle(al, sta)\n    vx = Vector.ByCoordinates(math.cos(ang), math.sin(ang), 0)\n    vy = Vector.ByCoordinates(-math.sin(ang), math.cos(ang), 0)\n    cs = CoordinateSystem.ByOriginVectors(Point.ByCoordinates(x, y, 0), vx, vy)\n\n    numero = len(nomes) + numero_inicial\n    pts.append(Point.ByCoordinates(x, y, 0))\n    coordinate_systems.append(cs)\n    stations_filtradas_total.append(sta)\n    origem_alinhamento.append(indice_alinhamento)\n    if indice_alinhamento == ultimo_indice:\n        indices_ultimo_alinhamento.append(len(nomes))\n\n    angle_base = ang\n    angulos_perp_rad.append(angle_base)\n    angulos_perp_graus.append(math.degrees(angle_base))\n    nomes.append('Ponto {}'.format(numero))\n    descricoes.append('Ponto {}'.format(numero))\n    coords_ne.append([y, x])\n    return True\n\n\ndef processar():\n    doc = Application.DocumentManager.MdiActiveDocument\n    db = doc.Database\n    civdoc = CivilApplication.ActiveDocument\n    wanted = nomes_desejados()\n    wanted_norm = dict((normalizar_nome(n), n) for n in wanted)\n\n    tr = db.TransactionManager.StartTransaction()\n    try:\n        found = {}\n        ids = civdoc.GetAlignmentIds()\n        for oid in ids:\n            try:\n                al = tr.GetObject(oid, OpenMode.ForRead)\n                nm = normalizar_nome(al.Name)\n                if nm in wanted_norm:\n                    found[nm] = al\n            except Exception as e:\n                pass\n\n        ultimo_indice = len(wanted)\n        for idx, nm_original in enumerate(wanted):\n            nm = normalizar_nome(nm_original)\n            al = found.get(nm)\n            if al is None:\n                avisos.append('Nao encontrou alinhamento: {}'.format(nm_original))\n                continue\n            stas = alignment_stations(al)\n            if len(stas) == 0:\n                avisos.append('Alinhamento sem estacas legiveis: {}'.format(nm_original))\n                continue\n            criou = 0\n            for sta in stas:\n                if adicionar_ponto(al, sta, idx + 1, ultimo_indice):\n                    criou += 1\n            if criou == 0:\n                avisos.append('Encontrou {}, mas nao criou pontos.'.format(nm_original))\n        tr.Commit()\n    except Exception as e:\n        avisos.append('Erro geral API Civil: {}'.format(e))\n        try:\n            tr.Abort()\n        except:\n            pass\n\nprocessar()\n\nif len(indices_ultimo_alinhamento) > 0:\n    idx_ultimo = indices_ultimo_alinhamento[-1]\n    nomes[idx_ultimo] = 'Ponto 1'\n    descricoes[idx_ultimo] = 'Ponto 1'\n\nOUT=[pts, nomes, descricoes, stations_filtradas_total, coordinate_systems, angulos_perp_rad, angulos_perp_graus, coords_ne, origem_alinhamento, avisos]\n",
+      "VariableInputPorts": true,
+      "Id": "8afe11f85a9f411f8dbb74d3abe04e09",
+      "Inputs": [
+        {
+          "Id": "519c52a35fd347c998034a42db82f044",
+          "Name": "IN[0] - prefixo",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6a840c93576f4e5a830ea91fdae6c658",
+          "Name": "IN[1] - inicio",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "61eea7d1b2725994b2f857b373d7b97b",
+          "Name": "IN[2] - fim",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3749403140e055169398d90731f4036c",
+          "Name": "IN[3] - modo",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "89a210e8f674474e91f73046c20c0dac",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.Civil.DynamoNodes.CogoPoint.ByGeometry@Autodesk.DesignScript.Geometry.Point,string,Autodesk.AutoCAD.DynamoNodes.Document,string,string",
+      "Id": "4bba582810c24d6ab69dfadb8a3ccd51",
+      "Inputs": [
+        {
+          "Id": "71b073961d0f4268a1e49751b5cc5096",
+          "Name": "geometry",
+          "Description": "Point",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6f6d9a2b2ee14bd29f42f1c56893e884",
+          "Name": "layer",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1ad3a82ab40546cbad1bb898cc9803ec",
+          "Name": "document",
+          "Description": "Document",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "462733d26d4c49a89952412e936d3b37",
+          "Name": "name",
+          "Description": "string\nDefault value : \"\"",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9d95d7e38a2e492ab7385d05fb0c23c8",
+          "Name": "rawDescription",
+          "Description": "string\nDefault value : \"\"",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "eff12e29a9aa49e98db8b3ea49cd048c",
+          "Name": "CogoPoint",
+          "Description": "CogoPoint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Create Cogo point from Dynamo point.\n\nCogoPoint.ByGeometry (geometry: Point, layer: string, document: Document, name: string = \"\", rawDescription: string = \"\"): CogoPoint"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "0",
+      "Id": "ef1f1c16d29048ceb613506456f7d408",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c35666e151cb4ab7bbbbd31fe1a8bec0",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Autodesk.AutoCAD.DynamoNodes.Document.Current",
+      "Id": "159e13275bc6416db390aa4d47d67413",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "076ee0f8e11e498a80f7bd0be8413e52",
+          "Name": "Document",
+          "Description": "Document",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the current AutoCAD document.\n\nDocument.Current: Document"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.GetItemAtIndex@var[]..[],int",
+      "Id": "b098b4050e084c0bb0d9c68d2bf7d723",
+      "Inputs": [
+        {
+          "Id": "fb15c18756a7460daafb800e264a33bf",
+          "Name": "list",
+          "Description": "List to fetch an item from.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7442f5a5dae449868847a9f13856bf63",
+          "Name": "index",
+          "Description": "Index of the item to be fetched.\n\nint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "77e2f4be1e044452936770dff48341ed",
+          "Name": "item",
+          "Description": "Item in the list at the given index.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Returns an item from the given list that's located at the specified index.\n\nList.GetItemAtIndex (list: var[]..[], index: int): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 0.0,
+      "Id": "ddd401463b9f437ca79185b830d5b08f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6f345f2909fa42f3ad94def5469f0cd0",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 2.0,
+      "Id": "98617bc7a75842eeb890994821d09c03",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3aa12d983d054bc0954e2ec9e21bbdc7",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 1.0,
+      "Id": "c3e2a4147cb041058838f8f17de22436",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b1e971c7c46743d7bb554e710aec8207",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.GetItemAtIndex@var[]..[],int",
+      "Id": "da14bc7e938d49f0979a30fdf2db93cd",
+      "Inputs": [
+        {
+          "Id": "da36e5b7c99540bea95f04993259a038",
+          "Name": "list",
+          "Description": "List to fetch an item from.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a138c90dc80549bdb286eabb7772682a",
+          "Name": "index",
+          "Description": "Index of the item to be fetched.\n\nint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f7d465d96b044cd89eac68ca6029f89a",
+          "Name": "item",
+          "Description": "Item in the list at the given index.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Returns an item from the given list that's located at the specified index.\n\nList.GetItemAtIndex (list: var[]..[], index: int): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.GetItemAtIndex@var[]..[],int",
+      "Id": "038dd251249141e387aa1abdec003701",
+      "Inputs": [
+        {
+          "Id": "6707a85e6c9e4ba096475cce7c3cd77b",
+          "Name": "list",
+          "Description": "List to fetch an item from.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "409be21d87f84225b5d930d6121c46cb",
+          "Name": "index",
+          "Description": "Index of the item to be fetched.\n\nint",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5c0aaadbdef941fe990fd1f39022fa67",
+          "Name": "item",
+          "Description": "Item in the list at the given index.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Returns an item from the given list that's located at the specified index.\n\nList.GetItemAtIndex (list: var[]..[], index: int): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "904e0f9122075b7c917a5110453d1cf6",
+      "Inputs": [
+        {
+          "Id": "0889c0465fb1509ca840d5ffae8fdd96",
+          "Name": "input",
+          "Description": "Input",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nimport math\n\nclr.AddReference('AcMgd')\nclr.AddReference('AcDbMgd')\nclr.AddReference('AcCoreMgd')\nfrom Autodesk.AutoCAD.ApplicationServices import Application\nfrom Autodesk.AutoCAD.DatabaseServices import OpenMode\nfrom Autodesk.AutoCAD.Geometry import Point3d, Vector3d\n\ncogos = IN[0]\ndata = IN[1]\n\ndeslocamento_label = 0.0\r\ndeslocamento_ao_longo = -18.0\r\nrotacao_extra_graus = 90.0\r\nmanter_texto_legivel = True\n\ndef as_list(value):\n    if value is None:\n        return []\n    if isinstance(value, list):\n        return value\n    try:\n        return list(value)\n    except:\n        return [value]\n\ndef get_object_id(obj):\n    if obj is None:\n        return None\n\n    for attr in [\"InternalDBObject\", \"InternalObject\", \"InternalDBObjectId\", \"InternalObjectId\", \"ObjectId\"]:\n        try:\n            v = getattr(obj, attr)\n            if callable(v):\n                v = v()\n            if v is None:\n                continue\n            try:\n                if hasattr(v, \"ObjectId\"):\n                    return v.ObjectId\n            except:\n                pass\n            try:\n                # ObjectId usually has IsNull.\n                if hasattr(v, \"IsNull\"):\n                    return v\n            except:\n                pass\n        except:\n            pass\n\n    return None\n\ndef try_set_label(cogo, label_pt, offset_vec, angle):\n    moved = False\n    rotated = False\n\n    try:\n        cogo.IsLabelDragged = True\n    except:\n        pass\n\n    for prop, val in [\n        (\"LabelLocation\", label_pt),\n        (\"LabelPosition\", label_pt),\n        (\"LabelDraggedOffset\", offset_vec),\n        (\"DraggedLabelOffset\", offset_vec),\n        (\"LabelOffset\", offset_vec)\n    ]:\n        try:\n            setattr(cogo, prop, val)\n            moved = True\n            break\n        except:\n            pass\n\n    for method, val in [\n        (\"SetLabelLocation\", label_pt),\n        (\"SetLabelPosition\", label_pt),\n        (\"SetLabelDraggedOffset\", offset_vec)\n    ]:\n        if moved:\n            break\n        try:\n            getattr(cogo, method)(val)\n            moved = True\n            break\n        except:\n            pass\n\n    for prop in [\"LabelRotation\", \"Rotation\", \"LabelTextRotation\"]:\n        try:\n            setattr(cogo, prop, angle)\n            rotated = True\n            break\n        except:\n            pass\n\n    for method in [\"SetLabelRotation\", \"SetRotation\"]:\n        if rotated:\n            break\n        try:\n            getattr(cogo, method)(angle)\n            rotated = True\n            break\n        except:\n            pass\n\n    return moved, rotated\n\ncogo_list = as_list(cogos)\npts = as_list(data[0]) if len(data) > 0 else []\nangles = as_list(data[5]) if len(data) > 5 else []\nnomes = as_list(data[1]) if len(data) > 1 else []\n\nacad_doc = Application.DocumentManager.MdiActiveDocument\navisos = []\najustados = 0\n\nif acad_doc is None:\n    OUT = \"Documento AutoCAD ativo nao encontrado.\"\nelse:\n    lock = acad_doc.LockDocument()\n    tr = acad_doc.Database.TransactionManager.StartTransaction()\n    try:\n        total = min(len(cogo_list), len(pts), len(angles))\n        for i in range(total):\n            oid = get_object_id(cogo_list[i])\n            if oid is None:\n                avisos.append(\"Sem ObjectId para item {}\".format(i + 1))\n                continue\n\n            cogo = tr.GetObject(oid, OpenMode.ForWrite)\n            x = pts[i].X\n            y = pts[i].Y\n            angle_base = angles[i]\n            angle = angle_base + math.radians(rotacao_extra_graus)\n\n            # Espelha a leitura quando a rotacao cair de cabeca para baixo.\n            if manter_texto_legivel:\n                angle_norm = angle % (2.0 * math.pi)\n                if angle_norm > (math.pi / 2.0) and angle_norm < (3.0 * math.pi / 2.0):\n                    angle = angle + math.pi\n\n            # Primeiro afasta perpendicularmente ao alinhamento.\n            dx = math.cos(angle_base) * deslocamento_label\n            dy = math.sin(angle_base) * deslocamento_label\n\n            # Depois afasta tambem na direcao do alinhamento, para tirar a label do miolo.\n            angle_alinhamento = angle_base - (math.pi / 2.0)\n            dx += math.cos(angle_alinhamento) * deslocamento_ao_longo\n            dy += math.sin(angle_alinhamento) * deslocamento_ao_longo\n            label_pt = Point3d(x + dx, y + dy, 0)\n            offset_vec = Vector3d(dx, dy, 0)\n\n            if i < len(nomes):\n                for prop in [\"Name\", \"PointName\"]:\n                    try:\n                        setattr(cogo, prop, nomes[i])\n                        break\n                    except:\n                        pass\n                try:\n                    cogo.RawDescription = nomes[i]\n                except:\n                    pass\n\n            moved, rotated = try_set_label(cogo, label_pt, offset_vec, angle)\n            if moved or rotated:\n                ajustados += 1\n            if not moved:\n                avisos.append(\"{}: label nao moveu\".format(i + 1))\n            if not rotated:\n                avisos.append(\"{}: label nao girou\".format(i + 1))\n\n        tr.Commit()\n        OUT = \"Labels ajustadas em {} de {} COGO Points. Rotacao extra: {} graus anti-horario; leitura espelhada: {}. {}\".format(ajustados, total, rotacao_extra_graus, manter_texto_legivel, \" | \".join(avisos[:8]))\n    except Exception as ex:\n        OUT = \"Erro ao ajustar labels: {}\".format(ex)\n    finally:\n        tr.Dispose()\n        lock.Dispose()",
+      "VariableInputPorts": true,
+      "Id": "1d8ff67b25a15641b8b346bb7165a82a",
+      "Inputs": [
+        {
+          "Id": "7a9ce3a4736b5c5d993880485dcc0dd2",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3ac888d79bd35152853489c7f0d95bbb",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0edcb578115c50e18b9adbf499e74ee5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "a11e0ec20ffd5894af1e36cce834c205",
+      "Inputs": [
+        {
+          "Id": "0ae4c12f51c0553f9fec2b6773eb03ca",
+          "Name": "input",
+          "Description": "Input",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 1.0,
+      "Id": "6d916d023d59442d90493eb5623c4d2e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cf68d58d52b54f54afb4d6d7e278e1d6",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 3.0,
+      "Id": "6f4a72438b5849489c830d158e760ade",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "011f49a6ed7c43919e8cae4f2c18d9d7",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "IMPARES",
+      "Id": "7ebc4b02342647dfbb4827f06363d437",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f61c3ba1ec024e74b9dafd18fe600e5b",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "2488d07a36f94f56b88d19f8a8eeb2ff",
+      "End": "519c52a35fd347c998034a42db82f044",
+      "Id": "c38ea99622824e44aea3655b5c0c5aec"
+    },
+    {
+      "Start": "89a210e8f674474e91f73046c20c0dac",
+      "End": "fb15c18756a7460daafb800e264a33bf",
+      "Id": "b7a96cfcc1534255906a5c9678050417"
+    },
+    {
+      "Start": "89a210e8f674474e91f73046c20c0dac",
+      "End": "da36e5b7c99540bea95f04993259a038",
+      "Id": "68602170d9764a23aed8be54e306d522"
+    },
+    {
+      "Start": "89a210e8f674474e91f73046c20c0dac",
+      "End": "6707a85e6c9e4ba096475cce7c3cd77b",
+      "Id": "a82d3ef6a89a4c2fbd48a61df7d07c34"
+    },
+    {
+      "Start": "89a210e8f674474e91f73046c20c0dac",
+      "End": "3ac888d79bd35152853489c7f0d95bbb",
+      "Id": "c2a7f4028d5c51a09adc06252bc8e4eb"
+    },
+    {
+      "Start": "eff12e29a9aa49e98db8b3ea49cd048c",
+      "End": "7a9ce3a4736b5c5d993880485dcc0dd2",
+      "Id": "7752967ebee25a9eacaa324532830ac1"
+    },
+    {
+      "Start": "c35666e151cb4ab7bbbbd31fe1a8bec0",
+      "End": "6f6d9a2b2ee14bd29f42f1c56893e884",
+      "Id": "7fda4d086d975081b5e359d48a99c6b0"
+    },
+    {
+      "Start": "076ee0f8e11e498a80f7bd0be8413e52",
+      "End": "1ad3a82ab40546cbad1bb898cc9803ec",
+      "Id": "599f95ffc9245462a09ad60db96559b9"
+    },
+    {
+      "Start": "77e2f4be1e044452936770dff48341ed",
+      "End": "0889c0465fb1509ca840d5ffae8fdd96",
+      "Id": "98dc80f3099454b79397cdd81f8e8570"
+    },
+    {
+      "Start": "77e2f4be1e044452936770dff48341ed",
+      "End": "71b073961d0f4268a1e49751b5cc5096",
+      "Id": "988ed00a73f25054b78ae0e409d51fdd"
+    },
+    {
+      "Start": "6f345f2909fa42f3ad94def5469f0cd0",
+      "End": "7442f5a5dae449868847a9f13856bf63",
+      "Id": "84623752c940403a85a778acc9dd4632"
+    },
+    {
+      "Start": "3aa12d983d054bc0954e2ec9e21bbdc7",
+      "End": "409be21d87f84225b5d930d6121c46cb",
+      "Id": "0d56b65f97554d68b19e7f730aff6fa5"
+    },
+    {
+      "Start": "b1e971c7c46743d7bb554e710aec8207",
+      "End": "a138c90dc80549bdb286eabb7772682a",
+      "Id": "2e92aafccc554d7a9bdeefc17a152d94"
+    },
+    {
+      "Start": "f7d465d96b044cd89eac68ca6029f89a",
+      "End": "462733d26d4c49a89952412e936d3b37",
+      "Id": "44fd7b77766c56a684a5464d7bc4d588"
+    },
+    {
+      "Start": "5c0aaadbdef941fe990fd1f39022fa67",
+      "End": "9d95d7e38a2e492ab7385d05fb0c23c8",
+      "Id": "951e5fa3345c5f618fb3577b0d2e17b6"
+    },
+    {
+      "Start": "0edcb578115c50e18b9adbf499e74ee5",
+      "End": "0ae4c12f51c0553f9fec2b6773eb03ca",
+      "Id": "11c47ce6247f55aca3b39a901cbb40a1"
+    },
+    {
+      "Start": "cf68d58d52b54f54afb4d6d7e278e1d6",
+      "End": "6a840c93576f4e5a830ea91fdae6c658",
+      "Id": "e5cbe92b99174c88ad924bfcb4c93edb"
+    },
+    {
+      "Start": "011f49a6ed7c43919e8cae4f2c18d9d7",
+      "End": "61eea7d1b2725994b2f857b373d7b97b",
+      "Id": "b407705bef5744f8938cba2427d05409"
+    },
+    {
+      "Start": "f61c3ba1ec024e74b9dafd18fe600e5b",
+      "End": "3749403140e055169398d90731f4036c",
+      "Id": "344918d40f43410790fec1c894bdf89d"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.5.1.7586",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "String - Prefixo",
+        "Id": "cef228dc4462400ebde0ac0007c14b37",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 60.0,
+        "Y": -260.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Document.Current",
+        "Id": "5504bef44f7a476093e958b01eb8725b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 274.5,
+        "Y": 233.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "2b302e8ecd484383a38855c35f9791af",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 552.32351189838334,
+        "Y": 360.53874385238487
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number",
+        "Id": "fdef62ffa76944b98ddbab6d0a97eab3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 603.92227930070158,
+        "Y": 271.19264386803712
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python - Buscar alinhamentos via API Civil",
+        "Id": "8afe11f85a9f411f8dbb74d3abe04e09",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 380.0,
+        "Y": -180.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "SAIDA - Civil 3D COGO Points",
+        "Id": "4bba582810c24d6ab69dfadb8a3ccd51",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 1627.1709135879551,
+        "Y": -20.213131956365089
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "ef1f1c16d29048ceb613506456f7d408",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1461.9813636206914,
+        "Y": 121.41130756539042
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Document.Current",
+        "Id": "159e13275bc6416db390aa4d47d67413",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1455.4645883871863,
+        "Y": 201.48897160648005
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Pontos de Geometria para Civil",
+        "Id": "b098b4050e084c0bb0d9c68d2bf7d723",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1245.69777819498,
+        "Y": -23.1480458964773
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number",
+        "Id": "ddd401463b9f437ca79185b830d5b08f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1151.48390815189,
+        "Y": 66.202459720232
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number",
+        "Id": "98617bc7a75842eeb890994821d09c03",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1153.13656547644,
+        "Y": 193.82796428861
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number",
+        "Id": "c3e2a4147cb041058838f8f17de22436",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1152.574822329,
+        "Y": 129.675998371332
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.GetItemAtIndex",
+        "Id": "da14bc7e938d49f0979a30fdf2db93cd",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1254.76563211126,
+        "Y": 105.196587098185
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.GetItemAtIndex",
+        "Id": "038dd251249141e387aa1abdec003701",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1256.73715248885,
+        "Y": 222.822091666563
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch - Pontos de Geometria",
+        "Id": "904e0f9122075b7c917a5110453d1cf6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 1450.0,
+        "Y": -190.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Ajustar Labels Perpendiculares",
+        "Id": "1d8ff67b25a15641b8b346bb7165a82a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 1810.0,
+        "Y": 240.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch - Ajuste Labels",
+        "Id": "a11e0ec20ffd5894af1e36cce834c205",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2100.0,
+        "Y": 245.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number - Inicio",
+        "Id": "6d916d023d59442d90493eb5623c4d2e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 60.0,
+        "Y": -165.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number - Fim",
+        "Id": "6f4a72438b5849489c830d158e760ade",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 60.0,
+        "Y": -70.0
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String - Modo TODOS/PARES/IMPARES",
+        "Id": "7ebc4b02342647dfbb4827f06363d437",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 60.0,
+        "Y": 25.0
+      }
+    ],
+    "Annotations": [],
+    "X": 268.7896870672264,
+    "Y": 452.26868505302866,
+    "Zoom": 1.371436041525343
+  }
+}
