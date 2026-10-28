@@ -4,7 +4,7 @@ Acervo de ferramentas e scripts para automatizar tarefas de engenharia, desenho,
 
 ## Planejamento de melhorias
 
-O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um template de GitHub Projects em formato Kanban, backlog priorizado e Issues para correções, validações e novas funcionalidades.
+O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um template de GitHub Projects em formato de tabela (Table), backlog priorizado e Issues para correções, validações e novas funcionalidades.
 
 ## Como utilizar
 
@@ -18,7 +18,7 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D / .NET | 5 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 12 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 13 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **Python** | Python / Tkinter / NumPy / Matplotlib | 1 | [Ver catálogo](./Python/README.md) |
 | **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
@@ -51,6 +51,7 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 | [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | DNIT V4: 32 variantes de bocas (incluindo 9 tubulares extrapoladas), com `BOCA_DNIT_PLANTA_V4`; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
 | [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v13: bocas em planta e perfil (`BBU`/`BBP`), modo combinado (`BBT`) e dissipadores DEB por tabela; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`SUAVBACIA.lsp`](./Lisps/SUAVBACIA.lsp) | Suavização de contornos de bacias derivados de raster/MDT por pontos médios, Douglas–Peucker e Chaikin; comando `SUAVBACIA`. |
 
 ### [Python](./Python/README.md)
 
