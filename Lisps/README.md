@@ -21,6 +21,8 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | DNIT V4: 32 variantes, incluindo 9 tubulares extrapoladas; bloco dinâmico `BOCA_DNIT_PLANTA_V4`. | [Ver detalhes](#template_bocaslsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
 | [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASTUDO` / `BBT` / `BOCASBUEIRO` / `BBU` / `BOCASPERFIL` / `BBP` / `BOCASPERFILAUTO` / `BBCALIB` / `BBCALIBLIMPA` / `BBDIAG` | Versão v13: planta, perfil e modo combinado, com dissipadores DEB por tabela e diagnóstico. | [Ver detalhes](#bocas_bueirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
 
+| [`SUAVBACIA.lsp`](./SUAVBACIA.lsp) | `SUAVBACIA` | Suavização de contornos de bacias raster/MDT, com preservação pretendida de divisórias compartilhadas. | [Ver detalhes](#suavbacialsp) |
+
 ## Documentação das rotinas
 
 ### 1. CONT_AREA.lsp
@@ -295,3 +297,23 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 > Documentação elaborada pela leitura dos arquivos do repositório. Compatibilidade e resultados devem ser validados na versão de software utilizada.
 
+
+---
+
+### SUAVBACIA.lsp
+
+**Arquivo:** [`SUAVBACIA.lsp`](./SUAVBACIA.lsp)  
+**Comando / entrada:** `SUAVBACIA`  
+**Objetivo:** Suavizar contornos de bacias hidrográficas com aparência em degraus, tipicamente gerados a partir de raster ou MDT, reduzindo vértices e buscando manter a coincidência das divisórias entre bacias vizinhas.
+
+**Funcionamento:** Solicita a seleção de polilinhas leves (`LWPOLYLINE`) e constrói uma topologia de vértices compartilhados. Identifica pontos fixos (encontros de múltiplas bacias, pontas de linhas abertas, quinas não características de degraus, trechos longos e arcos), estima o tamanho de célula a partir do quartil inferior dos comprimentos de segmentos e aplica pontos médios, simplificação Douglas–Peucker e iterações de Chaikin nos trechos elegíveis. Ao final informa a quantidade de polilinhas e vértices processados e a variação percentual da soma das áreas fechadas.
+
+**Como utilizar:** No AutoCAD/Civil 3D para Windows, abra uma cópia do DWG, carregue `SUAVBACIA.lsp` com `APPLOAD` e execute `SUAVBACIA`. Selecione **todas as bacias vizinhas e suas divisórias** que devam permanecer coincidentes. Informe o tamanho da célula do raster (ou aceite a estimativa), a tolerância de simplificação e o número de iterações de arredondamento. Escolha `Copiar` para criar as novas geometrias na layer `BACIAS_SUAVIZADAS` (recomendado para testes) ou `Substituir` para apagar as entidades originais após a criação das substitutas.
+
+**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX e componente COM `Scripting.Dictionary`; trabalha com polilinhas leves 2D. Os parâmetros internos `*sb-fator-degrau*`, `*sb-prec*`, `*sb-ftol*`, `*sb-nch*`, `*sb-modo*` e `*sb-layer*` podem ser ajustados no código.
+
+**Status:** Arquivo fornecido incluído sem alterações funcionais; não houve validação por execução no AutoCAD/Civil 3D.
+
+**Limitações e cuidados:** A preservação de divisórias compartilhadas é uma intenção do algoritmo e **precisa ser comprovada em teste geométrico**, sobretudo quando as bacias possuem vértices ou segmentações diferentes ao longo da mesma divisa. A identificação de coincidências usa arredondamento de coordenadas a três casas decimais por padrão; confira a compatibilidade com as unidades e a precisão do desenho. A suavização pode alterar áreas e posições dos contornos. O relatório apresenta apenas a variação da **área total** das polilinhas fechadas, não um controle de área por bacia. Use inicialmente o modo `Copiar`, compare geometrias e áreas e só depois considere `Substituir`.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
