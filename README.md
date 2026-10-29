@@ -45,8 +45,8 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | [`CONT_COMP.lsp`](./Lisps/CONT_COMP.lsp) | Exportação dos comprimentos de polilinhas selecionadas para Excel. |
 | [`GEOIMG.lsp`](./Lisps/GEOIMG.lsp) | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. |
 | [`UnirConectados.lsp`](./Lisps/UnirConectados.lsp) | União de entidades lineares conectadas por extremidades. |
-| [`TEXTO_BACIA_2.lsp`](./Lisps/TEXTO_BACIA_2.lsp) | Criação e atualização de chamadas MLEADER de bacias com dados de CSV. |
-| [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Numeração de bacias por MLEADER e geração de quadro-resumo a partir de CSV. |
+| [`BACIAS.lsp`](./Lisps/BACIAS.lsp) | Rotina consolidada de bacias: chamadas MLEADER, numeração, quadro-resumo, seleção e atualização de dados CSV; substitui `TEXTO_BACIA_2.lsp` e incorpora as funcionalidades de `BACIAS_QUADRO.lsp`. |
+| [`BACIAS_QUADRO.lsp`](./Lisps/BACIAS_QUADRO.lsp) | Versão legada mantida para consulta; seus comandos também existem em `BACIAS.lsp`. Evite carregar os dois arquivos juntos. |
 | [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 | [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | DNIT V4: 32 variantes de bocas (incluindo 9 tubulares extrapoladas), com `BOCA_DNIT_PLANTA_V4`; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
@@ -87,5 +87,5 @@ Cada pasta contém um `README.md` com índice de arquivos e seções individuais
 
 ## Observações
 
-As duas variantes de `CONT_AREA` definem o **mesmo comando**; consulte as diferenças no catálogo de Lisps. As rotinas VBA são armazenadas em módulos `.bas` para facilitar a importação no editor VBA e o reconhecimento da linguagem pelo GitHub.
+As duas variantes de `CONT_AREA` definem o **mesmo comando**. A nova `BACIAS.lsp` substitui `TEXTO_BACIA_2.lsp` e incorpora os comandos de `BACIAS_QUADRO.lsp`, que permanece como legado: não carregue os dois simultaneamente.  consulte as diferenças no catálogo de Lisps. As rotinas VBA são armazenadas em módulos `.bas` para facilitar a importação no editor VBA e o reconhecimento da linguagem pelo GitHub.
 
