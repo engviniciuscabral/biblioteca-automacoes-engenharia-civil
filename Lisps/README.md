@@ -14,7 +14,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`CONT_COMP.lsp`](./CONT_COMP.lsp) | `CONT_COMP` | Exportação dos comprimentos de polilinhas selecionadas para Excel. | [Ver detalhes](#3-cont_complsp) |
 | [`GEOIMG.lsp`](./GEOIMG.lsp) | `GEOIMG` | Inserção de imagem PNG georreferenciada com arquivo PGW no AutoCAD. | [Ver detalhes](#4-geoimglsp) |
 | [`UnirConectados.lsp`](./UnirConectados.lsp) | `UNIRCON / UNIRCONCFG` | União de entidades lineares conectadas por extremidades. | [Ver detalhes](#5-unirconectadoslsp) |
-| [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp) | `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `TEXTO_BACIA_CSV` / `TEXTO_BACIA_RECARREGAR` | Criação e atualização de chamadas MLEADER de bacias a partir de CSV. | [Ver detalhes](#8-texto_bacia_2lsp) |
+| [`BACIAS.lsp`](./BACIAS.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_TABELA_ONDE` / `TEXTO_BACIAS_TODAS` / `TEXTO_BACIA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` | Rotina consolidada: numeração, quadro-resumo e chamadas textuais de bacias com um CSV compartilhado. | [Ver detalhes](#8-baciaslsp) |
 | [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp) | `BACIAS_QUADRO` / `BACIAS_NUMERAR` / `BACIAS_TABELA` / `BACIAS_CSV` / `BACIAS_RECARREGAR` / `BACIAS_APAGAR_BLOCOS` | Numeração das bacias em MLEADER com marcador circular e criação de quadro-resumo a partir de CSV. | [Ver detalhes](#bacias_quadrolsp) |
 | [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
@@ -165,28 +165,31 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 ---
 
-### 8. TEXTO_BACIA_2.lsp
+### 8. BACIAS.lsp
 
-**Arquivo:** [`TEXTO_BACIA_2.lsp`](./TEXTO_BACIA_2.lsp)  
-**Comandos:** `TEXTO_BACIAS_TODAS`, `TEXTO_BACIA`, `TEXTO_BACIA_CSV` e `TEXTO_BACIA_RECARREGAR`.  
-**Objetivo:** Criar e atualizar chamadas de identificação de bacias com MLEADER a partir de dados de planilha exportados para CSV.
+**Arquivo:** [`BACIAS.lsp`](./BACIAS.lsp)  
+**Comandos:** `BACIAS_QUADRO` (numeração + tabela), `BACIAS_NUMERAR` (somente números), `BACIAS_TABELA` (somente quadro), `BACIAS_TABELA_ONDE` (localiza o quadro), `TEXTO_BACIAS_TODAS` (chamadas completas de todas as bacias), `TEXTO_BACIA` (chamada individual), `BACIAS_CSV` / `TEXTO_BACIA_CSV` (seleção do CSV), `BACIAS_RECARREGAR` / `TEXTO_BACIA_RECARREGAR` (releitura dos dados) e `BACIAS_APAGAR_BLOCOS` (limpeza de blocos de versão antiga).
 
-**Funcionamento:** Procura um CSV com `BACIA` no nome na pasta do DWG ou solicita a escolha manual. Interpreta campos de código da bacia, estaca, área, comprimento do talvegue, declividade e, quando disponível, curso d'água. Relaciona os códigos às layers `BC` numeradas no Model Space; para cada bacia escolhe prioritariamente a curva fechada de maior área, calcula um ponto interno de referência e insere um MLEADER na layer `TEXTO BACIAS`. Chamadas anteriormente criadas pela rotina são identificadas por XData e têm o texto atualizado sem perder a posição.
+**Objetivo:** Consolidar as funcionalidades de `TEXTO_BACIA_2.lsp` e `BACIAS_QUADRO.lsp` em um único arquivo, usando uma fonte de dados CSV compartilhada para as chamadas textuais, a numeração e o quadro-resumo das bacias hidrográficas.
 
-**Como utilizar:** No Excel, exporte a tabela de bacias para CSV separado por ponto e vírgula, preferencialmente com `BACIA` no nome e na pasta do DWG. No AutoCAD/Civil 3D para Windows, carregue o arquivo com `APPLOAD`. Execute `TEXTO_BACIAS_TODAS` para inserir/atualizar todas as chamadas; `TEXTO_BACIA` para selecionar uma bacia e posicionar uma chamada manualmente; `TEXTO_BACIA_CSV` para selecionar outro CSV; e `TEXTO_BACIA_RECARREGAR` para limpar o cache antes de reler dados alterados. Ajuste altura, cores, layer e afastamento nas variáveis `*bb:...` do início do arquivo.
+**Funcionamento:** Identifica bacias pelas layers iniciadas em `BC`, associa os códigos ao cadastro CSV, cria ou atualiza MLEADERs de identificação e de texto e produz uma tabela do AutoCAD. O código busca preservar a posição de chamadas existentes nas reexecuções e substitui a tabela anterior pela versão atualizada. Inclui `BACIAS_TABELA_ONDE` para localizar o quadro existente.
 
-**Requisitos e dependências:** AutoCAD/Civil 3D com AutoLISP, Visual LISP/ActiveX e suporte a MLEADER; desenho com layers de bacias `BC` e arquivo CSV no formato esperado. Não exige Excel instalado durante a execução, apenas o CSV exportado.
+**Como utilizar:** Exporte a planilha para CSV separado por ponto e vírgula; prefira um arquivo com `BACIA` no nome, na mesma pasta do DWG. Carregue somente `BACIAS.lsp` pelo `APPLOAD`. Execute `BACIAS_QUADRO` para numeração e tabela ou `TEXTO_BACIAS_TODAS` para chamadas textuais. Use `BACIAS_CSV` para escolher outro arquivo e `BACIAS_RECARREGAR` após modificar os dados. Para uma chamada isolada, use `TEXTO_BACIA`.
 
-**Status:** Código original anexado incluído sem alterações; funcionamento não verificado em execução nesta revisão.
+**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX, suporte a MLEADER e tabelas, desenho com layers de bacias `BC` e CSV no formato esperado.
 
-**Limitações e cuidados:** Os campos do CSV são reconhecidos por cabeçalhos e, quando ausentes, por posições predefinidas; confira a estrutura e as unidades da planilha (área em km², comprimento em km e declividade em %). Se houver mais de um CSV com `BACIA` no nome, a seleção automática pode não corresponder ao arquivo desejado. Sem curva fechada, a rotina usa a curva aberta mais longa como referência, o que exige conferência visual. O comando altera/adiciona entidades MLEADER no desenho; teste em uma cópia antes do uso.
+**Status:** Nova versão recebida e publicada sem modificações funcionais; execução no AutoCAD/Civil 3D não verificada nesta atualização.
+
+**Limitações e cuidados:** A nova rotina também define os comandos `BACIAS_QUADRO`, `BACIAS_NUMERAR`, `BACIAS_TABELA`, `BACIAS_CSV`, `BACIAS_RECARREGAR` e `BACIAS_APAGAR_BLOCOS`, que existem no arquivo legado `BACIAS_QUADRO.lsp`. **Não carregue os dois arquivos na mesma sessão**, pois a última definição carregada prevalecerá. Confira cabeçalhos, unidades, separador e associação das layers antes do uso. Teste em uma cópia do DWG, especialmente a preservação de posições e a substituição da tabela.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
-
 ---
 
-### BACIAS_QUADRO.lsp
+### BACIAS_QUADRO.lsp (legado)
+
+**Atenção:** mantido apenas para compatibilidade e histórico. A nova [`BACIAS.lsp`](./BACIAS.lsp) incorpora os comandos deste arquivo e também os de chamadas textuais. Prefira a versão consolidada e **não carregue as duas rotinas juntas**, pois redefinem comandos de mesmo nome.
+
 
 **Arquivo:** [`BACIAS_QUADRO.lsp`](./BACIAS_QUADRO.lsp)  
 **Comandos:** `BACIAS_QUADRO`, `BACIAS_NUMERAR`, `BACIAS_TABELA`, `BACIAS_CSV`, `BACIAS_RECARREGAR`, `BACIAS_APAGAR_BLOCOS`
