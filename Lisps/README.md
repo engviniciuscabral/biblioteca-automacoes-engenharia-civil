@@ -20,7 +20,6 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
 | [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | DNIT V4: 32 variantes, incluindo 9 tubulares extrapoladas; bloco dinâmico `BOCA_DNIT_PLANTA_V4`. | [Ver detalhes](#template_bocaslsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
 | [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASTUDO` / `BBT` / `BOCASBUEIRO` / `BBU` / `BOCASPERFIL` / `BBP` / `BOCASPERFILAUTO` / `BBCALIB` / `BBCALIBLIMPA` / `BBDIAG` | Versão v13: planta, perfil e modo combinado, com dissipadores DEB por tabela e diagnóstico. | [Ver detalhes](#bocas_bueirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
-
 | [`SUAVBACIA.lsp`](./SUAVBACIA.lsp) | `SUAVBACIA` | Suavização de contornos de bacias raster/MDT, com preservação pretendida de divisórias compartilhadas. | [Ver detalhes](#suavbacialsp) |
 
 ## Documentação das rotinas
