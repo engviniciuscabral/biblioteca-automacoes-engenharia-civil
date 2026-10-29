@@ -173,7 +173,7 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 **Funcionamento:** Identifica bacias pelas layers iniciadas em `BC`, associa os códigos ao cadastro CSV, cria ou atualiza MLEADERs de identificação e de texto e produz uma tabela do AutoCAD. O código busca preservar a posição de chamadas existentes nas reexecuções e substitui a tabela anterior pela versão atualizada. Inclui `BACIAS_TABELA_ONDE` para localizar o quadro existente.
 
-**Como utilizar:** Exporte a planilha para CSV separado por ponto e vírgula; prefira um arquivo com `BACIA` no nome, na mesma pasta do DWG. Carregue somente `BACIAS.lsp` pelo `APPLOAD`. Execute `BACIAS_QUADRO` para numeração e tabela ou `TEXTO_BACIAS_TODAS` para chamadas textuais. Use `BACIAS_CSV` para escolher outro arquivo e `BACIAS_RECARREGAR` após modificar os dados. Para uma chamada isolada, use `TEXTO_BACIA`.
+**Como utilizar:** Exporte a planilha de vazões (aba Apresentação - Est. Hid.) para CSV separado por ponto e vírgula; prefira um arquivo com `BACIA` no nome, na mesma pasta do DWG. Carregue somente `BACIAS.lsp` pelo `APPLOAD`. Execute `BACIAS_QUADRO` para numeração e tabela ou `TEXTO_BACIAS_TODAS` para chamadas textuais. Use `BACIAS_CSV` para escolher outro arquivo e `BACIAS_RECARREGAR` após modificar os dados. Para uma chamada isolada, use `TEXTO_BACIA`.
 
 **Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX, suporte a MLEADER e tabelas, desenho com layers de bacias `BC` e CSV no formato esperado.
 
