@@ -19,7 +19,8 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`BUEIROS_PERFIL.lsp`](./Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | `BUEIROPERFIL` | Criação de COGO points no eixo e desenho dos bueiros projetados (BSCC/BDCC/BTCC, BSTC/BDTC/BTTC) com legenda na vista de perfil do Civil 3D, a partir do cadastro de obras em CSV. | [Ver detalhes](#9-bueiros_perfillsp) |
 | [`tlen.lsp`](./tlen.lsp) | `TLEN` | Soma dos comprimentos de entidades selecionadas. | [Ver detalhes](#6-tlenlsp) |
 | [`TEMPLATE_BOCAS.lsp`](./TEMPLATE_BOCAS.lsp) | `BOCASCADASTRO` / `BOCASCADBASE` / `BOCASCADDIN` / `BOCASADDIN` | DNIT V4: 32 variantes, incluindo 9 tubulares extrapoladas; bloco dinâmico `BOCA_DNIT_PLANTA_V4`. | [Ver detalhes](#template_bocaslsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
-| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BOCASTUDO` / `BBT` / `BOCASBUEIRO` / `BBU` / `BOCASPERFIL` / `BBP` / `BOCASPERFILAUTO` / `BBCALIB` / `BBCALIBLIMPA` / `BBDIAG` | Versão v13: planta, perfil e modo combinado, com dissipadores DEB por tabela e diagnóstico. | [Ver detalhes](#bocas_bueirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
+| [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BBT` / `BBTB` / `BBTD` / `BBX` / `BBU` / `BBP` / `BBATERRO` / `BBCOGO` / `BBOBRA` / `BBPLANILHA` / `BBGRADE` / `BBLIMPA` / `BBLIMPAANTIGO` | v14: inserção seletiva de bocas/dissipadores, atualização de labels, pontos COGO, planilha e limpeza de resultados. | [Ver detalhes](#bocas_bueirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
+| [`NOMEAR_PELO_ALINHAMENTO.lsp`](./NOMEAR_PELO_ALINHAMENTO.lsp) | `NOMEARALINHAMENTO` / `NAL` | Renomeação de Pipes, perfis e Profile Views com base nos alinhamentos do Civil 3D. | [Ver detalhes](#nomear_pelo_alinhamentolsp) |
 | [`SUAVBACIA.lsp`](./SUAVBACIA.lsp) | `SUAVBACIA` | Suavização de contornos de bacias raster/MDT, com preservação pretendida de divisórias compartilhadas. | [Ver detalhes](#suavbacialsp) |
 
 ## Documentação das rotinas
@@ -274,24 +275,21 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 
 ### BOCAS_BUEIRO.lsp
 
-**Arquivo:** [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) — versão recebida como `BOCAS_BUEIRO_4.lsp`, publicada com o nome padronizado do catálogo.
+**Arquivo:** [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) — atualizado com o arquivo recebido como `BOCAS_BUEIRO_5_18.lsp`, identificado no código como **v14**.
 
-**Comandos:** `BOCASTUDO` (`BBT`, planta + perfil), `BOCASBUEIRO` (`BBU`, planta), `BOCASPERFIL` (`BBP`, clique na pipe no perfil), `BOCASPERFILAUTO` (seleção de Profile Views), `BBCALIB`, `BBCALIBLIMPA` e `BBDIAG`.
+**Comandos principais:** `BOCASTUDO` / `BBT` (bocas e dissipadores em planta e perfil), `BBTB` (somente bocas), `BBTD` (somente dissipadores), `BBX` (escolha interativa), `BOCASBUEIRO` / `BBU` (planta), `BOCASPERFIL` / `BBP` (perfil por clique), `BOCASPERFILAUTO` (perfis automáticos).
+
+**Comandos auxiliares:** `BBATERRO` (atualiza altura de aterro na pipe/label), `BBCOGO` (pontos COGO no eixo), `BBOBRA` (tipo de obra em labels), `BBPLANILHA` (planilha Excel de bueiros), `BBGRADE` (bands e grade de Profile Views), `BBGREIDE` (reinicia a seleção de greide), `BBLIMPA` (limpeza de resultados identificados da rotina), `BBLIMPAANTIGO` (limpeza de resultados legados mediante confirmação), `BBPVDIAG` (diagnóstico de vistas), `BBCALIB`, `BBCALIBLIMPA` e `BBDIAG`.
 
 **Guia completo:** [Bocas de bueiros — instalação, configuração e uso passo a passo](./GUIA_BOCAS_BUEIROS.md).
 
-**Objetivo:** automatizar a inserção de bocas a montante e jusante em bueiros representados por tubos de Pipe Network no Civil 3D e, quando aplicável, inserir dissipadores de energia.
+**Objetivo:** Automatizar a representação de bocas e dissipadores de bueiros em Pipe Networks do Civil 3D, incluindo rotinas de atualização de informações, extração de dados e manutenção dos elementos gerados.
 
-**Funcionamento:** agrupa tubos paralelos e próximos para identificar bueiros simples, duplos ou triplos; lê as dimensões e as cotas das extremidades; considera a extremidade de menor cota como jusante; insere e orienta o bloco dinâmico `BOCA_DNIT_PLANTA_V4`. Para tubos tubulares dentro do limite configurado, pode inserir um dissipador. A v13 acrescenta cortes em Profile Views, modo combinado e geração de dissipadores DEB por tabela (padrão). `BBCALIB` e `BBCALIBLIMPA` atendem ao modo legado de bloco `DISSIPADOR`, ativado com `*BB:DISSIP-DNIT* = nil`; `BBDIAG` diagnostica a leitura de um tubo.
+**Funcionamento:** Agrupa tubos paralelos e próximos em bueiros simples, duplos ou triplos, lê dimensões e cotas das extremidades e infere jusante pela menor elevação. Insere blocos dinâmicos de bocas e dissipadores, além de desenhos em Profile Views. A v14 acrescenta modos de execução separados, cálculo de aterro e informações para labels, geração de pontos COGO e planilha, ajustes de vistas de perfil e limpeza de entidades previamente criadas.
 
-**Como utilizar:**
-1. Garanta que o bloco dinâmico de boca esteja no desenho. Se necessário, crie-o com `TEMPLATE_BOCAS.lsp`.
-2. Carregue o arquivo com `APPLOAD`.
-3. Execute `BOCASBUEIRO`/`BBU` para planta, `BOCASPERFIL`/`BBP` para clicar na pipe no perfil ou `BOCASTUDO`/`BBT` para planta e perfis automaticamente (ENTER seleciona todos os tubos).
-4. Confira a posição, orientação, estado de visibilidade e sentido de montante/jusante.
-5. No modo legado (`*BB:DISSIP-DNIT* = nil`), use `BBCALIB` para calibrar o encaixe do dissipador, `BBCALIBLIMPA` para limpar a calibração e `BBDIAG` para investigar as propriedades de um tubo.
+**Como utilizar:** Prepare o desenho com Pipe Networks, alinhamentos, Profile Views e o bloco `BOCA_DNIT_PLANTA_V4` gerado por `TEMPLATE_BOCAS.lsp`. Carregue `BOCAS_BUEIRO.lsp` com `APPLOAD` e execute `BBT` para o fluxo combinado ou `BBX` para escolher a operação. Para tarefas isoladas, use os comandos específicos listados acima. Confira os resultados no desenho e na planilha.
 
-**Requisitos e limitações:** AutoCAD Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX e Pipe Networks com propriedades de dimensões e extremidades acessíveis. O sentido do fluxo é inferido pelas cotas Z, portanto deve ser conferido manualmente. O agrupamento depende das tolerâncias configuradas. A rotina altera o DWG e deve ser testada em cópia. A versão foi publicada no repositório, mas não foi executada em ambiente AutoCAD/Civil 3D nesta revisão.
+**Requisitos e limitações:** Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX, Pipe Networks com propriedades acessíveis; para `BBPLANILHA`, Excel no Windows. Os resultados dependem de tolerâncias geométricas, cotas Z, associação aos alinhamentos e da configuração dos blocos. `BBLIMPA` e `BBLIMPAANTIGO` podem apagar entidades; teste em cópia do DWG. **Status:** atualização baseada na leitura do código, ainda sem validação por execução no Civil 3D.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
 
@@ -317,5 +315,26 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 **Status:** Arquivo fornecido incluído sem alterações funcionais; não houve validação por execução no AutoCAD/Civil 3D.
 
 **Limitações e cuidados:** A preservação de divisórias compartilhadas é uma intenção do algoritmo e **precisa ser comprovada em teste geométrico**, sobretudo quando as bacias possuem vértices ou segmentações diferentes ao longo da mesma divisa. A identificação de coincidências usa arredondamento de coordenadas a três casas decimais por padrão; confira a compatibilidade com as unidades e a precisão do desenho. A suavização pode alterar áreas e posições dos contornos. O relatório apresenta apenas a variação da **área total** das polilinhas fechadas, não um controle de área por bacia. Use inicialmente o modo `Copiar`, compare geometrias e áreas e só depois considere `Substituir`.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### NOMEAR_PELO_ALINHAMENTO.lsp
+
+**Arquivo:** [`NOMEAR_PELO_ALINHAMENTO.lsp`](./NOMEAR_PELO_ALINHAMENTO.lsp)  
+**Comandos:** `NOMEARALINHAMENTO` e atalho `NAL`.
+
+**Objetivo:** Renomear tubos de Pipe Networks, perfis longitudinais e vistas de perfil com base no nome do alinhamento correspondente.
+
+**Funcionamento:** Oferece as opções `Todos`, `Pipes`, `Perfis` e `Vistas`. Permite selecionar entidades ou processar o desenho inteiro. Para Pipes, procura o alinhamento mais próximo e aproximadamente paralelo ao tubo; em bueiros múltiplos, usa sufixos ` (2)`, ` (3)` etc. para evitar nomes duplicados na rede. Para perfis e vistas, busca a associação ao alinhamento pelas coleções do Civil 3D e oferece alternativas quando necessário. Agrupa as modificações em uma marca de UNDO.
+
+**Como utilizar:** Abra uma cópia do DWG no Civil 3D, carregue o LISP com `APPLOAD`, execute `NAL`, escolha o tipo de objeto e selecione os elementos desejados (ou ENTER para o desenho inteiro). Confira os nomes e use `U` para desfazer a operação, se necessário.
+
+**Requisitos e dependências:** Civil 3D para Windows com AutoLISP/Visual LISP/ActiveX, alinhamentos e objetos Pipe/Profile/Profile View. Parâmetros configuráveis: `*NA:TOL-OFF*` (10 m), `*NA:TOL-ANG*` (20°) e `*NA:PREFIXO-VISTA*`.
+
+**Status:** Arquivo novo incluído sem alterações funcionais; execução não verificada no Civil 3D.
+
+**Limitações e cuidados:** A associação de Pipes é geométrica, não uma garantia de vínculo hidráulico. Alinhamentos próximos ou cruzados podem gerar associações incorretas; verifique os nomes antes de usar em produção. A renomeação modifica propriedades do projeto, podendo afetar referências que dependam dos nomes originais.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
