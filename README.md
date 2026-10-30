@@ -18,7 +18,7 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D / .NET | 5 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 13 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 14 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **Python** | Python / Tkinter / NumPy / Matplotlib | 1 | [Ver catálogo](./Python/README.md) |
 | **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
@@ -50,7 +50,8 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | [`BUEIROS_PERFIL.lsp`](./Lisps/Bueiros%20Perfil/BUEIROS_PERFIL.lsp) | Lançamento de bueiros projetados no eixo e na vista de perfil do Civil 3D, com desenho e legenda; referência `TOPO` ajustada ao topo interno da seção. [Arquivos de exemplo](./Lisps/Bueiros%20Perfil/). |
 | [`tlen.lsp`](./Lisps/tlen.lsp) | Soma dos comprimentos de entidades selecionadas. |
 | [`TEMPLATE_BOCAS.lsp`](./Lisps/TEMPLATE_BOCAS.lsp) | DNIT V4: 32 variantes de bocas (incluindo 9 tubulares extrapoladas), com `BOCA_DNIT_PLANTA_V4`; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
-| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v13: bocas em planta e perfil (`BBU`/`BBP`), modo combinado (`BBT`) e dissipadores DEB por tabela; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v14: bocas e dissipadores em planta/perfil, comandos seletivos (`BBT`, `BBTB`, `BBTD`, `BBX`), labels, pontos COGO, planilha Excel e limpeza; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
+| [`NOMEAR_PELO_ALINHAMENTO.lsp`](./Lisps/NOMEAR_PELO_ALINHAMENTO.lsp) | Renomeia Pipes, perfis e Profile Views conforme o alinhamento associado (`NOMEARALINHAMENTO` / `NAL`). |
 | [`SUAVBACIA.lsp`](./Lisps/SUAVBACIA.lsp) | Suavização de contornos de bacias derivados de raster/MDT por pontos médios, Douglas–Peucker e Chaikin; comando `SUAVBACIA`. |
 
 ### [Python](./Python/README.md)
