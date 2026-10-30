@@ -1,6 +1,6 @@
 # Bocas de bueiros — guia passo a passo
 
-Este guia corresponde às versões atuais de `TEMPLATE_BOCAS.lsp` e `BOCAS_BUEIRO.lsp` (arquivo recebido como `BOCAS_BUEIRO_4.lsp`, mantido no repositório com o nome padronizado). A versão atual da rotina automática informa **v13** no carregamento.
+Este guia corresponde às versões atuais de `TEMPLATE_BOCAS.lsp` e `BOCAS_BUEIRO.lsp` (arquivo recebido como `BOCAS_BUEIRO_5_18.lsp`, mantido no repositório com o nome padronizado). A versão atual da rotina automática informa **v14** no carregamento.
 
 ## 1. O que cada rotina faz
 
@@ -99,6 +99,26 @@ Parâmetros do perfil (definidos na seção de perfil do LISP):
 
 O corte celular usa parâmetros pela altura; o código declara valores adotados para dente e ponta da ala que não constam da tabela DNIT. Nas rotinas de perfil baseadas no grupo 3D, cotas iguais impedem a inferência de montante/jusante e o grupo é ignorado. Em planta, a rotina solicita um clique próximo à jusante nesses casos.
 
+## 6.1. Novos comandos da versão v14
+
+Além dos modos anteriores, a v14 disponibiliza comandos específicos para executar partes do processamento e para manter os elementos criados:
+
+| Comando | Finalidade |
+|---|---|
+| `BBTB` / `BBTD` | Processar somente bocas / somente dissipadores. |
+| `BBX` | Escolher interativamente o que inserir e onde. |
+| `BBATERRO` | Recalcular a altura de aterro no eixo e gravar informação na pipe/label. |
+| `BBCOGO` | Criar somente os COGO points no eixo, um por bueiro. |
+| `BBOBRA` | Atualizar o tipo de obra nas labels de planta e perfil. |
+| `BBPLANILHA` | Gerar planilha Excel de bueiros com cotas, aterro, extensão, montante/jusante e estaca. |
+| `BBGRADE` | Ajustar bands e grade dos Profile Views. |
+| `BBGREIDE` | Limpar a escolha anterior de greide para selecioná-lo novamente. |
+| `BBLIMPA` | Apagar os elementos gerados pela LISP nos bueiros selecionados. |
+| `BBLIMPAANTIGO` | Localizar resultados de versões antigas sem etiqueta, apresentando confirmação antes de apagar. |
+| `BBPVDIAG` | Diagnosticar vistas de perfil. |
+
+A v14 prevê a substituição de elementos anteriormente criados pela própria rotina nos bueiros reprocessados, conforme a configuração `*BB:SUBSTITUIR*`. Verifique o comportamento em uma cópia do desenho antes de repetir o processamento ou utilizar comandos de limpeza. `BBPLANILHA` depende do Excel instalado.
+
 ## 7. Diagnóstico e problemas comuns
 
 - **Bloco de boca não encontrado:** confira se `BOCA_DNIT_PLANTA_V4` está no desenho e se `*BB:BLK-BOCA*` aponta para o nome correto.
@@ -116,5 +136,5 @@ O corte celular usa parâmetros pela altura; o código declara valores adotados 
 - A inserção automática depende de Pipe Networks com propriedades de dimensões e extremidades acessíveis.
 - A criação de blocos dinâmicos pode variar conforme versão/idioma do AutoCAD.
 - Os comandos criam ou alteram blocos, camadas e entidades. Trabalhe em cópia e confira unidades, dimensões, orientação, cotas e critérios construtivos antes do uso em projeto.
-- Os arquivos foram substituídos no repositório, mas não foram executados em ambiente AutoCAD/Civil 3D durante esta atualização.
+- A versão v14 de `BOCAS_BUEIRO.lsp` foi substituída no repositório; `TEMPLATE_BOCAS.lsp` foi comparado e permaneceu inalterado por ser idêntico ao arquivo enviado. Não houve execução em ambiente AutoCAD/Civil 3D nesta atualização.
 
