@@ -23,6 +23,8 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`NOMEAR_PELO_ALINHAMENTO.lsp`](./NOMEAR_PELO_ALINHAMENTO.lsp) | `NOMEARALINHAMENTO` / `NAL` | Renomeação de Pipes, perfis e Profile Views com base nos alinhamentos do Civil 3D. | [Ver detalhes](#nomear_pelo_alinhamentolsp) |
 | [`SUAVBACIA.lsp`](./SUAVBACIA.lsp) | `SUAVBACIA` | Suavização de contornos de bacias raster/MDT, com preservação pretendida de divisórias compartilhadas. | [Ver detalhes](#suavbacialsp) |
 
+| [`rotula_ctd.lsp`](./rotula_ctd.lsp) | `ROTULA_CTD` | Rotulagem de hachuras CTD com área e dados de fonte, imóvel e proprietário extraídos de Excel. | [Ver detalhes](#rotula_ctdlsp) |
+
 ## Documentação das rotinas
 
 ### 1. CONT_AREA.lsp
@@ -336,5 +338,26 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 **Status:** Arquivo novo incluído sem alterações funcionais; execução não verificada no Civil 3D.
 
 **Limitações e cuidados:** A associação de Pipes é geométrica, não uma garantia de vínculo hidráulico. Alinhamentos próximos ou cruzados podem gerar associações incorretas; verifique os nomes antes de usar em produção. A renomeação modifica propriedades do projeto, podendo afetar referências que dependam dos nomes originais.
+
+[↑ Voltar ao índice](#índice-de-rotinas)
+
+---
+
+### rotula_ctd.lsp
+
+**Arquivo:** [`rotula_ctd.lsp`](./rotula_ctd.lsp)  
+**Comando:** `ROTULA_CTD`.
+
+**Objetivo:** Inserir rótulos MTEXT em hachuras associadas a códigos CTD, combinando área calculada no desenho com informações cadastrais de uma planilha Excel.
+
+**Funcionamento:** Percorre as layers do desenho cujo nome contém `CTD` seguido de número (por exemplo, `CTD01` ou `CTD 08`), busca o código na **coluna F** da aba indicada do Excel e obtém **fonte (A)**, **proprietário (B)** e **imóvel (D)**. Para cada hachura da layer, lê a área, calcula o centro do retângulo envolvente, determina a orientação pelo maior segmento da polilinha temporária gerada com `HATCHGENERATEBOUNDARY` e insere um MTEXT na própria layer. A área é exibida com duas casas decimais e formatação brasileira.
+
+**Como utilizar:** No AutoCAD para Windows, carregue `rotula_ctd.lsp` com `APPLOAD` e execute `ROTULA_CTD`. Informe a altura do texto (padrão 2,5), selecione o arquivo Excel (`.xlsx`, `.xlsm` ou `.xls`) e digite o nome da aba que contém os dados. A rotina processa as hachuras encontradas e informa as quantidades de layers, códigos, hachuras e textos gerados.
+
+**Requisitos e dependências:** AutoCAD/Civil 3D para Windows, AutoLISP/Visual LISP/ActiveX, Microsoft Excel instalado e uma planilha com códigos CTD na coluna F e os dados nas colunas A, B e D. Os valores de área são considerados em m², sem conversão automática de unidades (`fatorArea = 1.0`).
+
+**Status:** Arquivo original adicionado ao repositório; execução no AutoCAD e integração com Excel ainda não verificadas.
+
+**Limitações e cuidados:** O código insere novos MTEXTs em cada execução e não identifica ou atualiza rótulos anteriores, podendo duplicá-los. A posição é o centro do retângulo envolvente, que pode cair fora de hachuras côncavas ou com vazios. A orientação depende de `HATCHGENERATEBOUNDARY`, que pode não funcionar em algumas hachuras. A rotina abre a pasta de trabalho pelo Excel COM e não implementa tratamento completo para falhas ou fechamento/liberação de objetos. Confira correspondência dos códigos, unidades, área e conteúdo antes do uso em produção; execute em cópia do DWG.
 
 [↑ Voltar ao índice](#índice-de-rotinas)
