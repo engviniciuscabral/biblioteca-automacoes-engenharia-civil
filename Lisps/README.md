@@ -22,7 +22,6 @@ Rotinas AutoLISP para AutoCAD e Civil 3D, incluindo medições, exportação de 
 | [`BOCAS_BUEIRO.lsp`](./BOCAS_BUEIRO.lsp) | `BBT` / `BBTB` / `BBTD` / `BBX` / `BBU` / `BBP` / `BBATERRO` / `BBCOGO` / `BBOBRA` / `BBPLANILHA` / `BBGRADE` / `BBLIMPA` / `BBLIMPAANTIGO` | v14: inserção seletiva de bocas/dissipadores, atualização de labels, pontos COGO, planilha e limpeza de resultados. | [Ver detalhes](#bocas_bueirolsp) · [Guia passo a passo](./GUIA_BOCAS_BUEIROS.md) |
 | [`NOMEAR_PELO_ALINHAMENTO.lsp`](./NOMEAR_PELO_ALINHAMENTO.lsp) | `NOMEARALINHAMENTO` / `NAL` | Renomeação de Pipes, perfis e Profile Views com base nos alinhamentos do Civil 3D. | [Ver detalhes](#nomear_pelo_alinhamentolsp) |
 | [`SUAVBACIA.lsp`](./SUAVBACIA.lsp) | `SUAVBACIA` | Suavização de contornos de bacias raster/MDT, com preservação pretendida de divisórias compartilhadas. | [Ver detalhes](#suavbacialsp) |
-
 | [`rotula_ctd.lsp`](./rotula_ctd.lsp) | `ROTULA_CTD` | Rotulagem de hachuras CTD com área e dados de fonte, imóvel e proprietário extraídos de Excel. | [Ver detalhes](#rotula_ctdlsp) |
 
 ## Documentação das rotinas
