@@ -18,7 +18,7 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | Categoria | Tecnologias | Rotinas | Documentação |
 |---|---|---:|---|
 | **Dynamo** | Dynamo / Civil 3D / .NET | 5 | [Ver catálogo](./Dynamo/README.md) |
-| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 14 | [Ver catálogo](./Lisps/README.md) |
+| **Lisps** | AutoLISP / AutoCAD / Civil 3D | 15 | [Ver catálogo](./Lisps/README.md) |
 | **QGIS** | PyQGIS / QGIS | 1 | [Ver catálogo](./QGIS/README.md) |
 | **Python** | Python / Tkinter / NumPy / Matplotlib | 1 | [Ver catálogo](./Python/README.md) |
 | **VBA** | VBA / Excel | 3 | [Ver catálogo](./VBA/README.md) |
@@ -53,6 +53,7 @@ O [plano de evolução da biblioteca](./PLANEJAMENTO_PROJETO.md) reúne um templ
 | [`BOCAS_BUEIRO.lsp`](./Lisps/BOCAS_BUEIRO.lsp) | Versão v14: bocas e dissipadores em planta/perfil, comandos seletivos (`BBT`, `BBTB`, `BBTD`, `BBX`), labels, pontos COGO, planilha Excel e limpeza; [guia passo a passo](./Lisps/GUIA_BOCAS_BUEIROS.md). |
 | [`NOMEAR_PELO_ALINHAMENTO.lsp`](./Lisps/NOMEAR_PELO_ALINHAMENTO.lsp) | Renomeia Pipes, perfis e Profile Views conforme o alinhamento associado (`NOMEARALINHAMENTO` / `NAL`). |
 | [`SUAVBACIA.lsp`](./Lisps/SUAVBACIA.lsp) | Suavização de contornos de bacias derivados de raster/MDT por pontos médios, Douglas–Peucker e Chaikin; comando `SUAVBACIA`. |
+| [`rotula_ctd.lsp`](./Lisps/rotula_ctd.lsp) | Geração de rótulos MTEXT para hachuras CTD com área e informações cadastrais de planilha Excel (`ROTULA_CTD`). |
 
 ### [Python](./Python/README.md)
 
